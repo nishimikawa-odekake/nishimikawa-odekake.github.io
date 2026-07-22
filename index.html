@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>あいち子育ておでかけマップ｜安城から車で約50分、子どもが喜ぶ場所マップ</title>
+<meta name="description" content="安城から車で約50分。愛知県内の子どもが喜ぶおでかけスポットを、遊びの気分で選べる地図サイト。">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" referrerpolicy="no-referrer">
+<style>
+:root{
+  --bg:#faf6ef; --card:#fffdf9; --ink:#3d3a34; --sub:#7a746a; --line:#e7ddcd;
+  --accent:#e08a5b; --accent-d:#c9713f;
+  --animal:#E9A23B; --active:#4CAF6E; --water:#3FA9D6; --create:#9B6DD6; --vehicle:#E06C75; --indoor:#7A8AA0;
+  --animal-b:#fbeccd; --active-b:#d9f0e2; --water-b:#d5edf8; --create-b:#ece0f7; --vehicle-b:#f9dcde; --indoor-b:#e3e8ef;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-text-size-adjust:100%}
+a{color:var(--accent-d)}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding:0 14px}
+
+/* header */
+header.hero{background:linear-gradient(160deg,#fbe6d3,#f6ede0);padding:22px 0 18px;border-bottom:1px solid var(--line)}
+header.hero h1{font-size:1.5rem;margin:0 0 6px;letter-spacing:.02em}
+header.hero .catch{font-size:1.02rem;color:var(--accent-d);font-weight:700;margin:0 0 4px}
+header.hero .note{font-size:.8rem;color:var(--sub);margin:0}
+
+/* mood buttons */
+.moods{padding:14px 0 4px}
+.moods h2{font-size:.95rem;margin:0 0 8px;color:var(--sub)}
+.mood-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.mood-btn{flex:0 0 auto;border:none;border-radius:18px;padding:14px 16px;min-width:104px;font-size:.95rem;font-weight:700;color:#4a4640;background:var(--card);box-shadow:0 2px 6px rgba(160,140,110,.18);cursor:pointer;text-align:center;line-height:1.35;transition:transform .1s}
+.mood-btn:active{transform:scale(.96)}
+.mood-btn .emo{font-size:1.5rem;display:block;margin-bottom:4px}
+
+/* filter bar */
+.filterbar{position:sticky;top:0;z-index:900;background:rgba(250,246,239,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:10px 0}
+.frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px}
+.frow:last-child{margin-bottom:0}
+.flabel{font-size:.75rem;color:var(--sub);margin-right:2px;flex:0 0 auto}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:.85rem;cursor:pointer;color:var(--ink);white-space:nowrap;transition:.12s}
+.chip:active{transform:scale(.95)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.chip.play.on{color:#fff}
+.chip.play[data-t="animal"].on{background:var(--animal);border-color:var(--animal)}
+.chip.play[data-t="active"].on{background:var(--active);border-color:var(--active)}
+.chip.play[data-t="water"].on{background:var(--water);border-color:var(--water)}
+.chip.play[data-t="create"].on{background:var(--create);border-color:var(--create)}
+.chip.play[data-t="vehicle"].on{background:var(--vehicle);border-color:var(--vehicle)}
+.chip.play[data-t="indoor"].on{background:var(--indoor);border-color:var(--indoor)}
+.count{font-size:.85rem;font-weight:700;color:var(--accent-d)}
+.reset{border:none;background:transparent;color:var(--sub);text-decoration:underline;font-size:.8rem;cursor:pointer;padding:6px 4px}
+
+/* layout */
+.main{display:flex;flex-direction:column;gap:16px;padding:16px 0}
+#mapwrap{width:100%}
+#map{width:100%;height:45vh;min-height:360px;border-radius:16px;box-shadow:0 2px 10px rgba(160,140,110,.18);z-index:1}
+.listwrap{width:100%;min-width:0}
+.section-title{font-size:1.1rem;margin:6px 0 2px;display:flex;align-items:baseline;gap:8px}
+.section-title small{font-size:.8rem;color:var(--sub);font-weight:400}
+
+/* cards */
+.cards{display:grid;grid-template-columns:1fr;gap:14px;max-width:700px;margin:0 auto;width:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(160,140,110,.12);transition:box-shadow .15s,transform .15s}
+.card.hl{box-shadow:0 0 0 3px var(--accent),0 4px 14px rgba(200,113,63,.28)}
+.card .photo{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#eee}
+.card .photo img{width:100%;height:100%;object-fit:cover}
+.ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem}
+.credit{position:absolute;left:0;bottom:0;right:0;font-size:.62rem;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.55));padding:10px 8px 3px}
+.card .body{padding:12px 14px 14px}
+.card h3{font-size:1.08rem;margin:0 0 2px}
+.card .city{font-size:.8rem;color:var(--sub);margin:0 0 8px}
+.appeal{background:#fff6ee;border-left:4px solid var(--accent);border-radius:6px;padding:8px 10px;font-size:.95rem;font-weight:700;color:#5a4632;margin:0 0 10px}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.badge{font-size:.74rem;border-radius:999px;padding:3px 9px;font-weight:700;white-space:nowrap}
+.badge.play{color:#fff}
+.badge.drive{background:#efe7da;color:#6a5c46}
+.badge.free{background:#dff0e4;color:#2e7d47}
+.badge.rain{background:#e3e8ef;color:#4a586c}
+.info{font-size:.78rem;color:var(--sub);margin:0 0 3px;display:flex;gap:5px}
+.info b{color:#665e50;font-weight:700;flex:0 0 auto}
+.actions{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}
+.btn{flex:1 1 auto;text-align:center;text-decoration:none;border-radius:10px;padding:10px 8px;font-size:.86rem;font-weight:700;white-space:nowrap}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.map{background:#eef2f6;color:#41556e;border:1px solid #d8e0ea}
+.checked{font-size:.68rem;color:#a89f90;margin:9px 0 0}
+
+/* weekend card */
+.weekend{background:linear-gradient(135deg,#fbe6d3,#f3e7d6);border-radius:16px;padding:18px 16px;text-align:center;border:1px solid var(--line)}
+.weekend h3{margin:0 0 6px;font-size:1.15rem}
+.weekend p{margin:0 0 12px;font-size:.9rem;color:#6a5c46}
+.weekend .actions{justify-content:center}
+.weekend .btn.insta{background:#d6588a;color:#fff;flex:0 1 auto;padding:10px 18px}
+.weekend .btn.links{background:#fff;color:var(--accent-d);border:1px solid var(--accent);flex:0 1 auto;padding:10px 18px}
+
+/* listing inquiry */
+.listing{max-width:700px;margin:24px auto 8px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 18px;text-align:center;box-shadow:0 2px 8px rgba(160,140,110,.12)}
+.listing h3{margin:0 0 6px;font-size:1.08rem}
+.listing p{margin:0 0 14px;font-size:.86rem;color:var(--sub)}
+.listing .btn.contact{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;border-radius:10px;padding:11px 22px;font-size:.9rem;font-weight:700}
+.listing .contact-msg{font-size:.8rem;color:var(--accent-d);font-weight:700;margin:12px 0 0}
+
+footer{margin-top:8px;padding:22px 0 40px;border-top:1px solid var(--line);color:var(--sub);font-size:.78rem}
+footer p{margin:0 0 6px}
+
+.leaflet-popup-content{margin:10px 12px;font-family:inherit}
+.pop h4{margin:0 0 4px;font-size:.95rem}
+.pop .pa{font-size:.8rem;color:#5a4632;margin:0 0 6px}
+.pop a{font-size:.82rem;font-weight:700}
+.pin{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 5px rgba(0,0,0,.3);border:2px solid #fff}
+.pin span{transform:rotate(45deg);font-size:16px}
+.pin.home{border-radius:50%;background:#4a4640}
+.pin.home span{transform:none}
+
+.empty{text-align:center;color:var(--sub);padding:30px;font-size:.9rem}
+
+/* origin selector */
+.origin-sel{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:6px 10px;font-size:.85rem;color:var(--ink);font-family:inherit;cursor:pointer;max-width:9.5em}
+.origin-btn{border:1.5px solid var(--accent);background:var(--card);color:var(--accent-d);border-radius:999px;padding:6px 12px;font-size:.85rem;cursor:pointer;font-weight:700;white-space:nowrap}
+.origin-btn:active{transform:scale(.95)}
+.origin-note{font-size:.7rem;color:var(--sub)}
+.origin-msg{font-size:.75rem;color:var(--accent-d);font-weight:700;flex-basis:100%;margin:2px 0 0}
+
+@media(min-width:820px){
+  header.hero h1{font-size:1.8rem}
+}
+
+@media(min-width:900px){
+  .main{flex-direction:row;align-items:flex-start;gap:24px}
+  #mapwrap{flex:0 0 57%;max-width:57%;position:sticky;top:12px;align-self:flex-start}
+  #map{width:100%;height:calc(100vh - 24px);min-height:520px;max-height:none}
+  .listwrap{flex:1 1 43%;max-width:43%;min-width:0}
+  .cards{grid-template-columns:1fr;max-width:none}
+  .listing{max-width:none}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <h1>あいち子育ておでかけマップ</h1>
+    <p class="catch">安城から車で約50分、子どもが喜ぶ場所マップ</p>
+    <p class="note">愛知県内の子連れおでかけスポットを、今日の気分で選べます。</p>
+  </div>
+</header>
+
+<section class="moods">
+  <div class="wrap">
+    <h2>気分で選ぶ</h2>
+    <div class="mood-scroll" id="moods" role="list">
+      <button class="mood-btn" data-mood="rain"    role="listitem"><span class="emo">☔</span>雨でも室内</button>
+      <button class="mood-btn" data-mood="free"    role="listitem"><span class="emo">🆓</span>無料</button>
+      <button class="mood-btn" data-mood="animal"  role="listitem"><span class="emo">🦁</span>動物とふれあう</button>
+      <button class="mood-btn" data-mood="active"  role="listitem"><span class="emo">🛝</span>からだを動かす</button>
+      <button class="mood-btn" data-mood="water"   role="listitem"><span class="emo">💦</span>水であそぶ</button>
+      <button class="mood-btn" data-mood="create"  role="listitem"><span class="emo">🔬</span>つくる・体験</button>
+      <button class="mood-btn" data-mood="vehicle" role="listitem"><span class="emo">🚃</span>のりもの・電車</button>
+    </div>
+  </div>
+</section>
+
+<div class="filterbar" id="filterbar">
+  <div class="wrap">
+    <div class="frow" role="group" aria-label="出発地を選ぶ">
+      <span class="flabel">🚗 どこから行く？</span>
+      <select class="origin-sel" id="originSel" aria-label="出発地の街"></select>
+      <button class="origin-btn" id="originGeo" type="button">📍現在地から</button>
+      <span class="origin-note">※所要時間は目安です</span>
+      <span class="origin-msg" id="originMsg" role="status" aria-live="polite" style="display:none"></span>
+    </div>
+    <div class="frow" role="group" aria-label="遊びタイプで絞り込み">
+      <span class="flabel">遊び</span>
+      <button class="chip play" data-t="animal"  aria-pressed="false">🦁 動物</button>
+      <button class="chip play" data-t="active"  aria-pressed="false">🛝 からだ</button>
+      <button class="chip play" data-t="water"   aria-pressed="false">💦 水</button>
+      <button class="chip play" data-t="create"  aria-pressed="false">🔬 つくる</button>
+      <button class="chip play" data-t="vehicle" aria-pressed="false">🚃 のりもの</button>
+      <button class="chip play" data-t="indoor"  aria-pressed="false">☔ 室内</button>
+    </div>
+    <div class="frow" role="group" aria-label="出発地からの所要時間で絞り込み">
+      <span class="flabel" id="driveLabel">安城から</span>
+      <button class="chip drive" data-d="20" aria-pressed="false">20分</button>
+      <button class="chip drive" data-d="30" aria-pressed="false">30分</button>
+      <button class="chip drive" data-d="40" aria-pressed="false">40分</button>
+      <button class="chip drive" data-d="50" aria-pressed="false">50分</button>
+      <button class="chip drive" data-d="60" aria-pressed="false">60分</button>
+    </div>
+    <div class="frow">
+      <button class="chip" data-f="rain" aria-pressed="false">☔ 雨でもOK</button>
+      <button class="chip" data-f="free" aria-pressed="false">🆓 無料</button>
+      <span class="count" id="count" aria-live="polite">該当32件</span>
+      <button class="reset" id="reset">リセット</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="main">
+    <div id="mapwrap">
+      <div id="map" role="application" aria-label="スポットの地図"></div>
+    </div>
+    <div class="listwrap">
+      <h2 class="section-title">スポット一覧 <small id="listcount"></small></h2>
+      <div class="cards" id="cards"></div>
+      <div class="empty" id="empty" style="display:none">条件に合うスポットがありません。条件をゆるめてみてください。</div>
+
+      <div class="weekend" style="margin-top:18px">
+        <h3>今週末のおでかけ 🎪</h3>
+        <p>最新イベント情報はInstagramでお知らせ！</p>
+        <div class="actions">
+          <a class="btn insta" href="https://www.instagram.com/nishimikawa_odekake/" target="_blank" rel="noopener">📷 Instagram</a>
+          <a class="btn links" href="./links.html">今週末のリンク集 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- 掲載のお問い合わせ導線 -->
+  <section class="listing" aria-label="掲載のお問い合わせ">
+    <h3>掲載をご希望の施設・イベントの方へ</h3>
+    <p>施設・イベントの掲載、PR・広告掲載のご相談はこちらから。</p>
+    <a class="btn contact" id="contactBtn" href="https://docs.google.com/forms/d/e/1FAIpQLSdcSuUG_4MbFgNq-Ejn_cfDvXKhQdQZh4DxITrDiKlo4ocFfw/viewform" target="_blank" rel="noopener">掲載のお問い合わせ →</a>
+    <p class="contact-msg" id="contactMsg" role="status" aria-live="polite" style="display:none">準備中です（フォーム設置後にご案内します）</p>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>掲載情報は変わることがあります。おでかけ前に各公式サイトで最終確認をお願いします。</p>
+    <p>写真: Wikimedia Commons（各写真にクレジットを表示しています）</p>
+    <p style="color:#bcb3a3">あいち子育ておでかけマップ（MVP）</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" referrerpolicy="no-referrer"></script>
+<script>
+const SPOTS = [
+  {
+    "id": "sp001",
+    "slug": "toyota-kotsu-anzen-center",
+    "name": "豊田市交通安全学習センター",
+    "summary": "ゴーカートで交通ルールを学べる入館無料の学習施設。",
+    "description": "豊田市池田町にある交通安全の学習施設。ゴーカートで交通ルールを体験でき、入館無料。9:00〜17:00開館。",
+    "play_types": [
+      "vehicle",
+      "indoor"
+    ],
+    "legacy_categories": [
+      "free",
+      "museum_science"
+    ],
+    "tags": [
+      "無料",
+      "乗り物体験",
+      "豊田市"
+    ],
+    "prefecture": "愛知県",
+    "city": "豊田市",
+    "latitude": 35.1039715,
+    "longitude": 137.2081861,
+    "official_url": "https://www.city.toyota.aichi.jp/shisetsu/gakushu/1029312/index.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.1039715,137.2081861",
+    "checked_at": "2026-07-22",
+    "business_hours": "9:00〜17:00",
+    "closed_days": null,
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "ゴーカートに乗って交通ルールを体験できる",
+    "estimated_drive_minutes_from_anjo": 35,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp002",
+    "slug": "kariya-kotsu-jido-yuen",
+    "name": "刈谷市交通児童遊園",
+    "summary": "乗り物デビューにおすすめの入園無料スポット。",
+    "description": "刈谷市神田町にある交通児童遊園。乗り物は50円〜で、乗り物デビューにおすすめ。9:00〜16:30、水曜休(3連休は営業)。入園無料。",
+    "play_types": [
+      "vehicle"
+    ],
+    "legacy_categories": [
+      "free",
+      "park"
+    ],
+    "tags": [
+      "無料",
+      "乗り物",
+      "刈谷市",
+      "水曜休"
+    ],
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 34.987261336861245,
+    "longitude": 137.01432178185703,
+    "official_url": "https://www.city.kariya.lg.jp/shisetsu/bunka/kotsu_jidou/1013260.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.987261336861245,137.01432178185703",
+    "checked_at": "2026-07-22",
+    "business_hours": "9:00〜16:30",
+    "closed_days": "水曜",
+    "price_text": "入園無料(乗り物50円〜)",
+    "is_free": null,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": null,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "50円から乗り物に乗れて乗り物デビューにぴったり",
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp003",
+    "slug": "kota-chuo-park",
+    "name": "幸田中央公園",
+    "summary": "約50mのローラー滑り台が楽しめる公園。",
+    "description": "幸田町菱池にある公園。約50mのローラー滑り台が人気。入園無料、無料駐車場83台。",
+    "play_types": [
+      "active"
+    ],
+    "legacy_categories": [
+      "park",
+      "free"
+    ],
+    "tags": [
+      "無料",
+      "公園",
+      "ローラー滑り台",
+      "駐車場あり",
+      "幸田町",
+      "屋外"
+    ],
+    "prefecture": "愛知県",
+    "city": "幸田町",
+    "latitude": 34.86467180603791,
+    "longitude": 137.17040824136572,
+    "official_url": "https://www.town.kota.lg.jp/soshiki/15/1329.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.86467180603791,137.17040824136572",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入園無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "無料83台",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "約50mのローラー滑り台を何度も滑って遊べる",
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp004",
+    "slug": "nishio-ikimono-fureai-no-sato",
+    "name": "西尾いきものふれあいの里",
+    "summary": "里山で生き物とふれあえる入園無料の施設。",
+    "description": "西尾市家武町にある施設。里山で生き物とふれあえる。9:00〜17:00、月曜休(土日は開館)。入園無料。",
+    "play_types": [
+      "animal"
+    ],
+    "legacy_categories": [
+      "park",
+      "free"
+    ],
+    "tags": [
+      "無料",
+      "自然",
+      "西尾市",
+      "月曜休",
+      "屋外"
+    ],
+    "prefecture": "愛知県",
+    "city": "西尾市",
+    "latitude": 34.8101,
+    "longitude": 137.1918,
+    "official_url": "https://www.city.nishio.aichi.jp/shisetsu/bunka/1001578/1004041.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8101,137.1918",
+    "checked_at": "2026-07-22",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜",
+    "price_text": "入園無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": null,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "里山で生き物にふれあいながら自然の中を歩ける",
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "low",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp005",
+    "slug": "miyoshi-park",
+    "name": "三好公園",
+    "summary": "広い芝生と遊具でのびのび遊べる公園。",
+    "description": "みよし市三好町にある公園。広い芝生と遊具でのびのび遊べる。入園無料。",
+    "play_types": [
+      "active"
+    ],
+    "legacy_categories": [
+      "park",
+      "free"
+    ],
+    "tags": [
+      "無料",
+      "公園",
+      "芝生",
+      "みよし市",
+      "屋外"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.0926872,
+    "longitude": 137.0880765,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/soshiki/toshikensetsu/kouen/5/kobetu/402.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.0926872,137.0880765",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入園無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": null,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "広い芝生と遊具の中を走り回って遊べる",
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%E4%B8%89%E5%A5%BD%E5%85%AC%E5%9C%92.jpg/800px-%E4%B8%89%E5%A5%BD%E5%85%AC%E5%9C%92.jpg",
+    "image_credit": "写真: Opqr / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:%E4%B8%89%E5%A5%BD%E5%85%AC%E5%9C%92.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp006",
+    "slug": "toyota-kaikan",
+    "name": "トヨタ会館",
+    "summary": "トヨタの最新車と技術を展示する入館無料の施設。",
+    "description": "トヨタ自動車本社横にあるトヨタ会館。最新車と技術展示が見られる入館無料の施設。9:30〜17:00、土曜開館(日・祝休)。無料駐車場あり。",
+    "play_types": [
+      "create",
+      "indoor"
+    ],
+    "legacy_categories": [
+      "factory_tour",
+      "museum_science",
+      "free",
+      "rain_ok"
+    ],
+    "tags": [
+      "無料",
+      "工場・企業見学",
+      "屋内",
+      "雨の日OK",
+      "駐車場あり",
+      "豊田市"
+    ],
+    "prefecture": "愛知県",
+    "city": "豊田市",
+    "latitude": 35.0844,
+    "longitude": 137.156,
+    "official_url": "https://www.toyota.co.jp/jp/about_toyota/facility/toyota_kaikan/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.0844,137.156",
+    "checked_at": "2026-07-22",
+    "business_hours": "9:30〜17:00",
+    "closed_days": "日曜・祝日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "無料あり",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "最新の車や技術の展示を間近で見て楽しめる",
+    "estimated_drive_minutes_from_anjo": 35,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Toyota_Kaikan1.jpg/800px-Toyota_Kaikan1.jpg",
+    "image_credit": "写真: Bariston / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Toyota_Kaikan1.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp007",
+    "slug": "kakukyu-hatcho-miso",
+    "name": "カクキュー八丁味噌の郷",
+    "summary": "八丁味噌の蔵を無料で見学でき、味噌ソフトも楽しめる。",
+    "description": "岡崎市八帖町のカクキュー八丁味噌の郷。蔵見学が無料ででき、味噌ソフトも楽しめる。9:00〜17:00、毎日開催(予約不要)。無料駐車場あり。",
+    "play_types": [
+      "create",
+      "indoor"
+    ],
+    "legacy_categories": [
+      "factory_tour",
+      "free",
+      "rain_ok"
+    ],
+    "tags": [
+      "無料",
+      "工場・企業見学",
+      "予約不要",
+      "駐車場あり",
+      "岡崎市",
+      "雨の日OK"
+    ],
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.9613,
+    "longitude": 137.1697,
+    "official_url": "https://www.kakukyu.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9613,137.1697",
+    "checked_at": "2026-07-22",
+    "business_hours": "9:00〜17:00",
+    "closed_days": null,
+    "price_text": "見学無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "無料あり",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": true,
+    "kid_appeal": "味噌蔵の見学と味噌ソフトクリームを楽しめる",
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Hatcho-Miso-Kakukyu-4.jpg/800px-Hatcho-Miso-Kakukyu-4.jpg",
+    "image_credit": "写真: Wikimedia Commons (CC0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Hatcho-Miso-Kakukyu-4.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp008",
+    "slug": "maruya-hatcho-miso",
+    "name": "まるや八丁味噌 蔵見学",
+    "summary": "600年続く味噌蔵をお土産つきで無料見学できる。",
+    "description": "岡崎市八帖町のまるや八丁味噌。600年の味噌蔵をお土産つきで無料見学できる。9:00〜16:20、毎日開催(予約不要)。",
+    "play_types": [
+      "create",
+      "indoor"
+    ],
+    "legacy_categories": [
+      "factory_tour",
+      "free",
+      "rain_ok"
+    ],
+    "tags": [
+      "無料",
+      "工場・企業見学",
+      "予約不要",
+      "岡崎市",
+      "雨の日OK"
+    ],
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.9615,
+    "longitude": 137.1701,
+    "official_url": "https://www.8miso.co.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9615,137.1701",
+    "checked_at": "2026-07-22",
+    "business_hours": "9:00〜16:20",
+    "closed_days": null,
+    "price_text": "見学無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "600年続く味噌蔵を見学しお土産もついてくる",
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "low",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp009",
+    "slug": "kewpie-koromo-factory",
+    "name": "キユーピー挙母工場 見学",
+    "summary": "マヨネーズ工場を無料で見学できる(要予約)。",
+    "description": "豊田市日之出町のキユーピー挙母工場。マヨネーズ工場を無料で見学できる。要予約(平日中心)、自由研究にもおすすめ。無料駐車場あり。",
+    "play_types": [
+      "create"
+    ],
+    "legacy_categories": [
+      "factory_tour",
+      "free"
+    ],
+    "tags": [
+      "無料",
+      "工場・企業見学",
+      "要予約",
+      "駐車場あり",
+      "豊田市"
+    ],
+    "prefecture": "愛知県",
+    "city": "豊田市",
+    "latitude": 35.0981,
+    "longitude": 137.1562,
+    "official_url": "https://www.kewpie.com/entertainment/tour/kobo/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.0981,137.1562",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "見学無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": null,
+    "rain_friendly": null,
+    "parking": "無料あり",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "マヨネーズができる工場の様子を見学できる",
+    "estimated_drive_minutes_from_anjo": 35,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "low",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp010",
+    "slug": "anjo-denpark",
+    "name": "安城デンパーク",
+    "summary": "四季の花と体験が楽しめる安城の農業公園。",
+    "description": "安城市の農業公園。夏はサマーフェスティバルや流しそうめん、手作りパン教室などのイベントも開催。無料駐車場1000台。入園料が必要。",
+    "play_types": [
+      "active"
+    ],
+    "legacy_categories": [
+      "park"
+    ],
+    "tags": [
+      "公園",
+      "駐車場あり",
+      "安城市",
+      "屋外"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.9319,
+    "longitude": 137.1,
+    "official_url": "https://denpark.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9319,137.1",
+    "checked_at": "2026-07-22",
+    "business_hours": "9:30〜17:00",
+    "closed_days": null,
+    "price_text": "入園料が必要",
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": null,
+    "parking": "無料1000台",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": true,
+    "kid_appeal": "四季の花に囲まれた広い農業公園で遊べる",
+    "estimated_drive_minutes_from_anjo": 15,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Denpark_main_gate.jpg/800px-Denpark_main_gate.jpg",
+    "image_credit": "写真: コヲダ / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Denpark_main_gate.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp011",
+    "slug": "lalaport-anjo",
+    "name": "ららぽーと安城",
+    "summary": "屋内で一日楽しめる安城のショッピングモール。",
+    "description": "安城市のショッピングモール。屋内で一日楽しめ、屋上ではカブクワイベントなども開催される。入館無料、無料駐車場あり。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "shopping_mall",
+      "indoor_play",
+      "rain_ok"
+    ],
+    "tags": [
+      "屋内",
+      "雨の日OK",
+      "駐車場あり",
+      "安城市",
+      "ショッピングモール"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.967,
+    "longitude": 137.094,
+    "official_url": "https://mitsui-shopping-park.com/lalaport/anjo/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.967,137.094",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "無料あり",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "屋内モールで買い物やイベントを楽しめる",
+    "estimated_drive_minutes_from_anjo": 15,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp012",
+    "slug": "hekinan-kaihin-aquarium",
+    "name": "碧南海浜水族館",
+    "summary": "屋内で楽しめる碧南市の水族館。特別展も開催。",
+    "description": "碧南市の水族館。屋内で楽しめ、特別展やバックヤードツアーなどのイベントも開催。9:00〜17:00。大人500円・小中学生200円・未就学無料。",
+    "play_types": [
+      "animal",
+      "indoor"
+    ],
+    "legacy_categories": [
+      "aquarium_zoo",
+      "rain_ok",
+      "indoor_play"
+    ],
+    "tags": [
+      "水族館",
+      "屋内",
+      "雨の日OK",
+      "碧南市"
+    ],
+    "prefecture": "愛知県",
+    "city": "碧南市",
+    "latitude": 34.8802,
+    "longitude": 136.982,
+    "official_url": "https://www.city.hekinan.lg.jp/aquarium/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8802,136.982",
+    "checked_at": "2026-07-22",
+    "business_hours": "9:00〜17:00",
+    "closed_days": null,
+    "price_text": "大人500円/小中学生200円/未就学無料",
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "屋内で魚や海の生き物をじっくり観察できる",
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/HEKINAN_SEA_SIDE_AQUARIUM.JPG/800px-HEKINAN_SEA_SIDE_AQUARIUM.JPG",
+    "image_credit": "写真: Bariston / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:HEKINAN_SEA_SIDE_AQUARIUM.JPG",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp013",
+    "slug": "kuragaike-park-zoo",
+    "name": "鞍ケ池公園 動物園",
+    "summary": "動物園もある入園無料の豊田市の公園。",
+    "description": "豊田市の鞍ケ池公園。動物園もあり入園無料。クイズラリーなどのイベントも開催される。",
+    "play_types": [
+      "animal",
+      "active"
+    ],
+    "legacy_categories": [
+      "park",
+      "aquarium_zoo",
+      "free"
+    ],
+    "tags": [
+      "無料",
+      "公園",
+      "動物園",
+      "豊田市",
+      "屋外"
+    ],
+    "prefecture": "愛知県",
+    "city": "豊田市",
+    "latitude": 35.073,
+    "longitude": 137.183,
+    "official_url": "https://kuragaikepark.com/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.073,137.183",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入園無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": null,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "動物園と広い公園で動物を見ながら遊べる",
+    "estimated_drive_minutes_from_anjo": 35,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kuragaike-Park-1.jpg/800px-Kuragaike-Park-1.jpg",
+    "image_credit": "写真: Wikimedia Commons (CC0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Kuragaike-Park-1.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp014",
+    "slug": "kariya-highway-oasis",
+    "name": "刈谷ハイウェイオアシス",
+    "summary": "観覧車や遊具もある入場無料の複合施設。",
+    "description": "刈谷市の刈谷ハイウェイオアシス。観覧車や遊具もあり、入場無料。コンサートなどのイベントも開催される。",
+    "play_types": [
+      "active"
+    ],
+    "legacy_categories": [
+      "park",
+      "free"
+    ],
+    "tags": [
+      "無料",
+      "観覧車",
+      "遊具",
+      "刈谷市"
+    ],
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 34.998,
+    "longitude": 137.018,
+    "official_url": "https://kariya-oasis.com/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.998,137.018",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入場無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": null,
+    "rain_friendly": null,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "観覧車や遊具で遊べるサービスエリア併設施設",
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Kariyaoasis1.JPG/800px-Kariyaoasis1.JPG",
+    "image_credit": "写真: Bariston / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Kariyaoasis1.JPG",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp015",
+    "slug": "anforet",
+    "name": "アンフォーレ",
+    "summary": "図書館併設で子連れにやさしい安城の複合施設。",
+    "description": "安城市の複合施設。図書館併設で子連れにやさしく、マルシェなどのイベントも開催される。入館無料、駐車場2時間無料。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "free",
+      "indoor_play",
+      "rain_ok"
+    ],
+    "tags": [
+      "無料",
+      "図書館",
+      "屋内",
+      "雨の日OK",
+      "駐車場あり",
+      "安城市",
+      "子連れ"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.9578,
+    "longitude": 137.0797,
+    "official_url": "https://anforet.city.anjo.aichi.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9578,137.0797",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "2時間無料",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "図書館やキッズスペースで雨でも快適に過ごせる",
+    "estimated_drive_minutes_from_anjo": 15,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp016",
+    "slug": "nagoya-city-science-museum",
+    "name": "名古屋市科学館",
+    "summary": "巨大プラネタリウムと体験型展示が人気の科学館。",
+    "description": "名古屋市中区にある科学館。世界最大級のプラネタリウムや竜巻・放電などの実験展示が体験できる。",
+    "play_types": [
+      "create",
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "科学館",
+      "プラネタリウム",
+      "名古屋市",
+      "屋内"
+    ],
+    "prefecture": "愛知県",
+    "city": "名古屋市",
+    "latitude": 35.1656,
+    "longitude": 136.9007,
+    "official_url": "https://www.ncsm.city.nagoya.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.1656,136.9007",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": "月曜",
+    "price_text": null,
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "巨大プラネタリウムや放電・竜巻の実験を見て体験できる",
+    "estimated_drive_minutes_from_anjo": 55,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/1st_floor_of_Nagoya_City_Science_Museum_20150125.JPG/800px-1st_floor_of_Nagoya_City_Science_Museum_20150125.JPG",
+    "image_credit": "写真: そらみみ / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:1st_floor_of_Nagoya_City_Science_Museum_20150125.JPG",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp017",
+    "slug": "nagoya-port-aquarium",
+    "name": "名古屋港水族館",
+    "summary": "シャチやイルカショーも楽しめる大型水族館。",
+    "description": "名古屋港にある大型水族館。シャチ・ベルーガ・イルカのパフォーマンスやペンギン展示などが見られる。",
+    "play_types": [
+      "animal",
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "水族館",
+      "名古屋市",
+      "屋内",
+      "イルカショー"
+    ],
+    "prefecture": "愛知県",
+    "city": "名古屋市",
+    "latitude": 35.0863,
+    "longitude": 136.8827,
+    "official_url": "https://www.nagoyaaqua.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.0863,136.8827",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": null,
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "シャチやイルカのショー、ペンギンなど海の生き物を見られる",
+    "estimated_drive_minutes_from_anjo": 55,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Nagoya_Port_Aquarium_01.JPG/800px-Nagoya_Port_Aquarium_01.JPG",
+    "image_credit": "写真: Gnsin / Wikimedia Commons (CC BY-SA 3.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Nagoya_Port_Aquarium_01.JPG",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp018",
+    "slug": "higashiyama-zoo",
+    "name": "東山動植物園",
+    "summary": "動物園・植物園・遊園地が一体の広大な公園。",
+    "description": "名古屋市千種区にある動物園・植物園・遊園地が揃った公園。ゾウやコアラなど多様な動物と広い園内での散策が楽しめる。",
+    "play_types": [
+      "animal",
+      "active"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "動物園",
+      "植物園",
+      "名古屋市",
+      "屋外"
+    ],
+    "prefecture": "愛知県",
+    "city": "名古屋市",
+    "latitude": 35.1558,
+    "longitude": 136.9678,
+    "official_url": "https://www.higashiyama.city.nagoya.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.1558,136.9678",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": "月曜",
+    "price_text": null,
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "ゾウやコアラなど多くの動物を見ながら広い園内を歩ける",
+    "estimated_drive_minutes_from_anjo": 55,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Higashiyama_Zoo_and_Botanical_Gardens_Aerial.JPG/800px-Higashiyama_Zoo_and_Botanical_Gardens_Aerial.JPG",
+    "image_credit": "写真: outside / Wikimedia Commons (CC BY-SA 3.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Higashiyama_Zoo_and_Botanical_Gardens_Aerial.JPG",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp019",
+    "slug": "linear-tetsudokan",
+    "name": "リニア・鉄道館",
+    "summary": "新幹線やリニアの実物車両を間近で見られる鉄道博物館。",
+    "description": "名古屋港金城ふ頭にあるJR東海の鉄道博物館。歴代新幹線やリニアモーターカーの実物車両展示、運転シミュレーターがある。",
+    "play_types": [
+      "vehicle",
+      "create",
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "鉄道",
+      "博物館",
+      "名古屋市",
+      "屋内"
+    ],
+    "prefecture": "愛知県",
+    "city": "名古屋市",
+    "latitude": 35.0798,
+    "longitude": 136.8813,
+    "official_url": "https://museum.jr-central.co.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.0798,136.8813",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": "火曜",
+    "price_text": null,
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "本物の新幹線やリニアの車両を間近で見て運転体験もできる",
+    "estimated_drive_minutes_from_anjo": 55,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/SCMaglev_and_Railway_Park_Great_Rollingstock_Hall.jpg/800px-SCMaglev_and_Railway_Park_Great_Rollingstock_Hall.jpg",
+    "image_credit": "写真: Morio / Wikimedia Commons (CC BY-SA 3.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:SCMaglev_and_Railway_Park_Great_Rollingstock_Hall.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp020",
+    "slug": "legoland-japan",
+    "name": "レゴランド・ジャパン",
+    "summary": "レゴブロックの世界観で遊べるテーマパーク。",
+    "description": "名古屋港金城ふ頭にあるレゴブロックのテーマパーク。乗り物アトラクションやレゴ組み立て体験ができる。",
+    "play_types": [
+      "active",
+      "create"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "テーマパーク",
+      "レゴ",
+      "名古屋市"
+    ],
+    "prefecture": "愛知県",
+    "city": "名古屋市",
+    "latitude": 35.0785,
+    "longitude": 136.8802,
+    "official_url": "https://www.legoland.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.0785,136.8802",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": null,
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": null,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "レゴの乗り物やブロック体験で思いきり遊べる",
+    "estimated_drive_minutes_from_anjo": 55,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Legoland_japan.jpg/800px-Legoland_japan.jpg",
+    "image_credit": "写真: Bariston / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Legoland_japan.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp021",
+    "slug": "denki-no-kagakukan",
+    "name": "でんきの科学館",
+    "summary": "電気の実験やクイズを体験できる中部電力の科学館。",
+    "description": "名古屋市中区栄にある中部電力運営の科学館。電気やエネルギーに関する参加型の実験・展示が楽しめる。時期により臨時休館の場合があるため公式で要確認。",
+    "play_types": [
+      "create",
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "科学館",
+      "電気",
+      "名古屋市",
+      "屋内"
+    ],
+    "prefecture": "愛知県",
+    "city": "名古屋市",
+    "latitude": 35.1683,
+    "longitude": 136.9066,
+    "official_url": "https://www.chuden.co.jp/e-museum/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.1683,136.9066",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": "月曜",
+    "price_text": null,
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "電気の実験やクイズ、大画面ゲームで科学を体験できる",
+    "estimated_drive_minutes_from_anjo": 55,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Denki_Bunka_Kaikan%2C_Sakae_Naka_Ward_Nagoya_2022.jpg/800px-Denki_Bunka_Kaikan%2C_Sakae_Naka_Ward_Nagoya_2022.jpg",
+    "image_credit": "写真: Tomio344456 / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Denki_Bunka_Kaikan%2C_Sakae_Naka_Ward_Nagoya_2022.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true,
+      "note": "臨時休館の可能性があるため来館前に公式サイトで開館状況を要確認"
+    }
+  },
+  {
+    "id": "sp022",
+    "slug": "minami-chita-beach-land",
+    "name": "南知多ビーチランド",
+    "summary": "イルカ・アシカショーと遊園地が一体の水族館。",
+    "description": "知多郡美浜町の水族館兼遊園地。イルカ・アシカのショーや動物とのふれあい、隣接の遊園地アトラクションが楽しめる。",
+    "play_types": [
+      "animal",
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "水族館",
+      "知多",
+      "屋内"
+    ],
+    "prefecture": "愛知県",
+    "city": "知多郡美浜町",
+    "latitude": 34.7877,
+    "longitude": 136.8546,
+    "official_url": "https://beachland.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.7877,136.8546",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": null,
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "イルカやアシカのショーを見て動物とふれあえる",
+    "estimated_drive_minutes_from_anjo": 60,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Minami-Chita_Beach_Land%EF%BC%88%E5%8D%97%E7%9F%A5%E5%A4%9A%E3%83%93%E3%83%BC%E3%83%81%E3%83%A9%E3%83%B3%E3%83%89%EF%BC%89.jpg/800px-Minami-Chita_Beach_Land%EF%BC%88%E5%8D%97%E7%9F%A5%E5%A4%9A%E3%83%93%E3%83%BC%E3%83%81%E3%83%A9%E3%83%B3%E3%83%89%EF%BC%89.jpg",
+    "image_credit": "写真: Yusuke Kawasaki / Wikimedia Commons (CC BY 2.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Minami-Chita_Beach_Land%EF%BC%88%E5%8D%97%E7%9F%A5%E5%A4%9A%E3%83%93%E3%83%BC%E3%83%81%E3%83%A9%E3%83%B3%E3%83%89%EF%BC%89.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp023",
+    "slug": "mizkan-museum",
+    "name": "ミツカンミュージアム",
+    "summary": "お酢の歴史と製造を体験しながら学べる施設。",
+    "description": "半田市のミツカン運営の体験型ミュージアム。お酢の歴史や製造工程を映像・体験展示で学べる(要予約)。",
+    "play_types": [
+      "create",
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "博物館",
+      "体験",
+      "半田市",
+      "屋内"
+    ],
+    "prefecture": "愛知県",
+    "city": "半田市",
+    "latitude": 34.9058,
+    "longitude": 136.9316,
+    "official_url": "https://www.mizkan.co.jp/mim/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9058,136.9316",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": "月曜",
+    "price_text": null,
+    "is_free": null,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "お酢ができるまでの工程を映像や体験展示で学べる",
+    "estimated_drive_minutes_from_anjo": 45,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Mizkan_museum1.jpg/800px-Mizkan_museum1.jpg",
+    "image_credit": "写真: Bariston / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Mizkan_museum1.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp024",
+    "slug": "handa-red-brick",
+    "name": "半田赤レンガ建物",
+    "summary": "レンガ造りの歴史的建物で見学と体験ができる。",
+    "description": "半田市にある明治期のビール工場を保存活用したレンガ造りの建物。館内見学やイベントが行われる。",
+    "play_types": [
+      "create",
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "歴史建築",
+      "半田市",
+      "屋内"
+    ],
+    "prefecture": "愛知県",
+    "city": "半田市",
+    "latitude": 34.9096,
+    "longitude": 136.9345,
+    "official_url": "https://handa-redbrick.com/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9096,136.9345",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": "水曜",
+    "price_text": null,
+    "is_free": null,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "レンガ造りの歴史的な建物を見学しながら学べる",
+    "estimated_drive_minutes_from_anjo": 45,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/The-Handa-Red-Brick-Building-1.jpg/800px-The-Handa-Red-Brick-Building-1.jpg",
+    "image_credit": "写真: Wikimedia Commons (CC0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:The-Handa-Red-Brick-Building-1.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp025",
+    "slug": "mentai-park-tokoname",
+    "name": "めんたいパークとこなめ",
+    "summary": "明太子の製造を見学でき試食も楽しめる無料工場。",
+    "description": "常滑市にある明太子のかねふく運営工場見学施設。製造ラインの見学が入館無料でき、試食コーナーもある。",
+    "play_types": [
+      "create",
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "工場見学",
+      "無料",
+      "常滑市",
+      "屋内"
+    ],
+    "prefecture": "愛知県",
+    "city": "常滑市",
+    "latitude": 34.8901,
+    "longitude": 136.8261,
+    "official_url": "https://mentai-park.com/tokoname/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8901,136.8261",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": true,
+    "kid_appeal": "明太子ができる様子を見学し試食も楽しめる",
+    "estimated_drive_minutes_from_anjo": 60,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Kanefuku_Mentaipark-Tokoname.JPG/800px-Kanefuku_Mentaipark-Tokoname.JPG",
+    "image_credit": "写真: Renaik / Wikimedia Commons (CC BY 3.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Kanefuku_Mentaipark-Tokoname.JPG",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp026",
+    "slug": "inax-live-museum",
+    "name": "INAXライブミュージアム",
+    "summary": "やきものと窯業の歴史を体験できるミュージアム。",
+    "description": "常滑市のLIXIL運営のミュージアム群。窯の歴史展示や陶芸・モザイクタイル制作体験ができる。",
+    "play_types": [
+      "create",
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "博物館",
+      "体験",
+      "常滑市",
+      "屋内"
+    ],
+    "prefecture": "愛知県",
+    "city": "常滑市",
+    "latitude": 34.886,
+    "longitude": 136.839,
+    "official_url": "https://www.livingculture.lixil.com/ilm/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.886,136.839",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": "水曜",
+    "price_text": null,
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "タイルや陶芸の手作り体験と窯の歴史を学べる",
+    "estimated_drive_minutes_from_anjo": 60,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/INAX_MUSEUMS1.JPG/800px-INAX_MUSEUMS1.JPG",
+    "image_credit": "写真: Bariston / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:INAX_MUSEUMS1.JPG",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp027",
+    "slug": "aichi-kenko-no-mori-park",
+    "name": "あいち健康の森公園",
+    "summary": "大型遊具と広い芝生広場で体を動かせる公園。",
+    "description": "大府市・東浦町にまたがる県営公園。大型遊具のある広場や芝生の丘、ジョギングコースなどがある。",
+    "play_types": [
+      "active"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "公園",
+      "大型遊具",
+      "大府市",
+      "屋外"
+    ],
+    "prefecture": "愛知県",
+    "city": "大府市",
+    "latitude": 35.0034,
+    "longitude": 136.9679,
+    "official_url": "https://www.aichi-kenkounomori.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.0034,136.9679",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入園無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "大型遊具と広い芝生の丘でたっぷり体を動かせる",
+    "estimated_drive_minutes_from_anjo": 40,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Aichikenko1.JPG/800px-Aichikenko1.JPG",
+    "image_credit": "写真: Bariston / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Aichikenko1.JPG",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp028",
+    "slug": "aichi-bokujo",
+    "name": "愛知牧場",
+    "summary": "牛や羊とふれあい乳搾りなどの体験ができる牧場。",
+    "description": "日進市の観光牧場。牛や羊、ウサギなどとふれあえ、乳搾りやバター作りなどの体験メニューがある。",
+    "play_types": [
+      "animal"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "牧場",
+      "動物ふれあい",
+      "日進市",
+      "屋外"
+    ],
+    "prefecture": "愛知県",
+    "city": "日進市",
+    "latitude": 35.118,
+    "longitude": 137.043,
+    "official_url": "https://aichibokujou.com/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.118,137.043",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": null,
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": null,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": true,
+    "kid_appeal": "牛や羊にふれあい乳搾りなどの牧場体験ができる",
+    "estimated_drive_minutes_from_anjo": 40,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/%E6%84%9B%E7%9F%A5%E7%89%A7%E5%A0%B4.jpg/800px-%E6%84%9B%E7%9F%A5%E7%89%A7%E5%A0%B4.jpg",
+    "image_credit": "写真: 現美新幹線 / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:%E6%84%9B%E7%9F%A5%E7%89%A7%E5%A0%B4.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp029",
+    "slug": "takeshima-aquarium",
+    "name": "竹島水族館",
+    "summary": "深海生物やウツボなど個性的な展示で人気の水族館。",
+    "description": "蒲郡市の竹島水族館。深海生物やウツボなど手作り感のある解説展示が特徴で、タッチプールもある。",
+    "play_types": [
+      "animal",
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "水族館",
+      "蒲郡市",
+      "屋内"
+    ],
+    "prefecture": "愛知県",
+    "city": "蒲郡市",
+    "latitude": 34.8172,
+    "longitude": 137.232,
+    "official_url": "https://takeshima-aquarium.com/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8172,137.232",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": null,
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "深海生物やウツボを間近で見てタッチプールも楽しめる",
+    "estimated_drive_minutes_from_anjo": 50,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Takeshima-Aquarium-1.jpg/800px-Takeshima-Aquarium-1.jpg",
+    "image_credit": "写真: Wikimedia Commons (CC0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Takeshima-Aquarium-1.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp030",
+    "slug": "lagunasia",
+    "name": "ラグーナテンボス ラグナシア",
+    "summary": "絶叫マシンからプールまで揃うテーマパーク。",
+    "description": "蒲郡市のテーマパーク、ラグナシア。ジェットコースターなどのアトラクションに加え、隣接エリアでプールや温浴施設も楽しめる。",
+    "play_types": [
+      "active",
+      "water"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "テーマパーク",
+      "プール",
+      "蒲郡市"
+    ],
+    "prefecture": "愛知県",
+    "city": "蒲郡市",
+    "latitude": 34.8081,
+    "longitude": 137.2701,
+    "official_url": "https://www.lagunasia.co.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8081,137.2701",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": null,
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": null,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "アトラクションやプールで一日中遊べる",
+    "estimated_drive_minutes_from_anjo": 50,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/LAGUNA_TEN_BOSCH.jpg/800px-LAGUNA_TEN_BOSCH.jpg",
+    "image_credit": "写真: Bariston / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:LAGUNA_TEN_BOSCH.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp031",
+    "slug": "akatsukayama-park-gyogyoland",
+    "name": "赤塚山公園 ぎょぎょランド",
+    "summary": "淡水魚の展示とじゃぶじゃぶ池で遊べる公園施設。",
+    "description": "豊川市の赤塚山公園内にある淡水魚展示施設ぎょぎょランド。園内には水遊びのできる池や広場もある。",
+    "play_types": [
+      "animal",
+      "water",
+      "active"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "公園",
+      "淡水魚",
+      "豊川市",
+      "屋外"
+    ],
+    "prefecture": "愛知県",
+    "city": "豊川市",
+    "latitude": 34.8267,
+    "longitude": 137.3792,
+    "official_url": "https://www.city.toyokawa.lg.jp/kosodate/kodomokyoiku/kosodateshien/akatsukayamapark.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8267,137.3792",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": "月曜",
+    "price_text": "入園無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": null,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "淡水魚を見たり池で水遊びをしたりできる",
+    "estimated_drive_minutes_from_anjo": 50,
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Aichi_Toyokawa_c20251115_1058.jpg/800px-Aichi_Toyokawa_c20251115_1058.jpg",
+    "image_credit": "写真: 円周率３パーセント / Wikimedia Commons (CC BY-SA 4.0)",
+    "image_source": "https://commons.wikimedia.org/wiki/File:Aichi_Toyokawa_c20251115_1058.jpg",
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp032",
+    "slug": "mizu-to-midori-no-mori-no-eki-burari",
+    "name": "水とみどりの森の駅 ぶらり",
+    "summary": "岡崎の山あいで自然体験ができるビジターセンター。",
+    "description": "岡崎市の山間部、くらがり渓谷周辺にある森林体験拠点「水とみどりの森の駅」。自然観察や渓谷散策の拠点になる。写真情報は未確認のためimage系はnull。",
+    "play_types": [
+      "water",
+      "active"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "自然体験",
+      "岡崎市",
+      "屋外"
+    ],
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 35.045,
+    "longitude": 137.355,
+    "official_url": "https://okazaki-kanko.jp/mizutomidori/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.045,137.355",
+    "checked_at": "2026-07-22",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": null,
+    "is_free": null,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "渓谷での水遊びや森歩きなど自然体験ができる",
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "low",
+      "drive_guide": true
+    }
+  }
+];
+
+const ANJO=[34.958,137.080];
+
+// --- origin selector data & calibration ---
+const CITIES=[
+  // 西三河（先頭=安城市を初期選択として維持）
+  ["安城市",34.9585,137.0801,"西三河"],
+  ["岡崎市",34.9547,137.1740,"西三河"],
+  ["豊田市",35.0824,137.1563,"西三河"],
+  ["刈谷市",34.9891,136.9920,"西三河"],
+  ["知立市",34.9993,137.0490,"西三河"],
+  ["西尾市",34.8617,137.0617,"西三河"],
+  ["碧南市",34.8859,136.9932,"西三河"],
+  ["高浜市",34.9199,136.9873,"西三河"],
+  ["みよし市",35.0925,137.0759,"西三河"],
+  ["幸田町",34.8720,137.1620,"西三河"],
+  // 名古屋市
+  ["名古屋市(栄)",35.1681,136.9089,"名古屋市"],
+  // 尾張地方
+  ["一宮市",35.3039,136.8027,"尾張地方"],
+  ["瀬戸市",35.2257,137.0860,"尾張地方"],
+  ["春日井市",35.2477,136.9722,"尾張地方"],
+  ["津島市",35.1725,136.7383,"尾張地方"],
+  ["犬山市",35.3789,136.9455,"尾張地方"],
+  ["江南市",35.3339,136.8697,"尾張地方"],
+  ["小牧市",35.2894,136.9114,"尾張地方"],
+  ["稲沢市",35.2469,136.7789,"尾張地方"],
+  ["尾張旭市",35.2019,137.0197,"尾張地方"],
+  ["岩倉市",35.2833,136.8942,"尾張地方"],
+  ["豊明市",35.0733,137.0000,"尾張地方"],
+  ["日進市",35.1097,137.0433,"尾張地方"],
+  ["愛西市",35.1372,136.7669,"尾張地方"],
+  ["清須市",35.2136,136.8467,"尾張地方"],
+  ["北名古屋市",35.2308,136.8797,"尾張地方"],
+  ["弥富市",35.1258,136.7075,"尾張地方"],
+  ["あま市",35.1697,136.8236,"尾張地方"],
+  ["長久手市",35.1789,137.0492,"尾張地方"],
+  ["東郷町",35.1108,137.0269,"尾張地方"],
+  ["豊山町",35.2489,136.9214,"尾張地方"],
+  ["大口町",35.2731,136.8992,"尾張地方"],
+  ["扶桑町",35.3086,136.8931,"尾張地方"],
+  ["大治町",35.1436,136.8397,"尾張地方"],
+  ["蟹江町",35.1361,136.8306,"尾張地方"],
+  ["飛島村",35.0989,136.7278,"尾張地方"],
+  // 東三河
+  ["豊橋市",34.7692,137.3915,"東三河"],
+  ["豊川市",34.8271,137.3757,"東三河"],
+  ["蒲郡市",34.8267,137.2196,"東三河"],
+  ["新城市",34.9186,137.4967,"東三河"],
+  ["田原市",34.6672,137.2597,"東三河"],
+  ["設楽町",35.2158,137.5486,"東三河"],
+  ["東栄町",35.1517,137.6733,"東三河"],
+  ["豊根村",35.3239,137.6522,"東三河"],
+  // 知多地方
+  ["半田市",34.8927,136.9376,"知多地方"],
+  ["常滑市",34.8917,136.8358,"知多地方"],
+  ["東海市",34.9908,136.9075,"知多地方"],
+  ["大府市",35.0119,136.9622,"知多地方"],
+  ["知多市",34.9464,136.8875,"知多地方"],
+  ["阿久比町",34.9308,136.9200,"知多地方"],
+  ["東浦町",34.9928,136.9439,"知多地方"],
+  ["南知多町",34.7161,136.9014,"知多地方"],
+  ["美浜町",34.7508,136.9042,"知多地方"],
+  ["武豊町",34.8814,136.9192,"知多地方"]
+];
+function haversineKm(la1,lo1,la2,lo2){
+  const R=6371,d2r=Math.PI/180;
+  const dLa=(la2-la1)*d2r,dLo=(lo2-lo1)*d2r;
+  const a=Math.sin(dLa/2)**2+Math.cos(la1*d2r)*Math.cos(la2*d2r)*Math.sin(dLo/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+// Fit minutes ≈ a + b*km using the 32 Anjo-based samples (single linear regression)
+const REG=(function(){
+  const xs=[],ys=[];
+  SPOTS.forEach(s=>{
+    if(s.latitude!=null&&s.longitude!=null&&s.estimated_drive_minutes_from_anjo!=null){
+      xs.push(haversineKm(ANJO[0],ANJO[1],s.latitude,s.longitude));
+      ys.push(s.estimated_drive_minutes_from_anjo);
+    }
+  });
+  const n=xs.length;
+  if(n<2) return {a:0,b:1.5,n};
+  const mx=xs.reduce((a,b)=>a+b,0)/n, my=ys.reduce((a,b)=>a+b,0)/n;
+  let num=0,den=0;
+  for(let i=0;i<n;i++){num+=(xs[i]-mx)*(ys[i]-my);den+=(xs[i]-mx)**2;}
+  const b=den?num/den:0, a=my-b*mx;
+  return {a,b,n};
+})();
+console.log('drive-time regression: minutes ≈ '+REG.a.toFixed(2)+' + '+REG.b.toFixed(3)+' * km (n='+REG.n+')');
+
+const origin={name:'安城市',lat:ANJO[0],lng:ANJO[1],isAnjo:true};
+function driveMinutes(s){
+  if(origin.isAnjo) return s.estimated_drive_minutes_from_anjo;
+  if(s.latitude==null||s.longitude==null) return null;
+  const km=haversineKm(origin.lat,origin.lng,s.latitude,s.longitude);
+  let m=Math.round((REG.a+REG.b*km)/5)*5;
+  if(m<5)m=5;
+  return m;
+}
+
+const PLAY={
+  animal:{c:'#E9A23B',e:'🦁',label:'動物'},
+  active:{c:'#4CAF6E',e:'🛝',label:'からだ'},
+  water:{c:'#3FA9D6',e:'💦',label:'水'},
+  create:{c:'#9B6DD6',e:'🔬',label:'つくる'},
+  vehicle:{c:'#E06C75',e:'🚃',label:'のりもの'},
+  indoor:{c:'#7A8AA0',e:'☔',label:'室内'}
+};
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const primary=s=>(s.play_types&&s.play_types[0])||'indoor';
+
+// state
+const state={play:new Set(),drive:null,rain:false,free:false};
+
+// --- map init (isolated: map failures must never block cards/filters) ---
+let map=null;
+const markers={};
+try{
+  map=L.map('map',{scrollWheelZoom:false}).setView([34.96,137.08],10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:18,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+  map.on('click',()=>map.scrollWheelZoom.enable());
+
+  // home marker
+  const homeIcon=L.divIcon({className:'',html:'<div class="pin home"><span>🏠</span></div>',iconSize:[34,34],iconAnchor:[17,34]});
+  L.marker(ANJO,{icon:homeIcon,title:'安城（基準）',zIndexOffset:1000}).addTo(map).bindPopup('<div class="pop"><h4>🏠 安城</h4><div class="pa">ここからの所要時間の目安を表示しています</div></div>');
+
+  // spot markers
+  SPOTS.forEach((s,i)=>{
+    if(s.latitude==null||s.longitude==null) return;
+    const p=primary(s), col=PLAY[p].c, emo=PLAY[p].e;
+    const icon=L.divIcon({className:'',html:`<div class="pin" style="background:${col}"><span>${emo}</span></div>`,iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-30]});
+    const m=L.marker([s.latitude,s.longitude],{icon,title:s.name});
+    const purl=s.official_url?`<a href="${esc(s.official_url)}" target="_blank" rel="noopener">詳しく →</a>`:'';
+    m.bindPopup(`<div class="pop"><h4>${emo} ${esc(s.name)}</h4><div class="pa">${esc(s.kid_appeal||s.summary||'')}</div>${purl}</div>`);
+    m.on('click',()=>focusCard(i));
+    m._spotIndex=i;
+    markers[i]=m;
+    m.addTo(map);
+  });
+}catch(e){
+  console.warn('map init failed',e);
+  map=null;
+}
+
+function focusCard(i){
+  const el=document.getElementById('card-'+i);
+  if(!el) return;
+  document.querySelectorAll('.card.hl').forEach(c=>c.classList.remove('hl'));
+  el.classList.add('hl');
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>el.classList.remove('hl'),2600);
+}
+
+// --- rendering ---
+const cardsEl=document.getElementById('cards');
+function cardHTML(s,i){
+  const p=primary(s), col=PLAY[p].c;
+  let photo;
+  const phFallback=`<div class="ph" style="background:linear-gradient(135deg,${col}33,${col}aa)">${PLAY[p].e}</div>`;
+  if(s.image_url){
+    const phForAttr=phFallback.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    photo=`<img loading="lazy" src="${esc(s.image_url)}" alt="${esc(s.name)}の写真" onerror="this.parentNode.innerHTML='${phForAttr}'">`;
+    if(s.image_credit) photo+=`<div class="credit">${esc(s.image_credit)}</div>`;
+  }else{
+    photo=phFallback;
+  }
+  // badges
+  let badges='';
+  (s.play_types||[]).forEach(t=>{if(PLAY[t])badges+=`<span class="badge play" style="background:${PLAY[t].c}">${PLAY[t].e} ${PLAY[t].label}</span>`;});
+  const dm=driveMinutes(s);
+  if(dm!=null) badges+=`<span class="badge drive">🚗 ${esc(origin.name)}から約${dm}分</span>`;
+  if(s.is_free===true) badges+=`<span class="badge free">🆓 無料</span>`;
+  if(s.rain_friendly===true||s.indoor_or_outdoor==='indoor') badges+=`<span class="badge rain">☔ 屋内・雨OK</span>`;
+  // info
+  let info='';
+  if(s.price_text) info+=`<p class="info"><b>料金</b><span>${esc(s.price_text)}</span></p>`;
+  if(s.business_hours) info+=`<p class="info"><b>時間</b><span>${esc(s.business_hours)}</span></p>`;
+  if(s.closed_days) info+=`<p class="info"><b>休み</b><span>${esc(s.closed_days)}</span></p>`;
+  if(s.parking) info+=`<p class="info"><b>駐車場</b><span>${esc(s.parking)}</span></p>`;
+  // actions
+  let actions='';
+  if(s.official_url) actions+=`<a class="btn primary" href="${esc(s.official_url)}" target="_blank" rel="noopener">公式サイト →</a>`;
+  if(s.google_maps_url) actions+=`<a class="btn map" href="${esc(s.google_maps_url)}" target="_blank" rel="noopener">🗺 Googleマップ</a>`;
+  const checked=s.checked_at?`<p class="checked">情報確認日: ${esc(s.checked_at)}</p>`:'';
+  return `<article class="card" id="card-${i}" data-i="${i}">
+    <div class="photo">${photo}</div>
+    <div class="body">
+      <h3>${esc(s.name)}</h3>
+      <p class="city">${esc(s.city||'')}</p>
+      ${s.kid_appeal?`<p class="appeal">${esc(s.kid_appeal)}</p>`:''}
+      <div class="badges">${badges}</div>
+      ${info}
+      <div class="actions">${actions}</div>
+      ${checked}
+    </div>
+  </article>`;
+}
+
+function matches(s){
+  if(state.play.size){
+    const pts=s.play_types||[];
+    if(![...state.play].some(t=>pts.includes(t))) return false;
+  }
+  if(state.drive!=null){
+    const dm=driveMinutes(s);
+    if(dm==null||dm>state.drive) return false;
+  }
+  if(state.rain){ if(!(s.rain_friendly===true||s.indoor_or_outdoor==='indoor')) return false; }
+  if(state.free){ if(s.is_free!==true) return false; }
+  return true;
+}
+
+function apply(){
+  let n=0;
+  const frag=[];
+  SPOTS.forEach((s,i)=>{
+    const ok=matches(s);
+    if(ok){n++;frag.push(cardHTML(s,i));}
+  });
+  // card list rendering must always happen, regardless of map state
+  cardsEl.innerHTML=frag.join('');
+  document.getElementById('count').textContent='該当'+n+'件';
+  document.getElementById('listcount').textContent='('+n+'件)';
+  document.getElementById('empty').style.display=n?'none':'block';
+
+  // map marker sync is best-effort and isolated from card rendering
+  try{
+    if(map){
+      SPOTS.forEach((s,i)=>{
+        const ok=matches(s);
+        const m=markers[i];
+        if(m){ if(ok){ if(!map.hasLayer(m))m.addTo(map);} else { if(map.hasLayer(m))map.removeLayer(m);} }
+      });
+    }
+  }catch(e){
+    console.warn('map update failed',e);
+  }
+}
+
+// --- filter chip wiring ---
+document.querySelectorAll('.chip.play').forEach(c=>{
+  c.addEventListener('click',()=>{
+    const t=c.dataset.t;
+    if(state.play.has(t))state.play.delete(t);else state.play.add(t);
+    c.classList.toggle('on');c.setAttribute('aria-pressed',state.play.has(t));
+    apply();
+  });
+});
+document.querySelectorAll('.chip.drive').forEach(c=>{
+  c.addEventListener('click',()=>{
+    const d=+c.dataset.d;
+    document.querySelectorAll('.chip.drive').forEach(x=>{x.classList.remove('on');x.setAttribute('aria-pressed','false')});
+    if(state.drive===d){state.drive=null;}else{state.drive=d;c.classList.add('on');c.setAttribute('aria-pressed','true');}
+    apply();
+  });
+});
+document.querySelectorAll('.chip[data-f]').forEach(c=>{
+  c.addEventListener('click',()=>{
+    const f=c.dataset.f;state[f]=!state[f];
+    c.classList.toggle('on');c.setAttribute('aria-pressed',state[f]);
+    apply();
+  });
+});
+document.getElementById('reset').addEventListener('click',resetAll);
+function resetAll(){
+  state.play.clear();state.drive=null;state.rain=false;state.free=false;
+  document.querySelectorAll('.chip.on').forEach(c=>{c.classList.remove('on');c.setAttribute('aria-pressed','false')});
+  apply();
+}
+
+// --- mood buttons ---
+document.querySelectorAll('.mood-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    resetAll();
+    const mood=b.dataset.mood;
+    if(mood==='rain'){ state.rain=true; setChip('[data-f="rain"]'); }
+    else if(mood==='free'){ state.free=true; setChip('[data-f="free"]'); }
+    else { state.play.add(mood); setChip('.chip.play[data-t="'+mood+'"]'); }
+    apply();
+    document.getElementById('filterbar').scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(()=>{try{if(map)map.invalidateSize();}catch(e){console.warn('map invalidateSize failed',e);}},400);
+  });
+});
+function setChip(sel){const c=document.querySelector(sel);if(c){c.classList.add('on');c.setAttribute('aria-pressed','true');}}
+
+// --- origin selector wiring ---
+const originSel=document.getElementById('originSel');
+const cityOptGroups={};
+CITIES.forEach(([nm,lat,lng,grp])=>{
+  const o=document.createElement('option');
+  o.value=lat+','+lng; o.dataset.name=nm; o.textContent=nm;
+  let parent=originSel;
+  if(grp){
+    if(!cityOptGroups[grp]){
+      const g=document.createElement('optgroup'); g.label=grp;
+      originSel.appendChild(g); cityOptGroups[grp]=g;
+    }
+    parent=cityOptGroups[grp];
+  }
+  parent.appendChild(o);
+});
+originSel.value=CITIES[0][1]+','+CITIES[0][2]; // 安城市
+originSel.querySelector(`option[value="${CITIES[0][1]},${CITIES[0][2]}"]`).selected=true;
+
+const originMsg=document.getElementById('originMsg');
+function showMsg(t){originMsg.textContent=t;originMsg.style.display='';}
+function hideMsg(){originMsg.style.display='none';}
+
+let originMarker=null;
+function updateOriginMarker(){
+  try{
+    if(!map) return;
+    if(origin.isAnjo){ if(originMarker){map.removeLayer(originMarker);originMarker=null;} return; }
+    const icon=L.divIcon({className:'',html:'<div class="pin home" style="background:#c9713f"><span>🚗</span></div>',iconSize:[34,34],iconAnchor:[17,34]});
+    if(originMarker){ originMarker.setLatLng([origin.lat,origin.lng]); }
+    else{ originMarker=L.marker([origin.lat,origin.lng],{icon,zIndexOffset:1200,title:'出発地'}).addTo(map).bindPopup('<div class="pop"><h4>🚗 出発地</h4></div>'); }
+  }catch(e){ console.warn('origin marker update failed',e); }
+}
+
+function setOrigin(name,lat,lng){
+  origin.name=name; origin.lat=lat; origin.lng=lng; origin.isAnjo=(name==='安城市');
+  const dl=document.getElementById('driveLabel'); if(dl) dl.textContent=origin.name+'から';
+  apply();               // re-renders cards with new minutes + re-applies current 分以内 filter + count
+  updateOriginMarker();  // best-effort, guarded inside
+}
+
+originSel.addEventListener('change',()=>{
+  hideMsg();
+  const opt=originSel.selectedOptions[0];
+  const parts=originSel.value.split(',');
+  setOrigin(opt.dataset.name, +parts[0], +parts[1]);
+});
+
+document.getElementById('originGeo').addEventListener('click',()=>{
+  hideMsg();
+  const backToAnjo=()=>{ originSel.value=CITIES[0][1]+','+CITIES[0][2]; setOrigin('安城市',ANJO[0],ANJO[1]); };
+  if(!navigator.geolocation){ backToAnjo(); showMsg('現在地を取得できませんでした'); return; }
+  let done=false;
+  const fail=()=>{ if(done)return; done=true; backToAnjo(); showMsg('現在地を取得できませんでした'); };
+  // watchdog: if neither callback fires (e.g. prompt dismissed / headless), fall back gracefully
+  const watchdog=setTimeout(fail,9000);
+  navigator.geolocation.getCurrentPosition(
+    pos=>{ if(done)return; done=true; clearTimeout(watchdog); setOrigin('現在地',pos.coords.latitude,pos.coords.longitude); },
+    ()=>{ clearTimeout(watchdog); fail(); },
+    {timeout:8000,maximumAge:60000}
+  );
+});
+
+// 掲載お問い合わせ: URL未設定（#）の間は控えめに準備中を表示
+(function(){
+  const cb=document.getElementById('contactBtn'), cm=document.getElementById('contactMsg');
+  if(!cb)return;
+  cb.addEventListener('click',e=>{
+    const href=cb.getAttribute('href');
+    if(!href||href==='#'){ e.preventDefault(); if(cm)cm.style.display='block'; }
+  });
+})();
+
+apply();
+setTimeout(()=>{try{if(map)map.invalidateSize();}catch(e){console.warn('map invalidateSize failed',e);}},300);
+</script>
+</body>
+</html>
+
