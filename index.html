@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="google-site-verification" content="Kur1dstM49Uc-N-QLO84WBIAuuG5jn_rODDZ-8CWGhs" />
+<meta name="google-site-verification" content="Nfs_SxbXHLkNUnpUxyqPTuQx__y9nLNq0hhPFKrpB_E" />
 <title>あいち子育ておでかけマップ｜愛知の子連れおでかけ・遊び場・ランチ検索</title>
 <meta name="description" content="愛知県の子連れおでかけスポット81件を地図で検索。公園・水族館・科学館・工場見学から子連れランチまで。安城など出発地を選んで所要時間で絞り込み。雨の日OK・無料スポットも。">
 <link rel="canonical" href="https://nishimikawa-odekake.github.io/">
@@ -137,10 +137,41 @@ footer p{margin:0 0 6px}
 .pop h4{margin:0 0 4px;font-size:.95rem}
 .pop .pa{font-size:.8rem;color:#5a4632;margin:0 0 6px}
 .pop a{font-size:.82rem;font-weight:700}
+/* rich mini-card popup */
+.leaflet-popup.minipop .leaflet-popup-content-wrapper{border-radius:16px;box-shadow:0 6px 22px rgba(120,90,50,.28);padding:0;overflow:hidden;background:var(--card)}
+.leaflet-popup.minipop .leaflet-popup-content{margin:0;width:auto!important;font-family:inherit}
+.leaflet-popup.minipop .leaflet-popup-tip{background:var(--card)}
+.leaflet-popup.minipop a.leaflet-popup-close-button{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);font-size:20px;padding:5px 8px 0 0;z-index:3}
+.minicard{cursor:pointer;width:100%;max-width:290px}
+.mc-photo{height:90px;overflow:hidden}
+.mc-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.mc-ph{width:100%;height:90px;display:flex;align-items:center;justify-content:center;font-size:2.4rem}
+.mc-body{padding:9px 11px 4px}
+.mc-name{font-weight:800;font-size:.95rem;color:var(--ink);line-height:1.3}
+.mc-city{font-size:.72rem;color:var(--sub);margin:1px 0 5px}
+.mc-appeal{font-size:.82rem;font-weight:700;color:#5a4632;background:#fff6ee;border-left:3px solid var(--accent);border-radius:5px;padding:5px 8px;margin:0 0 7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mc-badges{display:flex;flex-wrap:wrap;gap:4px}
+.mc-badge{font-size:.68rem;border-radius:999px;padding:2px 7px;font-weight:700;white-space:nowrap}
+.mc-badge.play{color:#fff}
+.mc-badge.drive{background:#efe7da;color:#6a5c46}
+.mc-badge.free{background:#dff0e4;color:#2e7d47}
+.mc-badge.rain{background:#e3e8ef;color:#4a586c}
+.mc-kf{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.mc-kf .kf{font-size:.66rem;background:var(--food-b);color:#a13a54;border-radius:999px;padding:2px 7px;font-weight:700}
+.mc-more{background:var(--accent);color:#fff;text-align:center;font-size:.8rem;font-weight:800;padding:7px;margin-top:7px;letter-spacing:.02em}
+.minicard:active .mc-more{background:var(--accent-d)}
 .pin{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 5px rgba(0,0,0,.3);border:2px solid #fff}
 .pin span{transform:rotate(45deg);font-size:16px}
 .pin.home{border-radius:50%;background:#4a4640}
 .pin.home span{transform:none}
+
+/* home/origin marker: bigger, distinct, pulsing */
+.home-wrap{position:relative;width:48px;height:48px;display:flex;align-items:center;justify-content:center}
+.home-pulse{position:absolute;inset:0;border-radius:50%;background:var(--accent);opacity:.55;animation:home-pulse 2.2s ease-out infinite}
+.home-pin{position:relative;width:48px;height:48px;border-radius:50%;background:#fff;border:3px solid var(--accent-d);box-shadow:0 3px 10px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:24px}
+.home-label{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px;background:var(--accent-d);color:#fff;font-size:.72rem;font-weight:700;white-space:nowrap;padding:2px 8px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.25);pointer-events:none}
+@keyframes home-pulse{0%{transform:scale(.6);opacity:.55}100%{transform:scale(2.1);opacity:0}}
+@media(prefers-reduced-motion:reduce){.home-pulse{animation:none;display:none}}
 
 .empty{text-align:center;color:var(--sub);padding:30px;font-size:.9rem}
 
@@ -4303,9 +4334,7 @@ try{
   }).addTo(map);
   map.on('click',()=>map.scrollWheelZoom.enable());
 
-  // home marker
-  const homeIcon=L.divIcon({className:'',html:'<div class="pin home"><span>🏠</span></div>',iconSize:[34,34],iconAnchor:[17,34]});
-  L.marker(ANJO,{icon:homeIcon,title:'安城（基準）',zIndexOffset:1000}).addTo(map).bindPopup('<div class="pop"><h4>🏠 安城</h4><div class="pa">ここからの所要時間の目安を表示しています</div></div>');
+  // home/origin marker is created once and moved on origin change (see updateOriginMarker below)
 
   // spot markers
   SPOTS.forEach((s,i)=>{
@@ -4313,12 +4342,19 @@ try{
     const p=primary(s), col=PLAY[p].c, emo=PLAY[p].e;
     const icon=L.divIcon({className:'',html:`<div class="pin" style="background:${col}"><span>${emo}</span></div>`,iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-30]});
     const m=L.marker([s.latitude,s.longitude],{icon,title:s.name});
-    const purl=s.official_url?`<a href="${esc(s.official_url)}" target="_blank" rel="noopener">詳しく →</a>`:'';
-    m.bindPopup(`<div class="pop"><h4>${emo} ${esc(s.name)}</h4><div class="pa">${esc(s.kid_appeal||s.summary||'')}</div>${purl}</div>`);
-    m.on('click',()=>focusCard(i));
+    // popup content is generated on each open so drive-minutes always reflect the current origin
+    m.bindPopup(()=>popupHTML(s,i),{maxWidth:290,minWidth:220,autoPan:true,autoPanPadding:[18,18],keepInView:true,className:'minipop',maxHeight:Math.max(220,Math.round(window.innerHeight*0.42))});
     m._spotIndex=i;
     markers[i]=m;
     m.addTo(map);
+  });
+  // whole mini-card is tappable: close popup + scroll to the detail card
+  map.on('popupopen',e=>{
+    const el=e.popup.getElement(); if(!el) return;
+    const mc=el.querySelector('.minicard'); if(!mc) return;
+    const go=()=>{ const i=+mc.dataset.i; map.closePopup(); focusCard(i); };
+    mc.addEventListener('click',go);
+    mc.addEventListener('keydown',ev=>{ if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();go();} });
   });
 }catch(e){
   console.warn('map init failed',e);
@@ -4330,8 +4366,47 @@ function focusCard(i){
   if(!el) return;
   document.querySelectorAll('.card.hl').forEach(c=>c.classList.remove('hl'));
   el.classList.add('hl');
-  el.scrollIntoView({behavior:'smooth',block:'center'});
+  // offset the smooth scroll by the sticky filter bar so the card lands fully visible
+  const bar=document.getElementById('filterbar');
+  const off=(bar?bar.offsetHeight:0)+14;
+  const y=el.getBoundingClientRect().top+window.pageYOffset-off;
+  window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
   setTimeout(()=>el.classList.remove('hl'),2600);
+}
+
+// rich mini-card popup (rendered on demand → always current origin/minutes)
+function popupHTML(s,i){
+  const p=primary(s), col=PLAY[p].c;
+  const grad=`linear-gradient(135deg,${col}55,${col}cc)`;
+  const phFallback=`<div class="mc-ph" style="background:${grad}">${PLAY[p].e}</div>`;
+  let photo;
+  if(s.image_url){
+    const phForAttr=phFallback.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    photo=`<div class="mc-photo"><img loading="lazy" src="${esc(s.image_url)}" alt="${esc(s.name)}の写真" onerror="this.parentNode.innerHTML='${phForAttr}'"></div>`;
+  }else{
+    photo=`<div class="mc-photo">${phFallback}</div>`;
+  }
+  let badges=`<span class="mc-badge play" style="background:${col}">${PLAY[p].e} ${PLAY[p].label}</span>`;
+  const dm=driveMinutes(s);
+  if(dm!=null) badges+=`<span class="mc-badge drive">🚗 ${esc(origin.name)}から約${dm}分</span>`;
+  if(s.is_free===true) badges+=`<span class="mc-badge free">🆓 無料</span>`;
+  if(s.rain_friendly===true||s.indoor_or_outdoor==='indoor') badges+=`<span class="mc-badge rain">☔ 室内</span>`;
+  const isFood=(s.play_types||[]).includes('food');
+  let kidfeat='';
+  if(isFood && Array.isArray(s.kid_features) && s.kid_features.length){
+    kidfeat='<div class="mc-kf">'+s.kid_features.slice(0,3).map(f=>`<span class="kf">${esc(f)}</span>`).join('')+'</div>';
+  }
+  return `<div class="minicard" data-i="${i}" role="button" tabindex="0" aria-label="${esc(s.name)}の詳細をみる">
+    ${photo}
+    <div class="mc-body">
+      <div class="mc-name">${esc(s.name)}</div>
+      <div class="mc-city">${esc(s.city||'')}</div>
+      ${s.kid_appeal?`<div class="mc-appeal">${esc(s.kid_appeal)}</div>`:''}
+      <div class="mc-badges">${badges}</div>
+      ${kidfeat}
+    </div>
+    <div class="mc-more">詳しくみる ▼</div>
+  </div>`;
 }
 
 // --- rendering ---
@@ -4502,16 +4577,34 @@ const originMsg=document.getElementById('originMsg');
 function showMsg(t){originMsg.textContent=t;originMsg.style.display='';}
 function hideMsg(){originMsg.style.display='none';}
 
+// single home/origin marker: created once, moved+relabeled on every origin change (never duplicated)
 let originMarker=null;
+function homeDivIcon(label){
+  const emo=origin.isAnjo?'🏠':(origin.name==='現在地'?'📍':'🚗');
+  return L.divIcon({
+    className:'',
+    html:`<div class="home-wrap"><div class="home-pulse"></div><div class="home-pin"><span>${emo}</span></div><div class="home-label">📍${esc(label)}</div></div>`,
+    iconSize:[48,48],
+    iconAnchor:[24,24]
+  });
+}
 function updateOriginMarker(){
   try{
     if(!map) return;
-    if(origin.isAnjo){ if(originMarker){map.removeLayer(originMarker);originMarker=null;} return; }
-    const icon=L.divIcon({className:'',html:'<div class="pin home" style="background:#c9713f"><span>🚗</span></div>',iconSize:[34,34],iconAnchor:[17,34]});
-    if(originMarker){ originMarker.setLatLng([origin.lat,origin.lng]); }
-    else{ originMarker=L.marker([origin.lat,origin.lng],{icon,zIndexOffset:1200,title:'出発地'}).addTo(map).bindPopup('<div class="pop"><h4>🚗 出発地</h4></div>'); }
+    const icon=homeDivIcon(origin.name);
+    if(originMarker){
+      originMarker.setLatLng([origin.lat,origin.lng]);
+      originMarker.setIcon(icon);
+      originMarker.setPopupContent(`<div class="pop"><h4>🏠 ${esc(origin.name)}</h4><div class="pa">ここからの所要時間の目安を表示しています</div></div>`);
+      originMarker.options.title=origin.name;
+    }else{
+      originMarker=L.marker([origin.lat,origin.lng],{icon,zIndexOffset:2000,title:origin.name})
+        .addTo(map)
+        .bindPopup(`<div class="pop"><h4>🏠 ${esc(origin.name)}</h4><div class="pa">ここからの所要時間の目安を表示しています</div></div>`);
+    }
   }catch(e){ console.warn('origin marker update failed',e); }
 }
+updateOriginMarker(); // place initial marker (安城市) once map/origin are ready
 
 function setOrigin(name,lat,lng){
   origin.name=name; origin.lat=lat; origin.lng=lng; origin.isAnjo=(name==='安城市');
@@ -4557,4 +4650,3 @@ setTimeout(()=>{try{if(map)map.invalidateSize();}catch(e){console.warn('map inva
 </script>
 </body>
 </html>
-
