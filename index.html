@@ -10,8 +10,8 @@
 :root{
   --bg:#faf6ef; --card:#fffdf9; --ink:#3d3a34; --sub:#7a746a; --line:#e7ddcd;
   --accent:#e08a5b; --accent-d:#c9713f;
-  --animal:#E9A23B; --active:#4CAF6E; --water:#3FA9D6; --create:#9B6DD6; --vehicle:#E06C75; --indoor:#7A8AA0;
-  --animal-b:#fbeccd; --active-b:#d9f0e2; --water-b:#d5edf8; --create-b:#ece0f7; --vehicle-b:#f9dcde; --indoor-b:#e3e8ef;
+  --animal:#E9A23B; --active:#4CAF6E; --water:#3FA9D6; --create:#9B6DD6; --vehicle:#E06C75; --indoor:#7A8AA0; --food:#D95D77;
+  --animal-b:#fbeccd; --active-b:#d9f0e2; --water-b:#d5edf8; --create-b:#ece0f7; --vehicle-b:#f9dcde; --indoor-b:#e3e8ef; --food-b:#f9dbe2;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -49,6 +49,7 @@ header.hero .note{font-size:.8rem;color:var(--sub);margin:0}
 .chip.play[data-t="create"].on{background:var(--create);border-color:var(--create)}
 .chip.play[data-t="vehicle"].on{background:var(--vehicle);border-color:var(--vehicle)}
 .chip.play[data-t="indoor"].on{background:var(--indoor);border-color:var(--indoor)}
+.chip.play[data-t="food"].on{background:var(--food);border-color:var(--food)}
 .count{font-size:.85rem;font-weight:700;color:var(--accent-d)}
 .reset{border:none;background:transparent;color:var(--sub);text-decoration:underline;font-size:.8rem;cursor:pointer;padding:6px 4px}
 
@@ -85,6 +86,10 @@ header.hero .note{font-size:.8rem;color:var(--sub);margin:0}
 .btn.primary{background:var(--accent);color:#fff}
 .btn.map{background:#eef2f6;color:#41556e;border:1px solid #d8e0ea}
 .checked{font-size:.68rem;color:#a89f90;margin:9px 0 0}
+.kidfeat{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 10px}
+.kidfeat .kf{font-size:.72rem;background:var(--food-b);color:#a13a54;border-radius:999px;padding:3px 9px;font-weight:700;white-space:nowrap}
+.srcnote{font-size:.72rem;color:var(--sub);margin:0 0 6px}
+.foodnote{font-size:.68rem;color:#b08a92;margin:7px 0 0;line-height:1.4}
 
 /* weekend card */
 .weekend{background:linear-gradient(135deg,#fbe6d3,#f3e7d6);border-radius:16px;padding:18px 16px;text-align:center;border:1px solid var(--line)}
@@ -141,7 +146,7 @@ footer p{margin:0 0 6px}
   <div class="wrap">
     <h1>あいち子育ておでかけマップ</h1>
     <p class="catch">安城から車で約50分、子どもが喜ぶ場所マップ</p>
-    <p class="note">愛知県内の子連れおでかけスポットを、今日の気分で選べます。</p>
+    <p class="note">愛知県内の子連れおでかけスポットを、今日の気分で選べます。子連れランチも探せます。</p>
   </div>
 </header>
 
@@ -156,6 +161,7 @@ footer p{margin:0 0 6px}
       <button class="mood-btn" data-mood="water"   role="listitem"><span class="emo">💦</span>水であそぶ</button>
       <button class="mood-btn" data-mood="create"  role="listitem"><span class="emo">🔬</span>つくる・体験</button>
       <button class="mood-btn" data-mood="vehicle" role="listitem"><span class="emo">🚃</span>のりもの・電車</button>
+      <button class="mood-btn" data-mood="food"    role="listitem"><span class="emo">🍽</span>子連れランチ</button>
     </div>
   </div>
 </section>
@@ -177,6 +183,7 @@ footer p{margin:0 0 6px}
       <button class="chip play" data-t="create"  aria-pressed="false">🔬 つくる</button>
       <button class="chip play" data-t="vehicle" aria-pressed="false">🚃 のりもの</button>
       <button class="chip play" data-t="indoor"  aria-pressed="false">☔ 室内</button>
+      <button class="chip play" data-t="food"    aria-pressed="false">🍽 ごはん</button>
     </div>
     <div class="frow" role="group" aria-label="出発地からの所要時間で絞り込み">
       <span class="flabel" id="driveLabel">安城から</span>
@@ -1740,7 +1747,6 @@ const SPOTS = [
     "price_text": null,
     "is_free": false,
     "target_age_min": null,
-
     "target_age_max": null,
     "indoor_or_outdoor": "outdoor",
     "rain_friendly": null,
@@ -3279,6 +3285,872 @@ const SPOTS = [
       "drive_guide": true,
       "region": "知多"
     }
+  },
+  {
+    "id": "sp060",
+    "slug": "floral-garden-yosami",
+    "name": "フローラルガーデンよさみ",
+    "summary": "ミニSLとトドラー遊具、カフェもある公園",
+    "description": "刈谷市高須町にある公園。土日祝はミニSLが運行(小学生以上100円)、幼児向け遊具も充実。カフェ「in the Park Yosami no cafe」併設。毎週金曜プレーパーク開催。",
+    "play_types": [
+      "active",
+      "vehicle"
+    ],
+    "legacy_categories": [
+      "free",
+      "park"
+    ],
+    "tags": [
+      "無料",
+      "ミニSL",
+      "刈谷市",
+      "月曜休"
+    ],
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 34.972191,
+    "longitude": 137.015152,
+    "official_url": "https://www.city.kariya.lg.jp/shisetsu/bunka/1005346.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.972191,137.015152",
+    "checked_at": "2026-07-23",
+    "business_hours": "9:00〜17:00(カフェ8:00〜16:00 L.O.15:30)",
+    "closed_days": "月曜(祝日の場合は翌日)、年末年始。ミニSLは土日祝中心で天候により運休あり",
+    "price_text": "入園無料(ミニSLのみ小学生以上100円/1乗車)",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり(無料、約400台)",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": true,
+    "food_available": true,
+    "kid_appeal": "ミニSLに乗れて小さな子ども向け遊具も充実",
+    "estimated_drive_minutes_from_anjo": 15,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "sp061",
+    "slug": "shibaqen-budo-gari",
+    "name": "柴久園",
+    "summary": "夏〜秋はぶどう狩り、遊具のあるカフェも併設",
+    "description": "岡崎市駒立町のぶどう狩り農園。例年7月末〜8月下旬頃からぶどう狩りシーズン(時期は年により変動)。滑り台・三輪車・卓球台など遊具のある全天候型カフェを併設し、季節外でも遊べる。",
+    "play_types": [
+      "create",
+      "active"
+    ],
+    "legacy_categories": [
+      "seasonal",
+      "farm"
+    ],
+    "tags": [
+      "ぶどう狩り",
+      "夏〜秋限定",
+      "岡崎市",
+      "季節性あり"
+    ],
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 35.008911,
+    "longitude": 137.213318,
+    "official_url": "https://shibaqen.com/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.008911,137.213318",
+    "checked_at": "2026-07-23",
+    "business_hours": "カフェ10:00〜16:00(ぶどう狩りは季節営業、詳細はInstagram @shibaqen で告知)",
+    "closed_days": null,
+    "price_text": "ぶどう狩り料金は年により変動(要確認)",
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": true,
+    "parking": "あり(無料)",
+    "nursing_room": true,
+    "diaper_changing": true,
+    "stroller_access": true,
+    "food_available": true,
+    "kid_appeal": "ぶどう狩りの待ち時間も庭の遊具で遊べる",
+    "estimated_drive_minutes_from_anjo": 35,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": true
+    }
+  },
+  {
+    "id": "gm001",
+    "slug": "wamusubi-emu-anjo",
+    "name": "和むすび by 咲夢(えむ)",
+    "summary": "塩にこだわるおむすび専門の古民家風カフェ",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "お座敷",
+      "お座敷個室(予約制)",
+      "まめイス",
+      "ベビーカー入店可",
+      "おむつ替え台"
+    ],
+    "kid_appeal": "お座敷個室もあり赤ちゃん連れでも周りを気にせず入れる",
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.939575,
+    "longitude": 137.066864,
+    "official_url": "https://wagokoro-emu.com/",
+    "shop_instagram": "@wagokorosabou.emu",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.939575,137.066864",
+    "checked_at": "2026-07-23",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": null,
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 10,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm002",
+    "slug": "cafe-rob-kariya",
+    "name": "Cafe Rob 刈谷店",
+    "summary": "屋内キッズパーク併設の話題のパンケーキカフェ",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "屋内キッズパーク併設(有料)",
+      "見守り席",
+      "ハイチェア",
+      "授乳室",
+      "おむつ替え台",
+      "キッズメニュー",
+      "ベビーカー入店可"
+    ],
+    "kid_appeal": "併設キッズパークで遊びながら食事も楽しめる",
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 34.974796,
+    "longitude": 137.044006,
+    "official_url": "https://tabelog.com/aichi/A2305/A230503/23092071/",
+    "shop_instagram": "@caferob_kariya",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.974796,137.044006",
+    "checked_at": "2026-07-23",
+    "business_hours": "8:30〜18:00(L.O.17:00)",
+    "closed_days": "木曜",
+    "price_text": "〜999円程度",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 15,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm003",
+    "slug": "r-baker-misissauga-park",
+    "name": "R Baker（ミササガパーク内）",
+    "summary": "公園内のテラス席が心地よいパン屋兼カフェ",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "テラス席",
+      "ソファ席",
+      "ハイチェア",
+      "ベビーカー入店可"
+    ],
+    "kid_appeal": "公園で遊んだ後にそのまま立ち寄れる",
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 34.980743,
+    "longitude": 137.013687,
+    "official_url": "https://mississauga-park.com/bakerycafe",
+    "shop_instagram": "@r_baker_kariya",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.980743,137.013687",
+    "checked_at": "2026-07-23",
+    "business_hours": "8:00〜18:00",
+    "closed_days": "年末年始のみ(12/31〜1/2)",
+    "price_text": "1,000〜1,999円程度",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 20,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm004",
+    "slug": "iroha-nishio",
+    "name": "いろは",
+    "summary": "就労支援型の喫茶店、お子さまランチが安価",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "お座敷",
+      "キッズスペース",
+      "ハイチェア",
+      "キッズメニュー",
+      "キッズカトラリー"
+    ],
+    "kid_appeal": "お子さまランチ550円〜と価格が手頃",
+    "prefecture": "愛知県",
+    "city": "西尾市",
+    "latitude": 34.859211,
+    "longitude": 137.04805,
+    "official_url": "https://www.hotpepper.jp/strJ001272291/",
+    "shop_instagram": null,
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.859211,137.04805",
+    "checked_at": "2026-07-23",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "お子さまランチ550円程度",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 20,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm005",
+    "slug": "babyface-planets-mikawaanjo",
+    "name": "ベビーフェイスプラネッツ 三河安城店",
+    "summary": "全席個室でママ友会にも使いやすいファミレス",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "個室",
+      "お座敷",
+      "キッズカトラリー",
+      "キッズメニュー",
+      "おむつ替え台"
+    ],
+    "kid_appeal": "全席個室で気兼ねなく過ごせる",
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.964912,
+    "longitude": 137.059677,
+    "official_url": "https://babyface-planets.com/shoplist/",
+    "shop_instagram": null,
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.964912,137.059677",
+    "checked_at": "2026-07-23",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": null,
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 5,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm006",
+    "slug": "oyako-cafe-niina",
+    "name": "親子カフェNi-na",
+    "summary": "ボールプール完備の親子カフェ専業店",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "キッズスペース",
+      "バンボ・バウンサー",
+      "授乳室",
+      "おむつ替え台",
+      "キッズメニュー",
+      "キッズカトラリー",
+      "離乳食持込可"
+    ],
+    "kid_appeal": "親子カフェ専業で子連れへの理解が高い",
+    "prefecture": "愛知県",
+    "city": "豊明市",
+    "latitude": 35.059441,
+    "longitude": 136.979309,
+    "official_url": "https://www.instagram.com/oyako.cafe.niina/",
+    "shop_instagram": "@oyako.cafe.niina",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.059441,136.979309",
+    "checked_at": "2026-07-23",
+    "business_hours": "10:00〜12:00／12:30〜14:30(予約制2部制)",
+    "closed_days": "日曜(第2・4日曜は営業)",
+    "price_text": null,
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 40,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm007",
+    "slug": "ilso-illo-okazaki",
+    "name": "イルソ×イルロ",
+    "summary": "イオンタウン内のカフェ風焼肉・韓国料理店",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "お座敷(半個室)",
+      "バンボ・豆イス",
+      "キッズメニュー",
+      "キッズカトラリー",
+      "離乳食持込可"
+    ],
+    "kid_appeal": "半個室のお座敷でモール帰りに気軽に入れる",
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.925941,
+    "longitude": 137.186508,
+    "official_url": "https://chaoo.jp/gourmet/shop/ilso_illo/",
+    "shop_instagram": "@ilso_illo_okazaki",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.925941,137.186508",
+    "checked_at": "2026-07-23",
+    "business_hours": "ランチ11:00〜14:30(L.O.14:00)",
+    "closed_days": "木曜",
+    "price_text": "ランチ1,080円〜",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 20,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm008",
+    "slug": "river-brew-coffee-okazaki",
+    "name": "RIVER BREW COFFEE",
+    "summary": "乙川沿いの緑豊かなセルフ式コーヒースタンド",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "ソファ席",
+      "ベビーカー入店可"
+    ],
+    "kid_appeal": "キッズドリンクありで川沿い散歩の合間に立ち寄れる",
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.945156,
+    "longitude": 137.181107,
+    "official_url": "https://www.instagram.com/riverbrewcoffee/",
+    "shop_instagram": "@riverbrewcoffee",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.945156,137.181107",
+    "checked_at": "2026-07-23",
+    "business_hours": "火〜金10:00〜15:00／土10:00〜17:00",
+    "closed_days": "月曜・日曜",
+    "price_text": "1,000〜1,999円程度",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 25,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm009",
+    "slug": "kuruto-obu-tanita-cafe",
+    "name": "KURUTOおおぶ（タニタカフェ）",
+    "summary": "大府駅直結、野菜たっぷりヘルシーランチ",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "ベビーカー入店可",
+      "子どもイス",
+      "キッズカトラリー",
+      "おむつ替え台"
+    ],
+    "kid_appeal": "駅直結で雨の日も濡れずに行ける",
+    "prefecture": "愛知県",
+    "city": "大府市",
+    "latitude": 35.009396,
+    "longitude": 136.962402,
+    "official_url": "https://www.kuruto.jp/cafe/",
+    "shop_instagram": null,
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.009396,136.962402",
+    "checked_at": "2026-07-23",
+    "business_hours": "8:00〜21:00(L.O.20:30)",
+    "closed_days": "毎月1日(土日祝の場合は翌平日)",
+    "price_text": "週替わりランチ1,380円",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 45,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high"
+    }
+  },
+  {
+    "id": "gm010",
+    "slug": "misakiraji-jinan",
+    "name": "みさきらじ次男",
+    "summary": "ナンおかわり無料のインド・ネパールカレー店",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "駐車場",
+      "ベビーカー入店可",
+      "ハイチェア",
+      "キッズメニュー",
+      "キッズカトラリー",
+      "絵本あり"
+    ],
+    "kid_appeal": "5歳以下向けの少量お子さまメニューがある",
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.925373,
+    "longitude": 137.168823,
+    "official_url": "https://chaoo.jp/gourmet/shop/misakiraji/",
+    "shop_instagram": null,
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.925373,137.168823",
+    "checked_at": "2026-07-23",
+    "business_hours": "10:00〜21:30(L.O.21:00)",
+    "closed_days": "火曜",
+    "price_text": "850円〜(サラダ・スープ・ドリンク付)",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 20,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm011",
+    "slug": "in-the-park-yosami-cafe",
+    "name": "in the Park Yosami no cafe",
+    "summary": "フローラルガーデンよさみ内、公園遊び帰りに便利なカフェ",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "駐車場",
+      "ベビーカー入店可",
+      "ベビーチェア",
+      "授乳室",
+      "おむつ替え台",
+      "キッズメニュー",
+      "離乳食持込可",
+      "テラス席"
+    ],
+    "kid_appeal": "公園で遊んだ流れでそのまま食事できる",
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 34.972191,
+    "longitude": 137.015152,
+    "official_url": "https://tabelog.com/aichi/A2305/A230503/23086709/",
+    "shop_instagram": "@inthepark_yosaminocafe",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.972191,137.015152",
+    "checked_at": "2026-07-23",
+    "business_hours": "8:00〜16:00(L.O.15:30)",
+    "closed_days": "月曜",
+    "price_text": "1,000〜1,999円程度",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 15,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high"
+    }
+  },
+  {
+    "id": "gm012",
+    "slug": "kominka-maru-okazaki",
+    "name": "古民家MARU",
+    "summary": "山間の穴場、庭に遊具もある古民家カフェ",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "駐車場",
+      "テラス席",
+      "庭の遊具",
+      "お座敷(ベビーカー不可)",
+      "キッズカトラリー",
+      "キッズメニュー",
+      "豆イス"
+    ],
+    "kid_appeal": "庭で遊びながら順番待ちできる穴場古民家",
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.983917,
+    "longitude": 137.095093,
+    "official_url": "https://tabelog.com/en/aichi/A2305/A230502/23089253/",
+    "shop_instagram": "@maru_okazaki",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.983917,137.095093",
+    "checked_at": "2026-07-23",
+    "business_hours": null,
+    "closed_days": "水曜・木曜",
+    "price_text": null,
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm013",
+    "slug": "tartaruga-kitaokazaki",
+    "name": "タルタルーガ 北岡崎店",
+    "summary": "生パスタ&ピザ食べ放題、お座敷個室が人気",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "駐車場",
+      "ベビーカー入店可",
+      "お座敷(ドアなし個室)",
+      "バンボ",
+      "キッズカトラリー",
+      "おむつ替え台",
+      "2歳以下無料"
+    ],
+    "kid_appeal": "ドアなし個室で家族だけの空間を確保できる",
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.974815,
+    "longitude": 137.15947,
+    "official_url": "https://www.hotpepper.jp/strJ001059418/",
+    "shop_instagram": null,
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.974815,137.15947",
+    "checked_at": "2026-07-23",
+    "business_hours": null,
+    "closed_days": "なし(年中無休、12/31・1/1除く)",
+    "price_text": "1,501〜3,000円程度",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 25,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm014",
+    "slug": "capricciosa-aeonmall-okazaki",
+    "name": "カプリチョーザ イオンモール岡崎店",
+    "summary": "モール内でボックス席の本格イタリアン",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "ボックスベンチシート",
+      "キッズチェア",
+      "授乳室(モール内)",
+      "離乳食持込可"
+    ],
+    "kid_appeal": "授乳室がモール内すぐ近くで安心",
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.936398,
+    "longitude": 137.162979,
+    "official_url": "https://aeonmall-okazaki.capricciosa.com/",
+    "shop_instagram": null,
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.936398,137.162979",
+    "checked_at": "2026-07-23",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": null,
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 25,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "ちりっく（chirick.com）紹介。Pantagruelicoが2026年2月より休業中のため代替掲載",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high"
+    }
+  },
+  {
+    "id": "gm015",
+    "slug": "cafe-nicori-anjo",
+    "name": "Cafe nicori",
+    "summary": "国道1号線沿い、月替わりワンプレートが人気",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "駐車場",
+      "ベビーカー入店可",
+      "ソファ席",
+      "キッズメニュー",
+      "キッズカトラリー",
+      "離乳食持込可"
+    ],
+    "kid_appeal": "裏手の小さな公園で食後にひと遊びできる",
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.986176,
+    "longitude": 137.094986,
+    "official_url": "https://cafenicori.jp/",
+    "shop_instagram": "@cafe_nicori",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.986176,137.094986",
+    "checked_at": "2026-07-23",
+    "business_hours": null,
+    "closed_days": "水曜・第3火曜",
+    "price_text": "1,000〜1,999円程度",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 10,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium"
+    }
+  },
+  {
+    "id": "gm016",
+    "slug": "shibaqen-ishigama-cafe",
+    "name": "柴久園 石窯カフェ",
+    "summary": "ぶどう狩り園併設、遊具充実の全天候型カフェ",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "駐車場",
+      "ベビーカー入店可",
+      "ハイチェア",
+      "お座敷(冬季こたつ席)",
+      "キッズメニュー",
+      "遊具(滑り台・三輪車等)",
+      "授乳室・おむつ替え台"
+    ],
+    "kid_appeal": "石窯料理を待つ間、庭の遊具で遊べる",
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 35.008911,
+    "longitude": 137.213318,
+    "official_url": "https://shibaqen.com/shop",
+    "shop_instagram": "@shibaqen",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.008911,137.213318",
+    "checked_at": "2026-07-23",
+    "business_hours": "10:00〜16:00",
+    "closed_days": null,
+    "price_text": "モーニングプレート950円〜",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 35,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high"
+    }
+  },
+  {
+    "id": "gm017",
+    "slug": "hobo-mainichi-cafe-anjo",
+    "name": "ほぼ毎日カフェ",
+    "summary": "モデルハウス内、ご飯おかわり自由の日替わりランチ",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "駐車場",
+      "お座敷(2部屋)",
+      "ハイチェア・バンボ",
+      "キッズカトラリー",
+      "離乳食持込可",
+      "未就学児ごはん・味噌汁無料",
+      "キッズメニュー",
+      "おむつ替え台"
+    ],
+    "kid_appeal": "未就学児はごはん・味噌汁が無料でお得",
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.964169,
+    "longitude": 137.073853,
+    "official_url": "https://tabelog.com/aichi/A2305/A230503/23077019/",
+    "shop_instagram": null,
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.964169,137.073853",
+    "checked_at": "2026-07-23",
+    "business_hours": "月〜土10:00〜17:00(L.O.16:00)",
+    "closed_days": "日曜・祝日",
+    "price_text": "日替わりランチ1,000〜1,320円",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 10,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high"
+    }
+  },
+  {
+    "id": "gm018",
+    "slug": "nma-cafe-okazaki",
+    "name": "N'ma cafe（エヌマカフェ）",
+    "summary": "滝山寺近く、米粉スイーツが人気の緑豊かなカフェ",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "駐車場",
+      "ベビーカー入店可(席間隔広め)",
+      "ハイチェア"
+    ],
+    "kid_appeal": "席間隔が広くベビーカーのまま入店しやすい",
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.986122,
+    "longitude": 137.207016,
+    "official_url": "https://nma-cafe.com/",
+    "shop_instagram": null,
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.986122,137.207016",
+    "checked_at": "2026-07-23",
+    "business_hours": null,
+    "closed_days": "月曜(祝日の場合は営業)",
+    "price_text": null,
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 35,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @nishimika_waiwai 紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high"
+    }
+  },
+  {
+    "id": "gm019",
+    "slug": "piquant-mikawaanjo",
+    "name": "ピクアント",
+    "summary": "三河安城駅近くの自家製パスタ専門店",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "キッズメニュー"
+    ],
+    "kid_appeal": "駅近で子ども向けパスタメニューも選べる",
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.96888,
+    "longitude": 137.059265,
+    "official_url": "https://www.piquant.life/",
+    "shop_instagram": "@cafepiquant",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.96888,137.059265",
+    "checked_at": "2026-07-23",
+    "business_hours": null,
+    "closed_days": "火曜(祝日の場合は営業)",
+    "price_text": "1,000〜1,999円程度",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 5,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Web調査（ピクアント公式サイト）",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high"
+    }
+  },
+  {
+    "id": "gm020",
+    "slug": "shokudo-cafe-serina-chiryu",
+    "name": "食堂カフェ 瀬里奈",
+    "summary": "こだわり食材の定食、キッズルーム完備",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "キッズルーム"
+    ],
+    "kid_appeal": "専用キッズルームがあり家族利用しやすい",
+    "prefecture": "愛知県",
+    "city": "知立市",
+    "latitude": 35.010593,
+    "longitude": 137.038376,
+    "official_url": "https://www.instagram.com/syokudocafe.serina/",
+    "shop_instagram": "@syokudocafe.serina",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.010593,137.038376",
+    "checked_at": "2026-07-23",
+    "business_hours": "モーニング7:00〜11:00／ランチ11:00〜14:30(L.O.14:00)",
+    "closed_days": "火曜・月末水曜",
+    "price_text": "880円〜",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 20,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "三河おいしい推しグルメ（chaoo.jp）紹介",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high"
+    }
   }
 ];
 
@@ -3387,7 +4259,8 @@ const PLAY={
   water:{c:'#3FA9D6',e:'💦',label:'水'},
   create:{c:'#9B6DD6',e:'🔬',label:'つくる'},
   vehicle:{c:'#E06C75',e:'🚃',label:'のりもの'},
-  indoor:{c:'#7A8AA0',e:'☔',label:'室内'}
+  indoor:{c:'#7A8AA0',e:'☔',label:'室内'},
+  food:{c:'#D95D77',e:'🍽',label:'ごはん'}
 };
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const primary=s=>(s.play_types&&s.play_types[0])||'indoor';
@@ -3467,7 +4340,18 @@ function cardHTML(s,i){
   let actions='';
   if(s.official_url) actions+=`<a class="btn primary" href="${esc(s.official_url)}" target="_blank" rel="noopener">公式サイト →</a>`;
   if(s.google_maps_url) actions+=`<a class="btn map" href="${esc(s.google_maps_url)}" target="_blank" rel="noopener">🗺 Googleマップ</a>`;
-  const checked=s.checked_at?`<p class="checked">情報確認日: ${esc(s.checked_at)}</p>`:'';
+  const isFood=(s.play_types||[]).includes('food');
+  // food-specific: kid feature tags + source note
+  let kidfeat='';
+  if(isFood && Array.isArray(s.kid_features) && s.kid_features.length){
+    kidfeat='<div class="kidfeat">'+s.kid_features.map(f=>`<span class="kf">${esc(f)}</span>`).join('')+'</div>';
+  }
+  let srcnote='';
+  if(isFood && s.source_note){
+    srcnote=`<p class="srcnote">紹介: Instagram @nishimika_waiwai</p>`;
+  }
+  const foodDisclaimer=isFood?`<p class="foodnote">※営業情報は変わりやすいため、お店の最新の発信をご確認ください。</p>`:'';
+  const checked=(s.checked_at?`<p class="checked">情報確認日: ${esc(s.checked_at)}</p>`:'')+foodDisclaimer;
   return `<article class="card" id="card-${i}" data-i="${i}">
     <div class="photo">${photo}</div>
     <div class="body">
@@ -3475,7 +4359,9 @@ function cardHTML(s,i){
       <p class="city">${esc(s.city||'')}</p>
       ${s.kid_appeal?`<p class="appeal">${esc(s.kid_appeal)}</p>`:''}
       <div class="badges">${badges}</div>
+      ${kidfeat}
       ${info}
+      ${srcnote}
       <div class="actions">${actions}</div>
       ${checked}
     </div>
@@ -3647,3 +4533,4 @@ setTimeout(()=>{try{if(map)map.invalidateSize();}catch(e){console.warn('map inva
 </script>
 </body>
 </html>
+
