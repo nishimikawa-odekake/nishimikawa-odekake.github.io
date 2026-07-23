@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8CDXHXFG9F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-8CDXHXFG9F');
+</script>
 <meta name="google-site-verification" content="Nfs_SxbXHLkNUnpUxyqPTuQx__y9nLNq0hhPFKrpB_E" />
 <title>あいち子育ておでかけマップ｜愛知の子連れおでかけ・遊び場・ランチ検索</title>
 <meta name="description" content="愛知県の子連れおでかけスポット176件を地図で検索。公園・水族館・科学館・工場見学から子連れランチまで。安城など出発地を選んで所要時間で絞り込み。雨の日OK・無料スポットも。">
@@ -222,6 +230,8 @@ footer p{margin:0 0 6px}
 .wxbar-rain{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;background:#d5edf8;border:1.5px solid #9cd0ea;border-radius:999px;padding:5px 12px;font-size:.76rem;font-weight:800;color:#2a7aa0;cursor:pointer;transition:.12s;white-space:nowrap}
 .wxbar-rain:hover{background:#c2e4f3}
 .wxbar-src{font-size:.56rem;color:#c3baaa;margin:5px 0 0}
+.topbanner{display:block;max-width:700px;margin:10px auto 0;background:#fff6ee;border:1.5px solid var(--accent);border-radius:999px;padding:9px 16px;text-align:center;font-size:.85rem;font-weight:800;color:var(--accent-d);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbanner:hover{background:var(--accent);color:#fff}
 </style>
 </head>
 <body>
@@ -238,6 +248,8 @@ footer p{margin:0 0 6px}
       </div>
       <p class="wxbar-src">天気: Open-Meteo</p>
     </div>
+    <!-- weekly-banner: 週次更新時に件数を書き換え -->
+    <a class="topbanner" href="./links.html">📅 今週末のイベント32選はこちら →</a>
   </div>
 </header>
 
