@@ -142,6 +142,19 @@ footer a{color:var(--sub)}
       <button class="bigbtn" data-when="sat">今週末（土）</button>
       <button class="bigbtn" data-when="sun">今週末（日）</button>
     </div>
+    <div id="departWrap" style="display:none;margin-top:18px">
+      <div class="q" style="font-size:1.05rem" id="departQ">何時に出発？</div>
+      <div class="bigbtns" id="departTodayBtns" style="display:none">
+        <button class="bigbtn" data-depart="30">30分後くらい</button>
+        <button class="bigbtn" data-depart="60">1時間後</button>
+        <button class="bigbtn" data-depart="120">2時間後</button>
+        <button class="bigbtn" data-depart="180">3時間後</button>
+      </div>
+      <div class="bigbtns" id="departDayBtns" style="display:none">
+        <button class="bigbtn" data-slot="am">午前<small>9:30ごろ出発</small></button>
+        <button class="bigbtn" data-slot="noon">お昼から<small>13:00ごろ出発</small></button>
+      </div>
+    </div>
     <div class="navrow">
       <button class="back" data-back>← もどる</button>
       <button class="next" data-next disabled>次へ →</button>
@@ -321,7 +334,7 @@ function priceLabel(s){
 }
 
 /* ===== state ===== */
-const state={origin:null,when:null,ages:new Set(),budget:null,weather:null,variant:0,plans:[]};
+const state={origin:null,when:null,depart:null,ages:new Set(),budget:null,weather:null,variant:0,plans:[]};
 let step=0;
 
 /* ===== wizard nav ===== */
@@ -334,7 +347,7 @@ function render(){
 }
 function canNext(){
   if(step===0) return !!state.origin;
-  if(step===1) return !!state.when;
+  if(step===1) return !!state.when&&!!state.depart;
   if(step===2) return state.ages.size>0;
   if(step===3) return !!state.budget;
   return false;
@@ -383,7 +396,26 @@ document.getElementById('geoBtn').addEventListener('click',()=>{
 /* when */
 document.querySelectorAll('#whenBtns .bigbtn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('#whenBtns .bigbtn').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on'); state.when=b.dataset.when; refreshNext();
+  b.classList.add('on'); state.when=b.dataset.when;
+  // reset departure sub-question when the date changes
+  state.depart=null;
+  document.querySelectorAll('#departTodayBtns .bigbtn,#departDayBtns .bigbtn').forEach(x=>x.classList.remove('on'));
+  const isToday=state.when==='today';
+  document.getElementById('departWrap').style.display='block';
+  document.getElementById('departQ').textContent=isToday?'何時に出発？':'出発は？';
+  document.getElementById('departTodayBtns').style.display=isToday?'':'none';
+  document.getElementById('departDayBtns').style.display=isToday?'none':'';
+  refreshNext();
+}));
+/* departure time (today: offset from now) */
+document.querySelectorAll('#departTodayBtns .bigbtn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#departTodayBtns .bigbtn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); state.depart={mode:'offset',min:parseInt(b.dataset.depart,10)}; refreshNext();
+}));
+/* departure time (tomorrow/weekend: am or noon slot) */
+document.querySelectorAll('#departDayBtns .bigbtn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#departDayBtns .bigbtn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); state.depart={mode:'slot',slot:b.dataset.slot}; refreshNext();
 }));
 /* ages (multi) */
 document.querySelectorAll('#ageBtns .bigbtn').forEach(b=>b.addEventListener('click',()=>{
@@ -449,7 +481,7 @@ function scoreSpot(s,date,w){
 }
 function budgetPass(s){
   if(state.budget==='any') return true;
-  if(state.budget==='free') return !!s.is_free;
+  if(state.budget==='free') return s.is_free===true;
   const p=parsePrice(s);
   if(p==null) return true; // unknown: keep
   if(state.budget==='1000') return p<=1000;
@@ -498,7 +530,7 @@ function pickSub(main,date){
   const o=state.origin;
   const c=SPOTS.filter(s=>{
     if(s===main||s.latitude==null) return false;
-    if(!s.is_free) return false;
+    if(s.is_free!==true) return false;
     const km=haversineKm(main.latitude,main.longitude,s.latitude,s.longitude);
     // ~20 min ≈ within about 12km locally
     if(km>12) return false;
@@ -509,11 +541,13 @@ function pickSub(main,date){
   return c[0]||null;
 }
 function startMinutes(){
-  if(state.when==='today'){
-    const now=new Date(); let m=now.getHours()*60+now.getMinutes()+30;
-    m=Math.ceil(m/30)*30; if(m>19*60)m=13*60; return m;
+  const d=state.depart;
+  if(state.when==='today'&&d&&d.mode==='offset'){
+    const now=new Date(); let m=now.getHours()*60+now.getMinutes()+d.min;
+    m=Math.round(m/30)*30; if(m>19*60)m=13*60; return m;
   }
-  return 9*60+30; // 9:30 for tomorrow/weekend
+  if(d&&d.mode==='slot') return d.slot==='noon'?13*60:9*60+30;
+  return 9*60+30; // 9:30 fallback
 }
 function buildPlan(main,date,w){
   const o=state.origin;
@@ -531,7 +565,7 @@ function buildPlan(main,date,w){
   if(lunch){
     const ldm=Math.max(5,Math.round(haversineKm(main.latitude,main.longitude,lunch.latitude,lunch.longitude)*2.2/5)*5);
     t+=ldm;
-    rows.push({type:'spot',time:t,spot:lunch,tag:afternoon?'おやつ・カフェ':'ランチ',food:true});
+    rows.push({type:'spot',time:t,spot:lunch,tag:afternoon?'おやつ・カフェ':'ランチ',food:true,paynote:state.budget==='free'});
     t+=60;
   }
   if(sub){
@@ -550,7 +584,7 @@ function buildPlan(main,date,w){
   if(allFree&&!hasUnknown) cost='ほぼ無料（大人1人あたり）';
   else if(known===0&&hasUnknown) cost='料金は各公式サイトで確認';
   else cost='大人1人あたり 目安 '+known.toLocaleString()+'円〜'+(hasUnknown?'（一部要確認）':'');
-  return {rows,main,totalDrive,cost};
+  return {rows,main,totalDrive,cost,hasUnknown};
 }
 function generatePlans(date,w){
   const pool=buildPool(date,w);
@@ -605,7 +639,7 @@ function rowHtml(r){
     '<span class="icon">'+spotEmoji(s)+'</span><span class="line"></span></div>'+
     '<div class="body">'+
     (r.opt?'<span class="opt">⏱ 時間が余ったら</span><br>':'')+
-    '<div class="sname">'+esc(s.name)+' <small style="font-weight:600;color:var(--sub);font-size:.75rem">/ '+esc(r.tag)+'・'+esc(s.city)+'</small></div>'+
+    '<div class="sname">'+esc(s.name)+' <small style="font-weight:600;color:var(--sub);font-size:.75rem">/ '+esc(r.tag)+'・'+esc(s.city)+'</small>'+(r.paynote?' <small style="font-weight:600;color:var(--sub);font-size:.72rem">※お食事代は別です</small>':'')+'</div>'+
     (s.kid_appeal?'<div class="appeal">'+esc(s.kid_appeal)+'</div>':'')+
     '<div class="meta">💴 '+esc(priceLabel(s))+(s.business_hours?'　🕐 '+esc(s.business_hours):'')+'</div>'+
     links+'</div></div>';
@@ -629,6 +663,9 @@ function showResult(){
   html+='<div class="plantitle">🎯 '+esc(state.origin.name)+'発 きょうのプラン <small>'+esc(whenLabel())+' / 案'+(state.variant%state.plans.length+1)+'</small></div>';
   html+='<div class="timeline">'+p.rows.map(rowHtml).join('')+'</div>';
   html+='<div class="summary">🚗 移動の目安 <b>約'+driveStr+'</b>（往復）　／　💰 <b>'+esc(p.cost)+'</b></div>';
+  if((state.budget==='1000'||state.budget==='3000')&&p.hasUnknown){
+    html+='<div class="summary" style="color:var(--sub);font-size:.82rem;font-weight:600">※料金不明のスポットが含まれます。公式サイトでご確認ください</div>';
+  }
   html+='</div>';
   html+='<div class="share">📸 スクショして家族に送ってね！</div>';
   html+='<div class="actions">';
@@ -647,8 +684,9 @@ function reroll(){
   showResult();
 }
 function restart(){
-  state.when=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.plans=[];
+  state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.plans=[];
   document.querySelectorAll('.bigbtn.on').forEach(b=>b.classList.remove('on'));
+  document.getElementById('departWrap').style.display='none';
   document.getElementById('result').style.display='none';
   document.getElementById('dots').style.display='flex';
   step=0; render();
