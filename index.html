@@ -14,11 +14,11 @@
 <meta name="google-site-verification" content="Nfs_SxbXHLkNUnpUxyqPTuQx__y9nLNq0hhPFKrpB_E" />
 <title>あいち子育ておでかけマップ｜愛知の子連れおでかけ・遊び場・ランチ検索</title>
 <meta name="description" content="愛知県の子連れおでかけスポット230件を地図で検索。公園・水族館・科学館・工場見学から子連れランチまで。安城など出発地を選んで所要時間で絞り込み。雨の日OK・無料スポットも。">
-<link rel="canonical" href="https://nishimikawa-odekake.github.io/">
+<link rel="canonical" href="https://nishimikawa-odekake.com/">
 <meta property="og:title" content="あいち子育ておでかけマップ">
 <meta property="og:description" content="愛知県の子連れおでかけスポット230件を地図で検索。公園・水族館・科学館・工場見学から子連れランチまで。安城など出発地を選んで所要時間で絞り込み。雨の日OK・無料スポットも。">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://nishimikawa-odekake.github.io/">
+<meta property="og:url" content="https://nishimikawa-odekake.com/">
 <meta property="og:site_name" content="あいち子育ておでかけマップ">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kuragaike-Park-1.jpg/800px-Kuragaike-Park-1.jpg">
@@ -32,7 +32,7 @@
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "あいち子育ておでかけマップ",
-  "url": "https://nishimikawa-odekake.github.io/",
+  "url": "https://nishimikawa-odekake.com/",
   "description": "愛知県の子連れおでかけスポット230件を地図で検索。公園・水族館・科学館・工場見学から子連れランチまで。安城など出発地を選んで所要時間で絞り込み。雨の日OK・無料スポットも。",
   "inLanguage": "ja"
 }
@@ -149,7 +149,8 @@ footer p{margin:0 0 6px}
 .leaflet-popup.minipop .leaflet-popup-content-wrapper{border-radius:16px;box-shadow:0 6px 22px rgba(120,90,50,.28);padding:0;overflow:hidden;background:var(--card)}
 .leaflet-popup.minipop .leaflet-popup-content{margin:0;width:auto!important;font-family:inherit}
 .leaflet-popup.minipop .leaflet-popup-tip{background:var(--card)}
-.leaflet-popup.minipop a.leaflet-popup-close-button{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);font-size:20px;padding:5px 8px 0 0;z-index:3}
+.leaflet-popup.minipop a.leaflet-popup-close-button{color:var(--sub);text-shadow:none;font-size:20px;padding:5px 8px 0 0;z-index:3}
+.minicard.no-photo .mc-body{padding:26px 11px 4px}
 .minicard{cursor:pointer;width:100%;max-width:290px}
 .mc-photo{height:90px;overflow:hidden}
 .mc-photo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -189,6 +190,19 @@ footer p{margin:0 0 6px}
 .origin-btn:active{transform:scale(.95)}
 .origin-note{font-size:.7rem;color:var(--sub)}
 .origin-msg{font-size:.75rem;color:var(--accent-d);font-weight:700;flex-basis:100%;margin:2px 0 0}
+
+.readings{max-width:700px;margin:24px auto 0}
+.readings h2.section-title{margin-bottom:8px}
+.readings-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.reading-card{flex:0 0 auto;width:220px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 2px 6px rgba(160,140,110,.15);text-decoration:none;color:#4a4640;transition:transform .1s}
+.reading-card:active{transform:scale(.97)}
+.reading-card .emo{font-size:1.4rem;display:block;margin-bottom:6px}
+.reading-card .rt{font-size:.92rem;font-weight:800;line-height:1.4;color:#4a4640}
+.reading-card .rd{font-size:.76rem;color:var(--sub);margin-top:6px;line-height:1.4}
+
+@media(min-width:900px){
+  .readings{max-width:none}
+}
 
 @media(min-width:820px){
   header.hero h1{font-size:1.8rem}
@@ -343,6 +357,39 @@ footer p{margin:0 0 6px}
       </div>
     </div>
   </div>
+</div>
+
+<div class="wrap">
+  <section class="readings" aria-label="読みもの">
+    <h2 class="section-title">📖 読みもの</h2>
+    <div class="readings-scroll" id="readings" role="list">
+      <a class="reading-card" role="listitem" href="./article-ame-nishimikawa.html">
+        <span class="emo">☔</span>
+        <span class="rt">雨の日でも遊べる西三河スポット12選</span>
+        <span class="rd">雨の日の子連れおでかけ先に迷ったらこちら</span>
+      </a>
+      <a class="reading-card" role="listitem" href="./article-akachan-odekake.html">
+        <span class="emo">👶</span>
+        <span class="rt">赤ちゃん連れおでかけスポット12選</span>
+        <span class="rd">授乳室・おむつ替え台・お座敷ありのスポットまとめ</span>
+      </a>
+      <a class="reading-card" role="listitem" href="./article-lunch-zashiki.html">
+        <span class="emo">🍽️</span>
+        <span class="rt">座敷・個室あり子連れランチ12選</span>
+        <span class="rd">周りを気にせず食事できるお店を厳選</span>
+      </a>
+      <a class="reading-card" role="listitem" href="./article-natsuyasumi-suzushii.html">
+        <span class="emo">🧊</span>
+        <span class="rt">夏休みの涼しいおでかけ12選</span>
+        <span class="rd">猛暑日でも快適な屋内＆水遊びスポット</span>
+      </a>
+      <a class="reading-card" role="listitem" href="./article-hannichi-plan.html">
+        <span class="emo">🗺️</span>
+        <span class="rt">子連れ半日おでかけプラン3コース</span>
+        <span class="rd">移動・ランチ・午後の過ごし方までセットで紹介</span>
+      </a>
+    </div>
+  </section>
 </div>
 
 <div class="wrap">
@@ -537,15 +584,6 @@ function focusCard(i){
 // rich mini-card popup (rendered on demand → always current origin/minutes)
 function popupHTML(s,i){
   const p=primary(s), col=PLAY[p].c;
-  const grad=`linear-gradient(135deg,${col}55,${col}cc)`;
-  const phFallback=`<div class="mc-ph" style="background:${grad}">${PLAY[p].e}</div>`;
-  let photo;
-  if(s.image_url){
-    const phForAttr=phFallback.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
-    photo=`<div class="mc-photo"><img loading="lazy" src="${esc(s.image_url)}" alt="${esc(s.name)}の写真" onerror="this.parentNode.innerHTML='${phForAttr}'"></div>`;
-  }else{
-    photo=`<div class="mc-photo">${phFallback}</div>`;
-  }
   let badges=`<span class="mc-badge play" style="background:${col}">${PLAY[p].label}</span>`;
   const dm=driveMinutes(s);
   if(dm!=null) badges+=`<span class="mc-badge drive">🚗 ${esc(origin.name)}から約${dm}分</span>`;
@@ -556,8 +594,7 @@ function popupHTML(s,i){
   if(isFood && Array.isArray(s.kid_features) && s.kid_features.length){
     kidfeat='<div class="mc-kf">'+s.kid_features.slice(0,3).map(f=>`<span class="kf">${esc(f)}</span>`).join('')+'</div>';
   }
-  return `<div class="minicard" data-i="${i}" role="button" tabindex="0" aria-label="${esc(s.name)}の詳細をみる">
-    ${photo}
+  return `<div class="minicard no-photo" data-i="${i}" role="button" tabindex="0" aria-label="${esc(s.name)}の詳細をみる">
     <div class="mc-body">
       <div class="mc-name">${esc(s.name)}</div>
       <div class="mc-city">${esc(s.city||'')}</div>

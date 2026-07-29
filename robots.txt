@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nishimikawa-odekake.github.io/sitemap.xml
-
+Sitemap: https://nishimikawa-odekake.com/sitemap.xml
