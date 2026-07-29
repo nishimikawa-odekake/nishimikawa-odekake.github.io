@@ -7137,12 +7137,12 @@
     "kid_appeal": "モール内で雨の日も安心、買い物ついでに気軽に子連れランチできる",
     "prefecture": "愛知県",
     "city": "豊川市",
-    "latitude": 34.8272,
-    "longitude": 137.3919,
+    "latitude": 34.825752,
+    "longitude": 137.3508794,
     "official_url": "https://toyokawa.aeonmall.jp/shop/detail/80",
     "shop_instagram": null,
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8272,137.3919",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.825752,137.3508794",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": null,
     "price_text": null,
@@ -7175,12 +7175,12 @@
     "kid_appeal": "お座敷とハイチェア両対応で赤ちゃんから幼児まで安心して食べられる",
     "prefecture": "愛知県",
     "city": "岡崎市",
-    "latitude": 34.9377,
-    "longitude": 137.1928,
+    "latitude": 34.8991186,
+    "longitude": 137.12073,
     "official_url": "https://www.instagram.com/1to3bunno1.okazakiminami/",
     "shop_instagram": "@1to3bunno1.okazakiminami",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9377,137.1928",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8991186,137.12073",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": "水曜日",
     "price_text": "1,000〜1,999円",
@@ -7192,7 +7192,7 @@
     "source_note": "Instagram @nishimika_waiwai",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -7210,12 +7210,12 @@
     "kid_appeal": "海を眺めながらゆったり過ごせるコースランチで特別な日にも使える",
     "prefecture": "愛知県",
     "city": "蒲郡市",
-    "latitude": 34.8213,
-    "longitude": 137.1898,
+    "latitude": 34.800213,
+    "longitude": 137.1908661,
     "official_url": "http://www.carpineto.jp/",
     "shop_instagram": null,
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8213,137.1898",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.800213,137.1908661",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": "水曜日",
     "price_text": "3,000〜5,000円",
@@ -7227,7 +7227,7 @@
     "source_note": "Instagram @nishimika_waiwai",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -7245,12 +7245,12 @@
     "kid_appeal": "ジブリ風の内装で子どもが喜ぶ雰囲気、お子さまランチもあり",
     "prefecture": "愛知県",
     "city": "岡崎市",
-    "latitude": 34.9651,
-    "longitude": 137.1748,
+    "latitude": 34.9713245,
+    "longitude": 137.1551969,
     "official_url": "https://tabelog.com/aichi/A2305/A230502/23092283/",
     "shop_instagram": null,
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9651,137.1748",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9713245,137.1551969",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": "月曜日",
     "price_text": null,
@@ -7262,7 +7262,7 @@
     "source_note": "Instagram @nishimika_waiwai",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -7280,12 +7280,12 @@
     "kid_appeal": "取り分けしやすい中華メニューで個室もあり周りを気にせず食事できる",
     "prefecture": "愛知県",
     "city": "岡崎市",
-    "latitude": 34.9648,
-    "longitude": 137.1524,
+    "latitude": 34.9518169,
+    "longitude": 137.1213051,
     "official_url": "https://www.instagram.com/oka_chuka_minato/",
     "shop_instagram": "@oka_chuka_minato",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9648,137.1524",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9518169,137.1213051",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": "木曜日",
     "price_text": "1,000〜1,999円",
@@ -7297,7 +7297,7 @@
     "source_note": "Instagram @nishimika_waiwai",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -7317,12 +7317,12 @@
     "kid_appeal": "ナンをちぎって食べられ、豆イスとキッズメニューで子連れに優しい",
     "prefecture": "愛知県",
     "city": "岡崎市",
-    "latitude": 34.9382,
-    "longitude": 137.1524,
+    "latitude": 34.9234609,
+    "longitude": 137.1994196,
     "official_url": "https://hitosara.com/0031632146/",
     "shop_instagram": null,
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9382,137.1524",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9234609,137.1994196",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": null,
     "price_text": "1,000〜1,999円",
@@ -7334,7 +7334,7 @@
     "source_note": "Instagram @nishimika_waiwai",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -7354,12 +7354,12 @@
     "kid_appeal": "テラス席とおむつ替え台があり赤ちゃん連れでもゆったり過ごせる",
     "prefecture": "愛知県",
     "city": "岡崎市",
-    "latitude": 34.9972,
-    "longitude": 137.1854,
+    "latitude": 35.013493,
+    "longitude": 137.1709696,
     "official_url": "https://coffee-terrace.com/",
     "shop_instagram": null,
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9972,137.1854",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.013493,137.1709696",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": null,
     "price_text": null,
@@ -7371,7 +7371,7 @@
     "source_note": "Instagram @nishimika_waiwai",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -7393,12 +7393,12 @@
     "kid_appeal": "個室・お座敷でベビー布団も申し出可、赤ちゃん連れでも周りを気にせず食事できる",
     "prefecture": "愛知県",
     "city": "豊川市",
-    "latitude": 34.8271,
-    "longitude": 137.3752,
+    "latitude": 34.828679,
+    "longitude": 137.4078377,
     "official_url": "https://hananoiori.com/",
     "shop_instagram": null,
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8271,137.3752",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.828679,137.4078377",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": null,
     "price_text": null,
@@ -7410,7 +7410,7 @@
     "source_note": "Instagram @nishimika_waiwai",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -7430,12 +7430,12 @@
     "kid_appeal": "半個室風の掘りごたつ席で離乳食持ち込みもでき赤ちゃん連れでも安心",
     "prefecture": "愛知県",
     "city": "蒲郡市",
-    "latitude": 34.8266,
-    "longitude": 137.2352,
+    "latitude": 34.8295634,
+    "longitude": 137.2370812,
     "official_url": "https://www.hotpepper.jp/strJ000404644/",
     "shop_instagram": null,
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8266,137.2352",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8295634,137.2370812",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": null,
     "price_text": "刺身盛りランチなど1,260〜2,200円程度",
@@ -7447,7 +7447,7 @@
     "source_note": "Instagram @nishimika_waiwai",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -7503,12 +7503,12 @@
     "kid_appeal": "駅前の公共施設内で気軽に立ち寄れ、未就学児無料メニューもある",
     "prefecture": "愛知県",
     "city": "西尾市",
-    "latitude": 34.7951,
-    "longitude": 137.1578,
+    "latitude": 34.8303774,
+    "longitude": 137.0716662,
     "official_url": "https://chaoo.jp/gourmet/shop/cafe-en/",
     "shop_instagram": null,
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.7951,137.1578",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8303774,137.0716662",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": "日曜日",
     "price_text": "980円〜",
@@ -7520,7 +7520,7 @@
     "source_note": "Instagram @nishimika_waiwai",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -7879,12 +7879,12 @@
     "kid_appeal": "キッズスペース完備と紹介される一宮市のスイーツカフェ",
     "prefecture": "愛知県",
     "city": "一宮市",
-    "latitude": 35.338577,
-    "longitude": 136.776993,
+    "latitude": 35.3348171,
+    "longitude": 136.7775603,
     "official_url": "https://iko-yo.net/facilities?city_ids%5B%5D=423019&genre_ids%5B%5D=43&prefecture_ids%5B%5D=23&recommended_age=8",
     "shop_instagram": null,
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.338577,136.776993",
-    "checked_at": "2026-07-23",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.3348171,136.7775603",
+    "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": null,
     "price_text": null,
@@ -7896,7 +7896,7 @@
     "source_note": "いこーよ（子供とお出かけ情報）",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium",
+      "geo_confidence": "high",
       "geo_address": "愛知県一宮市木曽川町内割田二の通り79-1"
     }
   },
@@ -8660,10 +8660,10 @@
     "tags": [],
     "prefecture": "愛知県",
     "city": "知多郡美浜町",
-    "latitude": 34.7739,
-    "longitude": 136.8996,
+    "latitude": 34.7862358,
+    "longitude": 136.8554865,
     "official_url": "https://beachland.jp/",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.7739,136.8996",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.7862358,136.8554865",
     "checked_at": "2026-07-29",
     "business_hours": "9:30〜16:00(季節により変動)",
     "closed_days": null,
@@ -8686,7 +8686,7 @@
     "featured": false,
     "status": "published",
     "metadata": {
-      "geo_confidence": "estimated",
+      "geo_confidence": "high",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     }
   },
@@ -9336,11 +9336,11 @@
     "kid_appeal": "オムツ台・キッズチェア・キッズメニュー/カトラリー・座敷・おもちゃ絵本あり。ヒヨコとニワトリと触れ合える農園併設",
     "prefecture": "愛知県",
     "city": "安城市",
-    "latitude": 34.957897,
-    "longitude": 137.059341,
+    "latitude": 34.9593017,
+    "longitude": 137.0632623,
     "official_url": "https://hatakenoaru-cafe-leaf.com/",
     "shop_instagram": "@leaf_all.friendly",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.957897,137.059341",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9593017,137.0632623",
     "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": null,
@@ -9353,7 +9353,7 @@
     "source_note": "Instagram @marina_cafe_aichi「座敷あり子連れランチ8選」紹介",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -9374,11 +9374,11 @@
     "kid_appeal": "オムツ台・キッズチェアあり、キッズメニュー/カトラリーあり、絵本・おもちゃあり",
     "prefecture": "愛知県",
     "city": "豊明市",
-    "latitude": 35.048809,
-    "longitude": 136.974487,
+    "latitude": 35.0490254,
+    "longitude": 136.9780279,
     "official_url": "https://www.kodachi-gallerycafe.com/",
     "shop_instagram": "@gallery_cafe_kinonaka",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.048809,136.974487",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.0490254,136.9780279",
     "checked_at": "2026-07-29",
     "business_hours": null,
     "closed_days": null,
@@ -9391,7 +9391,7 @@
     "source_note": "Instagram @marina_cafe_aichi「座敷あり子連れランチ8選」紹介",
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium"
+      "geo_confidence": "high"
     }
   },
   {
@@ -10752,10 +10752,10 @@
     ],
     "prefecture": "愛知県",
     "city": "豊橋市",
-    "latitude": 34.730183,
-    "longitude": 137.42601,
+    "latitude": 34.7294635,
+    "longitude": 137.4316179,
     "official_url": "https://www.honokuni.or.jp/toyohashi/spot/000031.html",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.730183,137.42601",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.7294635,137.4316179",
     "checked_at": "2026-07-29",
     "business_hours": "9:00〜16:30",
     "closed_days": null,
@@ -10778,7 +10778,7 @@
     "featured": false,
     "status": "published",
     "metadata": {
-      "geo_confidence": "medium",
+      "geo_confidence": "high",
       "drive_guide": true
     }
   },
@@ -11654,10 +11654,10 @@
     ],
     "prefecture": "愛知県",
     "city": "清須市",
-    "latitude": 35.1965,
-    "longitude": 136.8385,
+    "latitude": 35.1978089,
+    "longitude": 136.8668221,
     "official_url": "https://www.city.kiyosu.aichi.jp/shisetsu_annai/jidokan/nishibi/shokai.html",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.1965,136.8385",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.1978089,136.8668221",
     "checked_at": "2026-07-29",
     "business_hours": "9:00〜17:00",
     "closed_days": "日曜日・祝日・年末年始(12/29〜1/3)",
@@ -11680,7 +11680,7 @@
     "featured": false,
     "status": "published",
     "metadata": {
-      "geo_confidence": "low",
+      "geo_confidence": "high",
       "drive_guide": true
     }
   },
@@ -11701,10 +11701,10 @@
     ],
     "prefecture": "愛知県",
     "city": "清須市",
-    "latitude": 35.2072,
-    "longitude": 136.8288,
+    "latitude": 35.2349777,
+    "longitude": 136.840965,
     "official_url": "https://www.yumenomori-kiyosu.jp/",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.2072,136.8288",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.2349777,136.840965",
     "checked_at": "2026-07-29",
     "business_hours": "終日開放（附属施設は火〜日9:00〜18:00）",
     "closed_days": "12/29〜1/3",
@@ -11727,7 +11727,7 @@
     "featured": false,
     "status": "published",
     "metadata": {
-      "geo_confidence": "low",
+      "geo_confidence": "high",
       "drive_guide": true
     }
   },
