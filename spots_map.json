@@ -704,7 +704,7 @@
     "slug": "kariya-highway-oasis",
     "name": "刈谷ハイウェイオアシス",
     "summary": "観覧車や遊具、噴水広場での水遊びも楽しめる入場無料の複合施設。",
-    "description": "刈谷市の刈谷ハイウェイオアシス。観覧車や遊具もあり、入場無料。ジャブジャブ噴水での水遊びもでき、コンサートなどのイベントも開催される。",
+    "description": "刈谷市の刈谷ハイウェイオアシス。観覧車や遊具もあり、入場無料。ジャブジャブ噴水での水遊びもでき、コンサートなどのイベントも開催される。県外から遊びに来る子連れ家族からもアクセスの良さで支持されている。",
     "play_types": [
       "active",
       "water"
@@ -6077,7 +6077,7 @@
     "slug": "sukusuku-oka-genki-no-sato-obu",
     "name": "すくすくヶ丘（げんきの郷）",
     "summary": "じゃぶじゃぶ噴水とせせらぎで水遊びができる大府市の複合施設。",
-    "description": "大府市吉田町正右ェ門新田のJAあぐりタウンげんきの郷内にある「すくすくヶ丘」エリア。じゃぶじゃぶ噴水と足首程度の深さのせせらぎで水遊びができる（4〜10月の季節営業）。営業時間9:00〜21:00、毎月1日休（土日祝の場合は翌平日）。入園無料、駐車場無料（3か所計540台）。フードコートやスイーツ店も隣接。",
+    "description": "大府市吉田町正右ェ門新田のJAあぐりタウンげんきの郷内にある「すくすくヶ丘」エリア。じゃぶじゃぶ噴水と足首程度の深さのせせらぎで水遊びができる（4〜10月の季節営業）。営業時間9:00〜21:00、毎月1日休（土日祝の場合は翌平日）。入園無料、駐車場無料（3か所計540台）。フードコートやスイーツ店も隣接。水遊びをする場合は服がしっかり濡れることがあるため、着替え（できれば長靴）を持参すると安心。",
     "play_types": [
       "water"
     ],
@@ -14585,5 +14585,223 @@
       "geo_audit_note": "広大な里山緑地のためGoogleマップ上のグリーン広場ピン位置を画面座標から推定。既存sp126(牧野ヶ池緑地)とは別施設"
     },
     "editorial_scale": "B"
+  },
+  {
+    "id": "sp231",
+    "slug": "pinnacle2-obu-resora",
+    "name": "ぴなくる2 リソラ大府店",
+    "summary": "ボルダリングジム内のキッズパークを単体利用できる室内遊び場。",
+    "description": "大府市柊山町のリソラ大府ショッピングテラス2階、ボルダリングジム「ぴなくる2」内にあるキッズパーク。木製ツリーハウス型の遊具や0歳から遊べるおもちゃがあり、ボルダリングをしなくてもキッズパークのみの単体利用が可能。有料施設で、0歳児は無料だが1歳以上は利用料がかかる（目安：2時間500円〜、フリー700円〜。詳細は公式サイト・電話で要確認）。リソラ大府内にはnamcoのあそびパークや西松屋、フードコート（お座敷・キッズスペースあり）もあり、1か所で用事がまとめて済む。",
+    "play_types": [
+      "indoor",
+      "active"
+    ],
+    "legacy_categories": [
+      "indoor_play"
+    ],
+    "tags": [
+      "有料",
+      "室内遊び場",
+      "大府市",
+      "ボルダリング",
+      "リソラ大府"
+    ],
+    "prefecture": "愛知県",
+    "city": "大府市",
+    "latitude": 35.016514,
+    "longitude": 136.957581,
+    "official_url": "https://pinna2.com/obu.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.016514,136.957581",
+    "checked_at": "2026-07-30",
+    "business_hours": "平日10:00〜23:00（キッズパークは19:00まで）、土日10:00〜21:00",
+    "closed_days": null,
+    "price_text": "有料（目安：2時間500円〜、フリー700円〜。0歳児は無料、詳細は公式要確認）",
+    "is_free": false,
+    "target_age_min": 0,
+    "target_age_max": 9,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "リソラ大府ショッピングテラス共用駐車場",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": true,
+    "kid_appeal": "木製ツリーハウス型の秘密基地遊具で0歳から遊べる",
+    "estimated_drive_minutes_from_anjo": 30,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "verified_gsi_gmaps_2026-07-30",
+      "drive_guide": true,
+      "source_note": "Instagram @odekake___mii"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp232",
+    "slug": "kodomocchi-park-okazaki",
+    "name": "こどもっちパーク おかざき店",
+    "summary": "2025年7月オープンの木と緑を基調にした落ち着いた室内公園。",
+    "description": "岡崎市大平町のトイザらス・ベビーザらス岡崎店1階にある、2025年7月オープンの室内公園。足元は人工芝で、大型遊具、ブロック・ままごとコーナー、ボールプールなど低年齢向けエリアも完備。木と緑を使った内装で色や音の刺激が控えめなつくり。有料の室内遊び場（時間制、詳細料金は公式サイト要確認）で、駐車場は無料。",
+    "play_types": [
+      "indoor",
+      "active"
+    ],
+    "legacy_categories": [
+      "indoor_play"
+    ],
+    "tags": [
+      "有料",
+      "室内遊び場",
+      "岡崎市",
+      "新規オープン"
+    ],
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.945999,
+    "longitude": 137.186264,
+    "official_url": "https://kodomocchi-park.com/parks/yn6d3ve4",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.945999,137.186264",
+    "checked_at": "2026-07-30",
+    "business_hours": "10:00〜",
+    "closed_days": null,
+    "price_text": "有料（時間制、詳細は公式サイト要確認）",
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "無料",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "木と緑を使った落ち着いた空間でのびのび遊べる",
+    "estimated_drive_minutes_from_anjo": 20,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "verified_gsi_gmaps_2026-07-30",
+      "drive_guide": true,
+      "source_note": "Instagram @mame.navi"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp233",
+    "slug": "wood-designpark-okazaki",
+    "name": "ウッドデザインパーク岡崎",
+    "summary": "日帰りBBQ・ニジマス釣り・キッズスペースも楽しめるグランピング施設。",
+    "description": "岡崎市鍛埜町日面の自然の中にあるグランピング＆「部屋ンピング」施設。宿泊しなくても日帰り利用が可能で、BBQ（手ぶらコース／持ち込みコースあり）、ニジマス釣り（11〜5月開催、釣った魚をその場で食べられる）、木製遊具のあるキッズプレイグラウンド、じゃぶじゃぶ池での川遊びが楽しめる。要予約。料金は1人あたり、手ぶらBBQ大人5,500円〜、持ち込みBBQ大人3,100円〜、小学生1,700円、未就学児500円。",
+    "play_types": [
+      "water",
+      "food",
+      "active",
+      "indoor"
+    ],
+    "legacy_categories": [
+      "bbq",
+      "water_play"
+    ],
+    "tags": [
+      "有料",
+      "BBQ",
+      "岡崎市",
+      "グランピング",
+      "水遊び",
+      "要予約"
+    ],
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.986683,
+    "longitude": 137.289886,
+    "official_url": "https://wood-designpark.jp/okazaki/dayuse/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.986683,137.289886",
+    "checked_at": "2026-07-30",
+    "business_hours": "10:00〜21:00",
+    "closed_days": null,
+    "price_text": "1人あたり 手ぶらBBQ大人5,500円〜／持ち込みBBQ大人3,100円〜／小学生1,700円／未就学児500円",
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": true,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": true,
+    "kid_appeal": "恐竜テーマの部屋やどんぐりプールもあり、BBQ・釣り・水遊びが1日で楽しめる",
+    "estimated_drive_minutes_from_anjo": 45,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "verified_gsi_gmaps_2026-07-30",
+      "drive_guide": true,
+      "source_note": "Instagram @kotokoto.family（要予約・日帰り利用可を公式で確認）"
+    },
+    "editorial_scale": "A"
+  },
+  {
+    "id": "sp234",
+    "slug": "linimo-terrace-koekishisetsu",
+    "name": "リニモテラス公益施設",
+    "summary": "イオンモール長久手隣接、飲食物持込OKでベビーカーも移動しやすい市民交流拠点。",
+    "description": "長久手市勝入塚、イオンモール長久手すぐ横にある市民交流拠点。館内は広々としておりベビーカーでの移動が楽。カフェ（tori 8coffee）併設だが、食べ物・飲み物の持ち込みも可能。1時間単位で借りられるレンタルスペースが4部屋あり、小規模なママ会などにも使える。入館無料。開館9:00〜21:00、月曜・年末年始休館。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "community_facility"
+    ],
+    "tags": [
+      "無料",
+      "室内",
+      "長久手市",
+      "ベビーカーOK",
+      "飲食持込OK"
+    ],
+    "prefecture": "愛知県",
+    "city": "長久手市",
+    "latitude": 35.173092,
+    "longitude": 137.050339,
+    "official_url": "https://linimoterrace.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.173092,137.050339",
+    "checked_at": "2026-07-30",
+    "business_hours": "9:00〜21:00",
+    "closed_days": "月曜（祝日の場合は翌平日）・年末年始",
+    "price_text": "入館無料（レンタルスペースは1時間500〜1,000円）",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": true,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": true,
+    "food_available": true,
+    "kid_appeal": "おしゃれな公共施設で自由に過ごせ、飲食物の持ち込みもできる",
+    "estimated_drive_minutes_from_anjo": 50,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "verified_gsi_gmaps_2026-07-30",
+      "drive_guide": true,
+      "source_note": "Instagram @odekake___mii"
+    },
+    "editorial_scale": "A"
   }
 ]
