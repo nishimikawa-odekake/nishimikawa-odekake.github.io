@@ -58,6 +58,14 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
 @keyframes home-pulse{0%{transform:scale(.6);opacity:.6}100%{transform:scale(1.8);opacity:0}}
 @media(prefers-reduced-motion:reduce){.home-pulse{animation:none;display:none}}
 
+#recenterBtn{position:fixed;right:10px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:1100;width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.25);font-size:19px;line-height:1;color:var(--accent-d);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+#recenterBtn:active{transform:scale(.94)}
+.geo-dot{width:16px;height:16px;position:relative}
+.geo-dot-ring{position:absolute;inset:-7px;border-radius:50%;background:rgba(66,133,244,.25)}
+.geo-dot-core{position:absolute;inset:0;border-radius:50%;background:#4285F4;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.4)}
+.geo-toast{position:fixed;left:50%;bottom:calc(70px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(10px);background:rgba(30,28,24,.92);color:#fff;font-size:.8rem;font-weight:600;padding:9px 16px;border-radius:999px;z-index:2000;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:86vw;text-align:center}
+.geo-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
 /* count badge */
 .countbadge{position:fixed;left:50%;transform:translateX(-50%);top:calc(84px + env(safe-area-inset-top));z-index:480;background:rgba(61,58,52,.85);color:#fff;font-size:.72rem;font-weight:700;padding:5px 12px;border-radius:999px;pointer-events:none}
 
@@ -114,6 +122,7 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
 <div class="countbadge" id="countBadge">該当640件</div>
 
 <div id="map" role="application" aria-label="スポットの地図"></div>
+<button id="recenterBtn" type="button" aria-label="現在地へ戻る" title="現在地へ戻る">⌖</button>
 
 <div class="chipbar" id="chipbar">
   <button class="chip play" data-t="animal">🦁 動物</button>
@@ -432,6 +441,38 @@ function setOrigin(name,lat,lng){
   apply();
   updateOriginMarker();
 }
+
+// --- 現在地UX: 青ドット表示・初回自動パン・トースト通知（alert不使用） ---
+let userLatLng=null, userDotMarker=null, autoPannedOnce=false;
+function showToast(msg){
+  let t=document.getElementById('geoToast');
+  if(!t){ t=document.createElement('div'); t.id='geoToast'; t.className='geo-toast'; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(showToast._tm);
+  showToast._tm=setTimeout(()=>t.classList.remove('show'),2600);
+}
+function blueDotIcon(){
+  return L.divIcon({className:'',html:'<div class="geo-dot"><div class="geo-dot-ring"></div><div class="geo-dot-core"></div></div>',iconSize:[16,16],iconAnchor:[8,8]});
+}
+function placeUserDot(lat,lng){
+  userLatLng=[lat,lng];
+  if(!map) return;
+  try{
+    if(userDotMarker){ userDotMarker.setLatLng(userLatLng); }
+    else{ userDotMarker=L.marker(userLatLng,{icon:blueDotIcon(),zIndexOffset:3000,interactive:false,keyboard:false}).addTo(map); }
+  }catch(e){ console.warn('user dot update failed',e); }
+}
+function requestGeolocation(onOk,onFail){
+  if(!navigator.geolocation){ showToast('位置情報が許可されていません'); if(onFail)onFail(); return; }
+  let done=false;
+  const watchdog=setTimeout(()=>{ if(done)return; done=true; showToast('位置情報が許可されていません'); if(onFail)onFail(); },9000);
+  navigator.geolocation.getCurrentPosition(
+    pos=>{ if(done)return; done=true; clearTimeout(watchdog); onOk(pos.coords.latitude,pos.coords.longitude); },
+    ()=>{ if(done)return; done=true; clearTimeout(watchdog); showToast('位置情報が許可されていません'); if(onFail)onFail(); },
+    {timeout:8000,maximumAge:60000}
+  );
+}
+
 originSel.addEventListener('change',()=>{
   const opt=originSel.selectedOptions[0];
   const parts=originSel.value.split(',');
@@ -439,15 +480,29 @@ originSel.addEventListener('change',()=>{
 });
 document.getElementById('originGeo').addEventListener('click',()=>{
   const backToAnjo=()=>{ originSel.value=CITIES[0][1]+','+CITIES[0][2]; setOrigin('安城市',ANJO[0],ANJO[1]); };
-  if(!navigator.geolocation){ backToAnjo(); return; }
-  let done=false;
-  const watchdog=setTimeout(()=>{ if(!done){done=true;backToAnjo();} },9000);
-  navigator.geolocation.getCurrentPosition(
-    pos=>{ if(done)return; done=true; clearTimeout(watchdog); setOrigin('現在地',pos.coords.latitude,pos.coords.longitude); },
-    ()=>{ clearTimeout(watchdog); backToAnjo(); },
-    {timeout:8000,maximumAge:60000}
-  );
+  requestGeolocation((lat,lng)=>{
+    setOrigin('現在地',lat,lng);
+    placeUserDot(lat,lng);
+    if(!autoPannedOnce && map){ map.setView([lat,lng],13,{animate:true}); autoPannedOnce=true; }
+  }, backToAnjo);
 });
+const recenterBtn=document.getElementById('recenterBtn');
+if(recenterBtn){
+  recenterBtn.addEventListener('click',()=>{
+    if(userLatLng){
+      if(map) map.setView(userLatLng,13,{animate:true});
+      setOrigin('現在地',userLatLng[0],userLatLng[1]);
+      placeUserDot(userLatLng[0],userLatLng[1]);
+      return;
+    }
+    requestGeolocation((lat,lng)=>{
+      setOrigin('現在地',lat,lng);
+      placeUserDot(lat,lng);
+      if(map) map.setView([lat,lng],13,{animate:true});
+      autoPannedOnce=true;
+    });
+  });
+}
 
 // --- URL param handoff ---
 (function(){

@@ -187,6 +187,14 @@ footer p{margin:0 0 6px}
 .home-pulse{position:absolute;inset:0;border-radius:50%;background:var(--accent);opacity:.55;animation:home-pulse 2.2s ease-out infinite}
 .home-pin{position:relative;width:48px;height:48px;border-radius:50%;background:#fff;border:3px solid var(--accent-d);box-shadow:0 3px 10px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:24px}
 .home-label{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px;background:var(--accent-d);color:#fff;font-size:.72rem;font-weight:700;white-space:nowrap;padding:2px 8px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.25);pointer-events:none}
+
+#recenterBtn{position:absolute;right:10px;bottom:10px;z-index:410;width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.18);font-size:19px;line-height:1;color:var(--accent-d);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+#recenterBtn:active{transform:scale(.94)}
+.geo-dot{width:16px;height:16px;position:relative}
+.geo-dot-ring{position:absolute;inset:-7px;border-radius:50%;background:rgba(66,133,244,.25)}
+.geo-dot-core{position:absolute;inset:0;border-radius:50%;background:#4285F4;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.4)}
+.geo-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(10px);background:rgba(30,28,24,.92);color:#fff;font-size:.8rem;font-weight:600;padding:9px 16px;border-radius:999px;z-index:2000;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:86vw;text-align:center}
+.geo-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @keyframes home-pulse{0%{transform:scale(.6);opacity:.55}100%{transform:scale(2.1);opacity:0}}
 @media(prefers-reduced-motion:reduce){.home-pulse{animation:none;display:none}}
 
@@ -343,6 +351,7 @@ footer p{margin:0 0 6px}
     <div id="mapwrap">
       <div id="map" role="application" aria-label="スポットの地図"></div>
       <button id="fullscreenMapBtn" type="button">⛶ 全画面で見る</button>
+      <button id="recenterBtn" type="button" aria-label="現在地へ戻る" title="現在地へ戻る">⌖</button>
     </div>
     <button id="backToMap" type="button" aria-label="マップに戻る">🗺 マップに戻る</button>
     <div class="listwrap">
@@ -914,6 +923,54 @@ function updateOriginMarker(){
 }
 updateOriginMarker(); // place initial marker (安城市) once map/origin are ready
 
+// --- 現在地UX: 青ドット表示・初回自動パン・トースト通知（alert不使用） ---
+let userLatLng=null, userDotMarker=null, autoPannedOnce=false;
+function showToast(msg){
+  let t=document.getElementById('geoToast');
+  if(!t){ t=document.createElement('div'); t.id='geoToast'; t.className='geo-toast'; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(showToast._tm);
+  showToast._tm=setTimeout(()=>t.classList.remove('show'),2600);
+}
+function blueDotIcon(){
+  return L.divIcon({className:'',html:'<div class="geo-dot"><div class="geo-dot-ring"></div><div class="geo-dot-core"></div></div>',iconSize:[16,16],iconAnchor:[8,8]});
+}
+function placeUserDot(lat,lng){
+  userLatLng=[lat,lng];
+  if(!map) return;
+  try{
+    if(userDotMarker){ userDotMarker.setLatLng(userLatLng); }
+    else{ userDotMarker=L.marker(userLatLng,{icon:blueDotIcon(),zIndexOffset:3000,interactive:false,keyboard:false}).addTo(map); }
+  }catch(e){ console.warn('user dot update failed',e); }
+}
+function requestGeolocation(onOk){
+  if(!navigator.geolocation){ showToast('位置情報が許可されていません'); return; }
+  let done=false;
+  const watchdog=setTimeout(()=>{ if(done)return; done=true; showToast('位置情報が許可されていません'); },9000);
+  navigator.geolocation.getCurrentPosition(
+    pos=>{ if(done)return; done=true; clearTimeout(watchdog); onOk(pos.coords.latitude,pos.coords.longitude); },
+    ()=>{ if(done)return; done=true; clearTimeout(watchdog); showToast('位置情報が許可されていません'); },
+    {timeout:8000,maximumAge:60000}
+  );
+}
+const recenterBtn=document.getElementById('recenterBtn');
+if(recenterBtn){
+  recenterBtn.addEventListener('click',()=>{
+    if(userLatLng){
+      if(map) map.setView(userLatLng,13,{animate:true});
+      setOrigin('現在地',userLatLng[0],userLatLng[1]);
+      placeUserDot(userLatLng[0],userLatLng[1]);
+      return;
+    }
+    requestGeolocation((lat,lng)=>{
+      setOrigin('現在地',lat,lng);
+      placeUserDot(lat,lng);
+      if(map) map.setView([lat,lng],13,{animate:true});
+      autoPannedOnce=true;
+    });
+  });
+}
+
 function setOrigin(name,lat,lng){
   origin.name=name; origin.lat=lat; origin.lng=lng; origin.isAnjo=(name==='安城市');
   const dl=document.getElementById('driveLabel'); if(dl) dl.textContent=origin.name+'から';
@@ -938,7 +995,13 @@ document.getElementById('originGeo').addEventListener('click',()=>{
   // watchdog: if neither callback fires (e.g. prompt dismissed / headless), fall back gracefully
   const watchdog=setTimeout(fail,9000);
   navigator.geolocation.getCurrentPosition(
-    pos=>{ if(done)return; done=true; clearTimeout(watchdog); setOrigin('現在地',pos.coords.latitude,pos.coords.longitude); },
+    pos=>{
+      if(done)return; done=true; clearTimeout(watchdog);
+      const lat=pos.coords.latitude, lng=pos.coords.longitude;
+      setOrigin('現在地',lat,lng);
+      placeUserDot(lat,lng);
+      if(!autoPannedOnce && map){ map.setView([lat,lng],13,{animate:true}); autoPannedOnce=true; }
+    },
     ()=>{ clearTimeout(watchdog); fail(); },
     {timeout:8000,maximumAge:60000}
   );
