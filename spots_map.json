@@ -17040,5 +17040,415 @@
     "featured": false,
     "status": "published",
     "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8623953,136.8806137"
+  },
+  {
+    "prefecture": "愛知県",
+    "target_age_min": null,
+    "target_age_max": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "checked_at": "2026-07-31",
+    "id": "sp278",
+    "slug": "nakamura-park-nagoya",
+    "name": "中村公園",
+    "summary": "豊臣秀吉ゆかりの史跡と日本庭園・遊具が揃う中村区の代表公園。",
+    "description": "名古屋市中村区中村町にある市営の都市公園。豊国神社に隣接し、豊臣秀吉・加藤清正ゆかりの史跡が点在。和風の池や流れが整備された日本庭園に面して茶室があり、児童向けの遊具広場も設置。「中村★魅力みにきてちょうMAP」や「どんぐり＋まつぼっくりマップ」など季節の親子向け散策マップを公式配布しており、史跡巡りと遊具遊びを両方楽しめる。",
+    "city": "名古屋市中村区",
+    "latitude": 35.1737037,
+    "longitude": 136.8545225,
+    "official_url": "https://www.nakamura-park.com/guidance/index.html",
+    "business_hours": "公園内自由",
+    "closed_days": null,
+    "price_text": "入園無料(公園内施設に入場する場合は別途必要)",
+    "is_free": true,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり",
+    "kid_appeal": "秀吉ゆかりの史跡めぐりと遊具遊びが一度に楽しめ、季節の親子向け散策マップも配布",
+    "play_types": [
+      "active"
+    ],
+    "editorial_scale": "A",
+    "geo_note": "公式サイトの位置情報とGoogleマップ施設ピン(35.1737037,136.8545225)を照合し一致。中村区にはこれまで掲載スポットがなかったため新規追加。",
+    "metadata": {
+      "geo_confidence": "medium",
+      "round": 7,
+      "drive_guide": false
+    },
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.1737037,136.8545225",
+    "tags": [
+      "無料",
+      "名古屋市中村区",
+      "ラウンド7追加"
+    ],
+    "legacy_categories": [
+      "free"
+    ]
+  },
+  {
+    "prefecture": "愛知県",
+    "target_age_min": null,
+    "target_age_max": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "checked_at": "2026-07-31",
+    "id": "sp279",
+    "slug": "kasadera-park-nagoya",
+    "name": "笠寺公園",
+    "summary": "梅と桜の名所で遊具も充実した名古屋市南区の高台公園。",
+    "description": "名古屋市南区見晴町の高台にある公園。弥生時代の遺跡が見つかった敷地内には見晴台考古資料館があり、戦時中の砲台跡も残る。梅の木が約160本植えられ初春には花見が楽しめるほか、幼児向けから健康遊具まで種類豊富な遊具が点在し、口コミでも「どんぐりの木が多く小さい子が楽しめる」と評判。名鉄本笠寺駅から徒歩9分。",
+    "city": "名古屋市南区",
+    "latitude": 35.0989607,
+    "longitude": 136.9399647,
+    "official_url": "https://iko-yo.net/facilities/159832",
+    "business_hours": "公園内自由",
+    "closed_days": null,
+    "price_text": "入園無料",
+    "is_free": true,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり",
+    "kid_appeal": "遊具が点在し、どんぐり拾いや梅・桜の花見も楽しめる高台の公園",
+    "play_types": [
+      "active"
+    ],
+    "editorial_scale": "B",
+    "geo_note": "Googleマップ施設ピン(35.0989607,136.9399647)といこーよ掲載住所(名古屋市南区見晴町)を照合し一致。南区の追加スポットとして採用。",
+    "metadata": {
+      "geo_confidence": "medium",
+      "round": 7,
+      "drive_guide": false
+    },
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.0989607,136.9399647",
+    "tags": [
+      "無料",
+      "名古屋市南区",
+      "ラウンド7追加"
+    ],
+    "legacy_categories": [
+      "free"
+    ]
+  },
+  {
+    "prefecture": "愛知県",
+    "target_age_min": null,
+    "target_age_max": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "checked_at": "2026-07-31",
+    "id": "sp280",
+    "slug": "mizuho-park-higashi-jidoen-nagoya",
+    "name": "瑞穂公園東児童園",
+    "summary": "ローラー滑り台とターザンロープで活発に遊べる瑞穂区の公園。",
+    "description": "名古屋市瑞穂区師長町、地下鉄名城線「瑞穂運動場東駅」3番出入口から徒歩約1分の公園。森の中を通る長いローラー滑り台やターザンロープ、クライミング遊具、小さな子ども向けのブランコまで年齢問わず遊べる遊具が揃う。桜の木も多く春は花見も可能。多目的トイレにおむつ交換台あり。2026年にアスレチックが新設されリニューアル。",
+    "city": "名古屋市瑞穂区",
+    "latitude": 35.1220997,
+    "longitude": 136.9463007,
+    "official_url": "https://iko-yo.net/facilities/179350",
+    "business_hours": "公園内自由",
+    "closed_days": null,
+    "price_text": "入園無料",
+    "is_free": true,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "駐車場なし(公共交通機関推奨)",
+    "kid_appeal": "長いローラー滑り台とターザンロープが人気。2026年にアスレチックも新設されリニューアル",
+    "play_types": [
+      "active"
+    ],
+    "editorial_scale": "B",
+    "geo_note": "Googleマップ施設ピン(35.1220997,136.9463007、公園東側の児童園区画)といこーよ掲載情報(地下鉄瑞穂運動場東駅徒歩1分)を照合し一致。瑞穂区の公園・児童館枠として追加。",
+    "metadata": {
+      "geo_confidence": "medium",
+      "round": 7,
+      "drive_guide": false
+    },
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.1220997,136.9463007",
+    "tags": [
+      "無料",
+      "名古屋市瑞穂区",
+      "ラウンド7追加"
+    ],
+    "legacy_categories": [
+      "free"
+    ]
+  },
+  {
+    "prefecture": "愛知県",
+    "target_age_min": null,
+    "target_age_max": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "checked_at": "2026-07-31",
+    "id": "sp281",
+    "slug": "nishio-rekishi-koen",
+    "name": "西尾市歴史公園(西尾城跡)",
+    "summary": "復元された城郭建築と庭園を無料で見学できる西尾市のシンボル公園。",
+    "description": "西尾市錦城町にある西尾城の一部を復元した史跡公園。本丸丑寅櫓・鍮石門・旧近衛邸などの復元建築が並び、本丸丑寅櫓は内部見学可(9:30〜16:00)。園内は入園無料で、抹茶ラボ西尾伝想茶屋店(古民家カフェ、10:00〜17:00)や旧近衛邸でのお抹茶体験(季節の和菓子付き600円)もあり、歴史散策と休憩を組み合わせやすい。",
+    "city": "西尾市",
+    "latitude": 34.866653,
+    "longitude": 137.048111,
+    "official_url": "https://www.city.nishio.aichi.jp/shisetsu/1005437/1002603.html",
+    "business_hours": "9:00〜18:00(10月〜3月は17:00まで)",
+    "closed_days": "月曜(祝日の場合は開館)、12/29〜1/3",
+    "price_text": "入園無料(旧近衛邸のお抹茶体験は600円)",
+    "is_free": true,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり",
+    "kid_appeal": "復元された城の建物を無料で見学でき、抹茶カフェでの休憩や古民家の雰囲気も楽しめる",
+    "play_types": [
+      "active"
+    ],
+    "editorial_scale": "A",
+    "geo_note": "公式ページ記載住所(西尾市錦城町231番地1)のGSI座標(34.866653,137.048111)とGoogleマップ施設ピン(34.8666582,137.0484364)を照合し0.03km差で一致。",
+    "metadata": {
+      "geo_confidence": "high",
+      "round": 7,
+      "drive_guide": false
+    },
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.866653,137.048111",
+    "tags": [
+      "無料",
+      "西尾市",
+      "ラウンド7追加"
+    ],
+    "legacy_categories": [
+      "free"
+    ]
+  },
+  {
+    "prefecture": "愛知県",
+    "target_age_min": null,
+    "target_age_max": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "checked_at": "2026-07-31",
+    "id": "sp282",
+    "slug": "ranran-ichigoen-nishio",
+    "name": "らんらんいちご園",
+    "summary": "章姫・かおり野・紅ほっぺの3品種が食べ比べできる西尾市唯一のいちご狩り園。",
+    "description": "西尾市市子町平加にあるいちご狩り園。通路が広くベビーカーでも利用しやすく、章姫・かおり野・紅ほっぺ(あきひめ・かおりの・べにほっぺ)の3品種を練乳・チョコシロップ・ホイップクリームのトッピング付きで食べ比べできる。夜のいちご狩りも実施している西尾市内で唯一の観光いちご園。駐車場70台(無料)。",
+    "city": "西尾市",
+    "latitude": 34.8287612,
+    "longitude": 137.0372304,
+    "official_url": "https://nishiokanko.com/list/shop/ranranichigoen/",
+    "business_hours": "9:00〜15:00(受付14:00まで)",
+    "closed_days": "毎週金曜日",
+    "price_text": "時期・品種により変動(要問合せ)",
+    "is_free": false,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり(70台・無料)",
+    "kid_appeal": "3品種のいちご食べ比べ+トッピング選び放題で、夜のいちご狩りという珍しい体験もできる",
+    "play_types": [
+      "active",
+      "food"
+    ],
+    "editorial_scale": "A",
+    "geo_note": "Googleマップ施設ピン(34.8287612,137.0372304)と、公式記載住所(西尾市市子町平加43)のGSI座標(34.829376,137.0354)を照合し約0.17km差で一致。",
+    "metadata": {
+      "geo_confidence": "high",
+      "round": 7,
+      "drive_guide": false
+    },
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8287612,137.0372304",
+    "tags": [
+      "有料",
+      "西尾市",
+      "ラウンド7追加"
+    ],
+    "legacy_categories": [
+      "paid"
+    ]
+  },
+  {
+    "prefecture": "愛知県",
+    "target_age_min": null,
+    "target_age_max": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "checked_at": "2026-07-31",
+    "id": "sp283",
+    "slug": "michinoeki-toyohashi",
+    "name": "道の駅とよはし",
+    "summary": "授乳室・情報提供施設を備えた大型テナント揃いの豊橋の道の駅。",
+    "description": "豊橋市東七根町にある大型道の駅。地元産の野菜・肉・魚を扱う「あぐりパーク食彩村」や食堂・ベーカリーなど多数のテナントが入る。情報提供施設には清潔な授乳室・おむつ交換スペースがあり、小さな子ども連れの利用が多い。24時間利用可能な休憩スペースとトイレがあり、広い駐車場でベビーカー移動もしやすい。",
+    "city": "豊橋市",
+    "latitude": 34.6960733,
+    "longitude": 137.4145487,
+    "official_url": "https://michinoeki-toyohashi.jp/use/use03",
+    "business_hours": "施設により異なる(情報提供施設は24時間利用可)",
+    "closed_days": "年中無休(店舗により異なる)",
+    "price_text": "入場無料",
+    "is_free": true,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "あり(大型車専用あり)",
+    "kid_appeal": "授乳室・おむつ交換スペースを完備し、食事処も多いのでドライブ休憩にちょうどいい",
+    "play_types": [
+      "indoor",
+      "food"
+    ],
+    "editorial_scale": "B",
+    "geo_note": "Googleマップ施設ピン(34.6960733,137.4145487)を採用。GSI住所検索は字地番(東七根町一の沢113-2)を町丁目レベルまでしか解決できなかったため、口コミ多数の施設ピンを正としツールキットcのルール(西三河ぐるっとナビ等公式情報と照合)に沿って中信頼度で採用。",
+    "metadata": {
+      "geo_confidence": "medium",
+      "round": 7,
+      "drive_guide": true
+    },
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.6960733,137.4145487",
+    "tags": [
+      "無料",
+      "豊橋市",
+      "ラウンド7追加"
+    ],
+    "legacy_categories": [
+      "free"
+    ]
+  },
+  {
+    "prefecture": "愛知県",
+    "target_age_min": null,
+    "target_age_max": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "checked_at": "2026-07-31",
+    "id": "sp284",
+    "slug": "michinoeki-tsukude-tedukurimura",
+    "name": "道の駅つくで手作り村",
+    "summary": "うさぎ・やぎとのふれあい体験ができる新城市作手高原の道の駅。",
+    "description": "新城市作手清岳にある道の駅。産直市場「山家市」、食堂「味彩館」、五平もちが人気の「勇気工房」に加え、「とんちん館」では木工細工の販売と、うさぎ・やぎとのふれあい体験ができる。高原ならではの新鮮野菜や高原トマトを使ったハヤシライス・ソフトクリームも名物。第一・第二駐車場に計100台以上、EV充電器あり。",
+    "city": "新城市",
+    "latitude": 34.9636694,
+    "longitude": 137.4208583,
+    "official_url": "https://www.tedukurimura.com/",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "木曜日(祝日の場合は営業・振替なし)",
+    "price_text": "入場無料(ふれあい体験・飲食は別途)",
+    "is_free": true,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり(第一・第二駐車場合計100台超)",
+    "kid_appeal": "うさぎ・やぎとのふれあい体験ができ、高原野菜を使ったグルメも楽しめる道の駅",
+    "play_types": [
+      "animal"
+    ],
+    "editorial_scale": "B",
+    "geo_note": "Googleマップ施設ピン(34.9636694,137.4208583)を採用。GSI住所検索は字地番(作手清岳字ナガラミ10-2)を大字レベルまでしか解決できなかったため、口コミ多数の施設ピンを正として中信頼度で採用。",
+    "metadata": {
+      "geo_confidence": "medium",
+      "round": 7,
+      "drive_guide": true
+    },
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9636694,137.4208583",
+    "tags": [
+      "無料",
+      "新城市",
+      "ラウンド7追加"
+    ],
+    "legacy_categories": [
+      "free"
+    ]
+  },
+  {
+    "prefecture": "愛知県",
+    "target_age_min": null,
+    "target_age_max": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "checked_at": "2026-07-31",
+    "id": "sp285",
+    "slug": "tahara-chuo-library",
+    "name": "田原市中央図書館",
+    "summary": "定期的なおはなし会と広い読書スペースが魅力の田原文化会館内図書館。",
+    "description": "田原市田原町汐見、田原文化会館内にある市立中央図書館。子どもの読書活動推進のため定期的に「おはなし会」を開催しているほか、さまざまなテーマの展示替えを行っており、何度訪れても新しい発見がある。木を基調にしたモダンな館内は閲覧席が多く、カフェ・食事スペースも広いので、雨の日の1日の過ごし先として使いやすい。第一・第二駐車場に加え立体駐車場もあり。",
+    "city": "田原市",
+    "latitude": 34.6713903,
+    "longitude": 137.2740466,
+    "official_url": "https://www2.city.tahara.aichi.jp/section/library/",
+    "business_hours": "火水金10:00〜19:00、木10:00〜20:00、土日祝10:00〜17:00",
+    "closed_days": "月曜(国民の休日の場合は直近平日)、館内整理日(毎月第2金曜)、12/28〜1/4",
+    "price_text": "入館無料",
+    "is_free": true,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "あり(第一・第二・立体駐車場)",
+    "kid_appeal": "定期開催のおはなし会や展示替えがあり、広い読書・カフェスペースで雨の日も長く過ごせる",
+    "play_types": [
+      "indoor"
+    ],
+    "editorial_scale": "B",
+    "geo_note": "Googleマップ施設ピン(34.6713903,137.2740466)とGSI住所検索座標(34.671787,137.274109、田原市田原町汐見5)を照合し約0.03km差で一致。",
+    "metadata": {
+      "geo_confidence": "high",
+      "round": 7,
+      "drive_guide": false
+    },
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.6713903,137.2740466",
+    "tags": [
+      "無料",
+      "田原市",
+      "ラウンド7追加"
+    ],
+    "legacy_categories": [
+      "free"
+    ]
   }
 ]
