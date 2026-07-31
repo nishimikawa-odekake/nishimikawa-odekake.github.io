@@ -573,7 +573,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp011",
@@ -690,7 +694,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp013",
@@ -3449,7 +3457,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm002",
@@ -3494,7 +3506,12 @@
     "has_kids_space": true,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": true,
+      "benefit": "カフェご利用1,000円以上で100円引き",
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm003",
@@ -3536,7 +3553,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm004",
@@ -3579,7 +3600,11 @@
     "has_kids_space": true,
     "has_zashiki": true,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm005",
@@ -3622,7 +3647,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm006",
@@ -3710,7 +3739,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm008",
@@ -3750,7 +3783,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm009",
@@ -3836,7 +3873,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm011",
@@ -3882,7 +3923,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm012",
@@ -3927,7 +3972,11 @@
     "has_kids_space": true,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm013",
@@ -3972,7 +4021,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm014",
@@ -4014,7 +4067,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm015",
@@ -4058,7 +4115,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm016",
@@ -4103,7 +4164,11 @@
     "has_kids_space": true,
     "has_zashiki": true,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm017",
@@ -4149,7 +4214,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm018",
@@ -4190,7 +4259,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm019",
@@ -4229,7 +4302,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm020",
@@ -4268,7 +4345,11 @@
     "has_kids_space": true,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp062",
@@ -7733,7 +7814,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp123",
@@ -7872,7 +7957,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm023",
@@ -7952,7 +8041,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm025",
@@ -7992,7 +8085,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm026",
@@ -8034,7 +8131,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm027",
@@ -8076,7 +8177,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm028",
@@ -8203,7 +8308,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm031",
@@ -8245,7 +8354,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm032",
@@ -9813,7 +9926,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm056",
@@ -9856,7 +9973,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm058",
@@ -9897,7 +10018,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm061",
@@ -9938,7 +10063,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm062",
@@ -9980,7 +10109,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm064",
@@ -10021,7 +10154,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm066",
@@ -10063,7 +10200,11 @@
     "has_kids_space": true,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm067",
@@ -10104,7 +10245,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm068",
@@ -10146,7 +10291,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm069",
@@ -10188,7 +10337,11 @@
     "has_kids_space": true,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm070",
@@ -10276,7 +10429,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm072",
@@ -10407,7 +10564,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm075",
@@ -10446,7 +10607,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm076",
@@ -10487,7 +10652,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm077",
@@ -10528,7 +10697,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm078",
@@ -10568,7 +10741,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm079",
@@ -10608,7 +10785,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm080",
@@ -10650,7 +10831,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm081",
@@ -10690,7 +10875,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm082",
@@ -10731,7 +10920,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm083",
@@ -10770,7 +10963,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm084",
@@ -10810,7 +11007,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm085",
@@ -10851,7 +11052,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm086",
@@ -10892,7 +11097,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm087",
@@ -10934,7 +11143,11 @@
     "has_kids_space": true,
     "has_zashiki": false,
     "has_kids_chair": true,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm090",
@@ -11250,7 +11463,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm098",
@@ -11289,7 +11506,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "gm099",
@@ -11329,7 +11550,11 @@
     "has_kids_space": false,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp137",
@@ -14600,9 +14825,9 @@
   {
     "id": "sp201",
     "slug": "miyoshi-araya-jidokan",
-    "name": "新谷児童館",
-    "summary": "みよし市井ノ杁原にある市立児童館。",
-    "description": "みよし市井ノ杁原1-21にある児童館。10時〜17時開館、火・日・祝日・年末年始・8月13〜15日休館。0歳〜18歳未満対象。",
+    "name": "新屋児童館",
+    "summary": "みよし市三好町池ノ原にある市立児童館。",
+    "description": "みよし市三好町池ノ原1-21にある児童館。10時〜17時開館（12時〜13時休憩）、火・日・祝日・年末年始（12/28〜1/4）・8月13〜15日休館。0歳〜18歳未満対象。",
     "play_types": [
       "indoor"
     ],
@@ -14641,7 +14866,8 @@
     "status": "published",
     "metadata": {
       "geo_confidence": "low",
-      "drive_guide": true
+      "drive_guide": true,
+      "fix_note": "旧名称『新谷児童館』は表記誤り。公式名称『新屋児童館』に修正（西三河児童館調査 2026-07-31）"
     },
     "editorial_scale": "B",
     "has_kids_space": true,
@@ -16004,7 +16230,11 @@
     "has_kids_space": true,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp234",
@@ -16578,7 +16808,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp244",
@@ -18739,7 +18973,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "prefecture": "愛知県",
@@ -19811,7 +20049,11 @@
     "has_kids_space": true,
     "has_zashiki": true,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp302",
@@ -20621,7 +20863,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp315",
@@ -20737,7 +20983,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp317",
@@ -20795,7 +21045,11 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
   },
   {
     "id": "sp318",
@@ -20910,6 +21164,2494 @@
     "has_kids_space": false,
     "has_zashiki": false,
     "has_kids_chair": false,
-    "is_jidokan": false
+    "is_jidokan": false,
+    "hagumin": {
+      "available": false,
+      "checked_at": "2026-07-31"
+    }
+  },
+  {
+    "id": "sp321",
+    "slug": "anjo-anjo-jidocenter",
+    "name": "安祥児童センター",
+    "summary": "安城市にある市立児童館・児童センター。",
+    "description": "安城市安城市安城町多門96番地にある児童館・児童センター。9:00〜17:00開館、月曜日（敬老の日等は開所の場合あり）、年末年始休館。0歳〜17歳未満対象。遊戯室・集会室・児童活動室（2室）・児童図書室・授乳コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "安城市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.943035,
+    "longitude": 137.092636,
+    "official_url": "https://www.city.anjo.aichi.jp/kurasu/kosodate/kosodateshisetsu/jido-center/annsyou.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.943035,137.092636",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（敬老の日等は開所の場合あり）、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp322",
+    "slug": "anjo-chuo-jidocenter",
+    "name": "中央児童センター",
+    "summary": "安城市にある市立児童館・児童センター。",
+    "description": "安城市安城市赤松町大北78番地1にある児童館・児童センター。9:00〜17:00開館、月曜日（敬老の日等は開所の場合あり）、年末年始休館。0歳〜17歳未満対象。遊戯室・集会室・児童活動室・図書コーナー・授乳コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "安城市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.945107,
+    "longitude": 137.071579,
+    "official_url": "https://www.city.anjo.aichi.jp/kurasu/kosodate/kosodateshisetsu/jido-center/chuou.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.945107,137.071579",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（敬老の日等は開所の場合あり）、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp323",
+    "slug": "anjo-seibu-jidocenter",
+    "name": "西部児童センター",
+    "summary": "安城市にある市立児童館・児童センター。",
+    "description": "安城市安城市福釜町西天12番地にある児童館・児童センター。9:00〜17:00開館、月曜日（敬老の日等は開所の場合あり）、年末年始休館。0歳〜17歳未満対象。集会室・遊戯室・児童図書室・授乳コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "安城市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.947723,
+    "longitude": 137.044144,
+    "official_url": "https://www.city.anjo.aichi.jp/kurasu/kosodate/kosodateshisetsu/jido-center/seibu.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.947723,137.044144",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（敬老の日等は開所の場合あり）、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp324",
+    "slug": "anjo-chubu-jidocenter",
+    "name": "中部児童センター",
+    "summary": "安城市にある市立児童館・児童センター。",
+    "description": "安城市安城市新田町小山西83番地にある児童館・児童センター。9:00〜17:00開館、月曜日（敬老の日等は開所の場合あり）、年末年始休館。0歳〜17歳未満対象。遊戯室・児童図書室・集会室・授乳コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "安城市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.971859,
+    "longitude": 137.086609,
+    "official_url": "https://www.city.anjo.aichi.jp/kurasu/kosodate/kosodateshisetsu/jido-center/chubu.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.971859,137.086609",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（敬老の日等は開所の場合あり）、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp325",
+    "slug": "anjo-hokubu-jidocenter",
+    "name": "北部児童センター",
+    "summary": "安城市にある市立児童館・児童センター。",
+    "description": "安城市安城市里町4丁目12番地4にある児童館・児童センター。9:00〜17:00開館、月曜日（敬老の日等は開所の場合あり）、年末年始休館。0歳〜17歳未満対象。遊戯室・学習室・集会室・授乳コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "安城市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.992493,
+    "longitude": 137.090286,
+    "official_url": "https://www.city.anjo.aichi.jp/kurasu/kosodate/kosodateshisetsu/jido-center/hokubu.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.992493,137.090286",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（敬老の日等は開所の場合あり）、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp326",
+    "slug": "anjo-sakuno-jidocenter",
+    "name": "作野児童センター",
+    "summary": "安城市にある市立児童館・児童センター。",
+    "description": "安城市安城市篠目町古林畔26番地にある児童館・児童センター。9:00〜17:00開館、月曜日（敬老の日等は開所の場合あり）、年末年始休館。0歳〜17歳未満対象。遊戯室・集会室（2室）・児童図書室・授乳コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "安城市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.977875,
+    "longitude": 137.078094,
+    "official_url": "https://www.city.anjo.aichi.jp/kurasu/kosodate/kosodateshisetsu/jido-center/sakuno.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.977875,137.078094",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（敬老の日等は開所の場合あり）、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp327",
+    "slug": "anjo-sakurai-jidocenter",
+    "name": "桜井児童センター",
+    "summary": "安城市にある市立児童館・児童センター。",
+    "description": "安城市安城市桜井町大役田1番地1にある児童館・児童センター。9:00〜17:00開館、月曜日（敬老の日等は開所の場合あり）、年末年始休館。0歳〜17歳未満対象。遊戯室・児童図書室・集会室（複数）・授乳コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "安城市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.915504,
+    "longitude": 137.089096,
+    "official_url": "https://www.city.anjo.aichi.jp/kurasu/kosodate/kosodateshisetsu/jido-center/sakurai.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.915504,137.089096",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（敬老の日等は開所の場合あり）、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp328",
+    "slug": "anjo-nihongi-jidocenter",
+    "name": "二本木児童センター",
+    "summary": "安城市にある市立児童館・児童センター。",
+    "description": "安城市安城市三河安城本町1丁目13番地9にある児童館・児童センター。9:00〜17:00開館、月曜日（敬老の日等は開所の場合あり）、年末年始休館。0歳〜17歳未満対象。遊戯室・集会室・児童図書室・授乳コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "安城市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.972073,
+    "longitude": 137.056305,
+    "official_url": "https://www.city.anjo.aichi.jp/kurasu/kosodate/kosodateshisetsu/jido-center/nihongi.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.972073,137.056305",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（敬老の日等は開所の場合あり）、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp329",
+    "slug": "anjo-meisho-jidocenter",
+    "name": "明祥児童センター",
+    "summary": "安城市にある市立児童館・児童センター。",
+    "description": "安城市安城市和泉町大下38番地1にある児童館・児童センター。9:00〜17:00開館、月曜日（敬老の日等は開所の場合あり）、年末年始休館。0歳〜17歳未満対象。遊戯室・児童集会室・児童図書室・授乳コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "安城市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.912148,
+    "longitude": 137.044159,
+    "official_url": "https://www.city.anjo.aichi.jp/kurasu/kosodate/kosodateshisetsu/jido-center/meisyou.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.912148,137.044159",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（敬老の日等は開所の場合あり）、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp330",
+    "slug": "kariya-fujimatsu-jidokan",
+    "name": "富士松児童館",
+    "summary": "刈谷市にある市立児童館・児童センター。",
+    "description": "刈谷市刈谷市今川町2丁目152番地にある児童館・児童センター。9:00〜17:00開館、月曜日、年末年始休館。0歳〜17歳未満対象。遊戯室・児童集会室",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "刈谷市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 35.030472,
+    "longitude": 137.018967,
+    "official_url": "https://www.city.kariya.lg.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.030472,137.018967",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp331",
+    "slug": "kariya-hokubu-jidokan",
+    "name": "北部児童館",
+    "summary": "刈谷市にある市立児童館・児童センター。",
+    "description": "刈谷市刈谷市東境町住吉78番地2にある児童館・児童センター。9:00〜17:00開館、月曜日、年末年始休館。0歳〜17歳未満対象。ブロックコーナー・マット・児童図書",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "刈谷市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 35.037891,
+    "longitude": 137.039154,
+    "official_url": "https://www.city.kariya.lg.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.037891,137.039154",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp332",
+    "slug": "kariya-higashikariya-jidokan",
+    "name": "東刈谷児童館",
+    "summary": "刈谷市にある市立児童館・児童センター。",
+    "description": "刈谷市刈谷市松栄町2丁目16番地1にある児童館・児童センター。9:00〜17:00開館、月曜日、年末年始休館。0歳〜17歳未満対象。授乳室・すべり台・遊戯室・集会室",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "刈谷市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 34.977657,
+    "longitude": 137.032547,
+    "official_url": "https://www.city.kariya.lg.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.977657,137.032547",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp333",
+    "slug": "kariya-ogakie-jidokan",
+    "name": "小垣江児童館",
+    "summary": "刈谷市にある市立児童館・児童センター。",
+    "description": "刈谷市刈谷市小垣江町小道45番地1にある児童館・児童センター。9:00〜17:00開館、月曜日、年末年始休館。0歳〜17歳未満対象。遊戯室・児童集会室・図書室",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "刈谷市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 34.964565,
+    "longitude": 136.998474,
+    "official_url": "https://www.city.kariya.lg.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.964565,136.998474",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp334",
+    "slug": "kariya-hitotsugi-jidokan",
+    "name": "一ツ木児童館",
+    "summary": "刈谷市にある市立児童館・児童センター。",
+    "description": "刈谷市刈谷市一ツ木町4丁目40番地3（一ツ木福祉センター内）にある児童館・児童センター。9:00〜17:00開館、月曜日、年末年始休館。0歳〜17歳未満対象。図書室・ちびっこルーム・遊戯室",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "刈谷市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 35.014465,
+    "longitude": 137.023407,
+    "official_url": "https://www.city.kariya.lg.jp/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.014465,137.023407",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp335",
+    "slug": "chiryu-raigoji-jidocenter",
+    "name": "来迎寺児童センター",
+    "summary": "知立市にある市立児童館・児童センター。",
+    "description": "知立市知立市来迎寺町外山5番地にある児童館・児童センター。10:00〜18:00開館、日曜日、祝日、12月29日〜1月3日休館。0歳〜17歳未満対象。図書貸出・乳幼児向けおもちゃ・行事スペース",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "知立市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "知立市",
+    "latitude": 35.002441,
+    "longitude": 137.069138,
+    "official_url": "https://www.city.chiryu.aichi.jp/soshiki/fukushikodomo/kodomo/gyomu/4/jidosenta/1445318717680.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.002441,137.069138",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜18:00",
+    "closed_days": "日曜日、祝日、12月29日〜1月3日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp336",
+    "slug": "chiryu-showa-jidocenter",
+    "name": "昭和児童センター",
+    "summary": "知立市にある市立児童館・児童センター。",
+    "description": "知立市知立市昭和7丁目1番地にある児童館・児童センター。10:00〜18:00開館、日曜日、祝日、12月29日〜1月3日休館。0歳〜17歳未満対象。図書貸出・乳幼児向けおもちゃ・行事スペース",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "知立市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "知立市",
+    "latitude": 34.994129,
+    "longitude": 137.067123,
+    "official_url": "https://www.city.chiryu.aichi.jp/soshiki/fukushikodomo/kodomo/gyomu/4/jidosenta/1445318717680.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.994129,137.067123",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜18:00",
+    "closed_days": "日曜日、祝日、12月29日〜1月3日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp337",
+    "slug": "chiryu-nishi-jidocenter",
+    "name": "西児童センター",
+    "summary": "知立市にある市立児童館・児童センター。",
+    "description": "知立市知立市西町草刈10番地5（スギ薬局知立福祉アリーナ内）にある児童館・児童センター。10:00〜18:00開館、日曜日、祝日、12月29日〜1月3日休館。0歳〜17歳未満対象。図書貸出・乳幼児向けおもちゃ・行事スペース",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "知立市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "知立市",
+    "latitude": 35.009487,
+    "longitude": 137.034103,
+    "official_url": "https://www.city.chiryu.aichi.jp/soshiki/fukushikodomo/kodomo/gyomu/4/jidosenta/1445318717680.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.009487,137.034103",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜18:00",
+    "closed_days": "日曜日、祝日、12月29日〜1月3日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp338",
+    "slug": "chiryu-hanayama-jidocenter",
+    "name": "花山児童センター",
+    "summary": "知立市にある市立児童館・児童センター。",
+    "description": "知立市知立市中山町東狭間35番地にある児童館・児童センター。10:00〜18:00開館、日曜日、祝日、12月29日〜1月3日休館。0歳〜17歳未満対象。図書貸出・乳幼児向けおもちゃ・行事スペース",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "知立市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "知立市",
+    "latitude": 35.008633,
+    "longitude": 137.046158,
+    "official_url": "https://www.city.chiryu.aichi.jp/soshiki/fukushikodomo/kodomo/gyomu/4/jidosenta/1445318717680.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.008633,137.046158",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜18:00",
+    "closed_days": "日曜日、祝日、12月29日〜1月3日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp339",
+    "slug": "chiryu-minami-jidocenter",
+    "name": "南児童センター",
+    "summary": "知立市にある市立児童館・児童センター。",
+    "description": "知立市知立市新林町新林18番地6にある児童館・児童センター。10:00〜18:00開館、日曜日、祝日、12月29日〜1月3日休館。0歳〜17歳未満対象。図書貸出・乳幼児向けおもちゃ・行事スペース（暴風警報等発令時は臨時閉館の場合あり）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "知立市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "知立市",
+    "latitude": 34.987392,
+    "longitude": 137.044754,
+    "official_url": "https://www.city.chiryu.aichi.jp/soshiki/fukushikodomo/kodomo/gyomu/4/jidosenta/1445318717680.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.987392,137.044754",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜18:00",
+    "closed_days": "日曜日、祝日、12月29日〜1月3日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp340",
+    "slug": "nishio-chuo-jidokan",
+    "name": "中央児童館",
+    "summary": "西尾市にある市立児童館・児童センター。",
+    "description": "西尾市西尾市鶴ケ崎町6-2にある児童館・児童センター。9:00〜17:00開館、月曜日（祝日は開館）、祝日の翌日、12月29日〜1月3日休館。0歳〜18歳未満対象。遊戯室・集会室・図書室・児童クラブ室",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "西尾市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "西尾市",
+    "latitude": 34.86919,
+    "longitude": 137.050827,
+    "official_url": "https://www.city.nishio.aichi.jp/kosodate/shien/1004990/1002320.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.86919,137.050827",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（祝日は開館）、祝日の翌日、12月29日〜1月3日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp341",
+    "slug": "nishio-isshiki-jidocenter",
+    "name": "一色児童センター",
+    "summary": "西尾市にある市立児童館・児童センター。",
+    "description": "西尾市西尾市一色町一色中屋敷84-1にある児童館・児童センター。9:00〜17:00開館、月曜日（祝日は開館）、祝日の翌日、12月29日〜1月3日休館。0歳〜18歳未満対象。遊戯室・乳幼児室・工作室・図書室・会議室・相談室・ホール・遊具・砂場",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "西尾市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "西尾市",
+    "latitude": 34.810261,
+    "longitude": 137.026077,
+    "official_url": "https://www.city.nishio.aichi.jp/kosodate/shien/1004990/1002317.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.810261,137.026077",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（祝日は開館）、祝日の翌日、12月29日〜1月3日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp342",
+    "slug": "nishio-kira-jidokan",
+    "name": "吉良児童館",
+    "summary": "西尾市にある市立児童館・児童センター。",
+    "description": "西尾市西尾市吉良町吉田大切間17-3（吉良保健センター2階）にある児童館・児童センター。9:00〜17:00開館、月曜日（祝日は開館）、祝日の翌日、12月29日〜1月3日休館。0歳〜18歳未満対象。遊戯室・乳幼児室・集会室・図書室",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "西尾市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "西尾市",
+    "latitude": 34.796165,
+    "longitude": 137.065643,
+    "official_url": "https://www.city.nishio.aichi.jp/kosodate/shien/1004990/1002319.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.796165,137.065643",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00",
+    "closed_days": "月曜日（祝日は開館）、祝日の翌日、12月29日〜1月3日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp343",
+    "slug": "hekinan-tanao-jidocenter",
+    "name": "棚尾児童センター",
+    "summary": "碧南市にある市立児童館・児童センター。",
+    "description": "碧南市碧南市汐田町2丁目28番地（棚尾公民館内）にある児童館・児童センター。9:30〜18:00開館、月曜日（祝日の場合は翌日）、年末年始（12/29〜1/4）休館。0歳〜17歳未満対象。設備詳細は公式一覧に未記載",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "碧南市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "碧南市",
+    "latitude": 34.875126,
+    "longitude": 136.990265,
+    "official_url": "http://www.hekinan-shakyo.jp/center-tanao.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.875126,136.990265",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:30〜18:00",
+    "closed_days": "月曜日（祝日の場合は翌日）、年末年始（12/29〜1/4）",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp344",
+    "slug": "hekinan-tobu-jidocenter",
+    "name": "東部児童センター",
+    "summary": "碧南市にある市立児童館・児童センター。",
+    "description": "碧南市碧南市照光町5丁目3番地（東部市民プラザ内）にある児童館・児童センター。9:30〜18:00開館、月曜日（祝日の場合は翌日）、年末年始（12/29〜1/4）休館。0歳〜17歳未満対象。設備詳細は公式一覧に未記載",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "碧南市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "碧南市",
+    "latitude": 34.885178,
+    "longitude": 137.010071,
+    "official_url": "http://www.hekinan-shakyo.jp/center-tobu.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.885178,137.010071",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:30〜18:00",
+    "closed_days": "月曜日（祝日の場合は翌日）、年末年始（12/29〜1/4）",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp345",
+    "slug": "hekinan-raracle-nishibata",
+    "name": "碧南市こどもプラザ ららくるにしばた",
+    "summary": "碧南市にある市立児童館・児童センター。",
+    "description": "碧南市碧南市三度山町2丁目53番地にある児童館・児童センター。9:30〜18:00開館、火曜日（祝日の場合は翌日）、年末年始（12/29〜1/3）休館。0歳〜17歳未満対象。ワークルーム（キッチン）・音楽室・サークル室・学習室・予約専用ルーム（有料）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "碧南市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "碧南市",
+    "latitude": 34.913937,
+    "longitude": 137.007858,
+    "official_url": "https://www.city.hekinan.lg.jp/soshiki/kodomo_kenkou/kodomo/facility/7232.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.913937,137.007858",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:30〜18:00",
+    "closed_days": "火曜日（祝日の場合は翌日）、年末年始（12/29〜1/3）",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp346",
+    "slug": "hekinan-cocorock-shinkawa",
+    "name": "碧南市こどもプラザ ここるっくしんかわ",
+    "summary": "碧南市にある市立児童館・児童センター。",
+    "description": "碧南市碧南市山神町8丁目35番地にある児童館・児童センター。9:30〜18:00開館、水曜日（祝日の場合は翌日）、年末年始（12/29〜1/3）休館。0歳〜17歳未満対象。設備詳細は公式一覧に未記載",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "碧南市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "碧南市",
+    "latitude": 34.898651,
+    "longitude": 136.987839,
+    "official_url": "https://www.city.hekinan.lg.jp/soshiki/kodomo_kenkou/kodomo/facility/7234.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.898651,136.987839",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:30〜18:00",
+    "closed_days": "水曜日（祝日の場合は翌日）、年末年始（12/29〜1/3）",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp347",
+    "slug": "takahama-tokai-jidocenter",
+    "name": "東海児童センター",
+    "summary": "高浜市にある市立児童館・児童センター。",
+    "description": "高浜市高浜市田戸町二丁目2番地59（東海会館内）にある児童館・児童センター。9:00〜12:00、13:00〜17:00開館、日曜日、祝日、年末年始（12/29〜1/3）休館。0歳〜17歳未満対象。大型ブロック・卓球台・トランポリン・マット・絵本紙芝居貸出等",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "高浜市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "高浜市",
+    "latitude": 34.913681,
+    "longitude": 136.98143,
+    "official_url": "https://www.city.takahama.lg.jp/soshiki/ikusei/1835.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.913681,136.98143",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜12:00、13:00〜17:00",
+    "closed_days": "日曜日、祝日、年末年始（12/29〜1/3）",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp348",
+    "slug": "takahama-tsubasa-jidocenter",
+    "name": "翼児童センター",
+    "summary": "高浜市にある市立児童館・児童センター。",
+    "description": "高浜市高浜市大塚町1丁目1番地にある児童館・児童センター。9:00〜12:00、13:00〜17:00開館、日曜日、祝日、年末年始（12/29〜1/3）休館。0歳〜17歳未満対象。大型ブロック・卓球台・トランポリン等（市共通設備）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "高浜市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "高浜市",
+    "latitude": 34.927578,
+    "longitude": 136.987305,
+    "official_url": "https://takahamashi.com/tubasa/sp/news/news.cgi",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.927578,136.987305",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜12:00、13:00〜17:00",
+    "closed_days": "日曜日、祝日、年末年始（12/29〜1/3）",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "low",
+      "geo_note": "市中心部フォールバック",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp349",
+    "slug": "takahama-yoshihama-jidocenter",
+    "name": "吉浜児童センター",
+    "summary": "高浜市にある市立児童館・児童センター。",
+    "description": "高浜市高浜市呉竹町3丁目8-20にある児童館・児童センター。9:00〜12:00、13:00〜17:00開館、日曜日、祝日、年末年始（12/29〜1/3）休館。0歳〜17歳未満対象。設備詳細は個別ページに未記載",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "高浜市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "高浜市",
+    "latitude": 34.940514,
+    "longitude": 136.989426,
+    "official_url": "http://www.chita-gakuen.or.jp/yosihama-jidocenter/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.940514,136.989426",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜12:00、13:00〜17:00",
+    "closed_days": "日曜日、祝日、年末年始（12/29〜1/3）",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp350",
+    "slug": "takahama-takahama-jidocenter",
+    "name": "高浜児童センター",
+    "summary": "高浜市にある市立児童館・児童センター。",
+    "description": "高浜市高浜市高浜町1丁目15にある児童館・児童センター。9:00〜12:00、13:00〜17:00開館、日曜日、祝日、年末年始（12/29〜1/3）休館。0歳〜17歳未満対象。幼児向け遊具・ブロック・オセロ・ゲーム機・マット・トランポリン",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "高浜市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "高浜市",
+    "latitude": 34.927578,
+    "longitude": 136.987305,
+    "official_url": "https://takahamashi.com/takahama/sisetu/sisetu.shtml",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.927578,136.987305",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜12:00、13:00〜17:00",
+    "closed_days": "日曜日、祝日、年末年始（12/29〜1/3）",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "low",
+      "geo_note": "市中心部フォールバック",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp351",
+    "slug": "miyoshi-miyoshikami-jidokan",
+    "name": "三好上児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市三好町上103にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.088078,
+    "longitude": 137.07074,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.088078,137.07074",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp352",
+    "slug": "miyoshi-hachigaike-jidokan",
+    "name": "蜂ヶ池児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市三好町蜂ケ池29-12にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.085144,
+    "longitude": 137.07634,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.085144,137.07634",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp353",
+    "slug": "miyoshi-miyoshishimo-jidokan",
+    "name": "三好下児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市三好町八和田50-2にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.08532,
+    "longitude": 137.067627,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.08532,137.067627",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp354",
+    "slug": "miyoshi-nishiisshiki-jidokan",
+    "name": "西一色児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市西一色町池ノ内17にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.087437,
+    "longitude": 137.058792,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.087437,137.058792",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp355",
+    "slug": "miyoshi-fukuta-jidokan",
+    "name": "福田児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市福田町東屋敷84にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.07214,
+    "longitude": 137.050964,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.07214,137.050964",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp356",
+    "slug": "miyoshi-myochikami-jidokan",
+    "name": "明知上児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市明知町東谷10にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.071548,
+    "longitude": 137.08197,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.071548,137.08197",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp357",
+    "slug": "miyoshi-myochishimo-jidokan",
+    "name": "明知下児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市明知町下屋敷17にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.060715,
+    "longitude": 137.079483,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.060715,137.079483",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp358",
+    "slug": "miyoshi-uchikoshi-jidokan",
+    "name": "打越児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市打越町前田27-1にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.073463,
+    "longitude": 137.098206,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.073463,137.098206",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp359",
+    "slug": "miyoshi-azabu-jidokan",
+    "name": "莇生児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市莇生町小金下2-1にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.101868,
+    "longitude": 137.099854,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.101868,137.099854",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp360",
+    "slug": "miyoshi-fukugai-jidokan",
+    "name": "福谷児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市福谷町仲田21-3にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.114464,
+    "longitude": 137.10556,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.114464,137.10556",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp361",
+    "slug": "miyoshi-higashiyama-jidokan",
+    "name": "東山児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市三好町弥栄31-3にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.083275,
+    "longitude": 137.082794,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.083275,137.082794",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp362",
+    "slug": "miyoshi-takane-jidokan",
+    "name": "高嶺児童館",
+    "summary": "みよし市にある市立児童館・児童センター。",
+    "description": "みよし市みよし市打越町新池浦63-1にある児童館・児童センター。10:00〜17:00（12:00〜13:00休憩）開館、火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日休館。0歳〜17歳未満対象。卓球台・一輪車・竹馬・ブロック・輪投げ・跳び箱・マット・ホッピング・児童図書等（施設ごとに内容は異なる）",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "みよし市",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "みよし市",
+    "latitude": 35.093407,
+    "longitude": 137.110657,
+    "official_url": "https://www.city.aichi-miyoshi.lg.jp/shisetsuosagasu/5654.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.093407,137.110657",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00（12:00〜13:00休憩）",
+    "closed_days": "火曜日、日曜日、祝日、年末年始（12/28〜1/4）、8月13日〜15日",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "市公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp363",
+    "slug": "koda-yokoochi-jidokan",
+    "name": "横落児童館",
+    "summary": "幸田町にある市立児童館・児童センター。",
+    "description": "幸田町幸田町大字横落字郷中65番地にある児童館・児童センター。10:00〜17:00開館、毎週月曜日、第3日曜日、年末年始休館。0歳〜17歳未満対象。キッズルーム（乳幼児用）・遊戯室・図書コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "幸田町",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "幸田町",
+    "latitude": 34.865688,
+    "longitude": 137.174942,
+    "official_url": "https://www.town.kota.lg.jp/soshiki/8/20268.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.865688,137.174942",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00",
+    "closed_days": "毎週月曜日、第3日曜日、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "町公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp364",
+    "slug": "koda-koda-jidokan",
+    "name": "幸田児童館",
+    "summary": "幸田町にある市立児童館・児童センター。",
+    "description": "幸田町幸田町大字芦谷字後シロ15番地1にある児童館・児童センター。10:00〜17:00開館、毎週月曜日、第3日曜日、年末年始休館。0歳〜17歳未満対象。キッズルーム（乳幼児用）・遊戯室・図書コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "幸田町",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "幸田町",
+    "latitude": 34.861462,
+    "longitude": 137.166595,
+    "official_url": "https://www.town.kota.lg.jp/soshiki/8/20268.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.861462,137.166595",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00",
+    "closed_days": "毎週月曜日、第3日曜日、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "町公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp365",
+    "slug": "koda-fukozo-jidokan",
+    "name": "深溝児童館",
+    "summary": "幸田町にある市立児童館・児童センター。",
+    "description": "幸田町幸田町大字深溝字里4番地1にある児童館・児童センター。10:00〜17:00開館、毎週月曜日、第3日曜日、年末年始休館。0歳〜17歳未満対象。キッズルーム（乳幼児用）・遊戯室・図書コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "幸田町",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "幸田町",
+    "latitude": 34.838615,
+    "longitude": 137.178879,
+    "official_url": "https://www.town.kota.lg.jp/soshiki/8/20268.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.838615,137.178879",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00",
+    "closed_days": "毎週月曜日、第3日曜日、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "町公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
+  },
+  {
+    "id": "sp366",
+    "slug": "koda-toyosaka-hotto",
+    "name": "豊坂ほっと館",
+    "summary": "幸田町にある市立児童館・児童センター。",
+    "description": "幸田町幸田町大字六栗字西山2番地169にある児童館・児童センター。10:00〜17:00開館、毎週月曜日、第3日曜日、年末年始休館。0歳〜17歳未満対象。キッズルーム（乳幼児用）・遊戯室・図書コーナー",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [],
+    "tags": [
+      "幸田町",
+      "児童館",
+      "無料"
+    ],
+    "prefecture": "愛知県",
+    "city": "幸田町",
+    "latitude": 34.858273,
+    "longitude": 137.15123,
+    "official_url": "https://www.town.kota.lg.jp/soshiki/8/20268.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.858273,137.15123",
+    "checked_at": "2026-07-31",
+    "business_hours": "10:00〜17:00",
+    "closed_days": "毎週月曜日、第3日曜日、年末年始",
+    "price_text": "入館無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 17,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "遊びを通して成長をサポートする地域の児童館・児童センター。",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "町公式住所+GSI",
+      "drive_guide": false,
+      "source": "西三河児童館一覧調査2026-07-31"
+    },
+    "editorial_scale": "B",
+    "has_kids_space": true,
+    "has_zashiki": false,
+    "has_kids_chair": false,
+    "is_jidokan": true
   }
 ]
