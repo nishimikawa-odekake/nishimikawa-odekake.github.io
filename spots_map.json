@@ -19042,5 +19042,274 @@
       "verified_at": "2026-07-31"
     },
     "editorial_scale": "meal"
+  },
+  {
+    "id": "sp315",
+    "slug": "toyota-chiiki-bunka-hiroba",
+    "name": "豊田地域文化広場",
+    "summary": "豊田市西町にある複合文化施設。プラネタリウム（とよた科学体験館）と無料のこども体験館・大型遊具のある広場を併設。",
+    "description": "豊田市西町3丁目60番地にある豊田市の複合文化施設「豊田地域文化広場」。館内のとよた科学体験館ではプラネタリウム番組を上映（有料）しているほか、無料のこども体験館やこども広場の大型遊具でも遊べる。雨の日でもプラネタリウムと室内広場を組み合わせて半日過ごせるのが魅力。",
+    "play_types": [
+      "indoor",
+      "active"
+    ],
+    "legacy_categories": [
+      "museum",
+      "planetarium",
+      "play_area"
+    ],
+    "tags": [
+      "プラネタリウム",
+      "室内遊具",
+      "豊田市",
+      "雨の日"
+    ],
+    "prefecture": "愛知県",
+    "city": "豊田市",
+    "latitude": 35.08374,
+    "longitude": 137.156235,
+    "official_url": "https://www.city.toyota.aichi.jp/shisetsu/bunka/bunkahiroba/1005783.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.08374,137.156235",
+    "checked_at": "2026-07-31",
+    "business_hours": "施設全体は9:00〜21:00（区画により異なる）。プラネタリウムは9:00〜17:00（夜間投影日は最終回終了まで）",
+    "closed_days": "月曜日（祝日・振替休日の場合は開館）、年末年始",
+    "price_text": "こども体験館・こども広場は無料。プラネタリウム観覧料は一般300円、4歳〜高校生100円（豊田市内在住の高校生以下・70歳以上は無料）",
+    "is_free": null,
+    "target_age_min": 0,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "駐車場あり",
+    "nursing_room": true,
+    "diaper_changing": true,
+    "stroller_access": true,
+    "food_available": null,
+    "kid_appeal": "無料のこども体験館・大型遊具に加え、プラネタリウムも楽しめる雨の日にも安心な複合施設",
+    "estimated_drive_minutes_from_anjo": 40,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（豊田市西町3丁目60番地）で緯度経度35.08374,137.156235を取得。Googleマップ検索でも同施設の位置と0.3km以内で一致することを確認。豊田市公式サイト・とよた科学体験館公式サイトでプラネタリウム料金（一般300円/4歳〜高校生100円）・開館時間・休館日（月曜、祝日除く）を確認済み。既存マスターの「一宮地域文化広場」とは別施設で重複なし。"
+    },
+    "editorial_scale": "A"
+  },
+  {
+    "id": "sp316",
+    "slug": "water-palace-kc-kariya",
+    "name": "ウォーターパレスKC",
+    "summary": "刈谷市にあるごみ焼却余熱を利用した屋内温水プール。ウォータースライダーやトレーニングジムも併設。",
+    "description": "刈谷市半城土北町にある刈谷知立環境組合が運営する屋内温水プール施設。ごみ焼却施設の余熱を利用し年間を通じて温水プールを利用でき、ウォータースライダーやトレーニングジム、スタジオも併設。雨の日や真夏・真冬でも安心して水遊びができる。",
+    "play_types": [
+      "water",
+      "indoor"
+    ],
+    "legacy_categories": [
+      "pool",
+      "public_facility"
+    ],
+    "tags": [
+      "屋内プール",
+      "温水プール",
+      "刈谷市",
+      "ウォータースライダー",
+      "余熱利用"
+    ],
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 34.985264,
+    "longitude": 137.025223,
+    "official_url": "https://kariyachiryu-wpkc.com/guide/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.985264,137.025223",
+    "checked_at": "2026-07-31",
+    "business_hours": "月〜金・土日祝 9:00〜21:00（プール・ジム利用は20:30まで）",
+    "closed_days": "毎月末の月曜日（祝日の場合は翌日）、9月は水質入替・設備点検のため長期休館あり",
+    "price_text": "大人（高校生以上）プール500円・ジム300円、子供（小中学生）プール200円、未就学児100円（プール利用時、2人目以降）",
+    "is_free": false,
+    "target_age_min": 0,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "駐車場あり",
+    "nursing_room": null,
+    "diaper_changing": true,
+    "stroller_access": true,
+    "food_available": null,
+    "kid_appeal": "ごみ焼却余熱で年中温かい屋内プール。ウォータースライダーもあり雨の日・真夏真冬でも遊べる",
+    "estimated_drive_minutes_from_anjo": 20,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（刈谷市半城土北町1丁目402番地）で緯度経度34.985264,137.025223を取得。Googleマップ検索でも同位置0.3km以内で一致。刈谷市公式サイト・刈谷知立環境組合公式サイトで営業時間9:00-21:00、休館日（月末月曜等）、料金（大人500円/子供200円/未就学児100円）を確認済み。既存マスター395件に同名・近接重複なし。"
+    },
+    "editorial_scale": "A"
+  },
+  {
+    "id": "sp317",
+    "slug": "mermaid-palace-anjo",
+    "name": "マーメイドパレス（安城市レジャープール）",
+    "summary": "安城市和泉町にあるごみ焼却余熱利用の屋内レジャープール。25mプール・流れるプール・ウォータースライダーあり。",
+    "description": "安城市和泉町大下にある安城市の屋内レジャープール「マーメイドパレス」。ごみ焼却施設の余熱を利用した温水プールで、25mプール・流れるプール（ラグーンプール）・波のプール・ウォータースライダー・トレーニング室を備える。夏休み期間は営業時間が延長される。",
+    "play_types": [
+      "water",
+      "indoor"
+    ],
+    "legacy_categories": [
+      "pool",
+      "public_facility"
+    ],
+    "tags": [
+      "屋内プール",
+      "温水プール",
+      "安城市",
+      "ウォータースライダー",
+      "流れるプール"
+    ],
+    "prefecture": "愛知県",
+    "city": "安城市",
+    "latitude": 34.912357,
+    "longitude": 137.042847,
+    "official_url": "https://www.asoview.com/spot/23212ca3370151469/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.912357,137.042847",
+    "checked_at": "2026-07-31",
+    "business_hours": "火水木金 13:00〜20:00／日土祝 10:00〜20:00（夏休み期間は10:00〜21:00）",
+    "closed_days": "月曜日（祝日を除く）、年末年始、施設点検日",
+    "price_text": "大人（高校生以上）510円、子供（中学生以下）200円（団体・障がい者割引あり）",
+    "is_free": false,
+    "target_age_min": 0,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "駐車場あり",
+    "nursing_room": null,
+    "diaper_changing": true,
+    "stroller_access": true,
+    "food_available": null,
+    "kid_appeal": "余熱利用の温水プールで、流れるプールやウォータースライダーを通年楽しめる屋内レジャープール",
+    "estimated_drive_minutes_from_anjo": 10,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（安城市和泉町大下23番地）で緯度経度34.912357,137.042847を取得。Googleマップ検索でも同位置0.3km以内で一致。るるぶ・アソビュー等の情報サイトで営業時間（火水木金13-20時／日土祝10-20時、夏休み延長）、休館日（月曜）、料金（大人510円/子供200円）を確認済み。既存マスターに同名・近接重複なし。"
+    },
+    "editorial_scale": "A"
+  },
+  {
+    "id": "sp318",
+    "slug": "primetree-akaike",
+    "name": "プライムツリー赤池",
+    "summary": "日進市赤池町にある大型商業施設。買い物のついでや雨の日に立ち寄れる有料キッズ施設「キドキド」を3階に併設。",
+    "description": "日進市赤池町にある大型ショッピングモール「プライムツリー赤池」。日用品の買い物や食事のついでに、3階の有料屋内キッズ施設「キドキド プライムツリー赤池店」（ボーネルンド運営）に立ち寄れる。雨の日の駆け込み先や、買い物中に子どもを少し遊ばせたい時の選択肢として便利。単独の目的地というより、ショッピングと組み合わせた利用がおすすめ。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "shopping_mall",
+      "indoor_play"
+    ],
+    "tags": [
+      "ショッピングモール",
+      "雨の日",
+      "キドキド",
+      "日進市",
+      "ついで遊び"
+    ],
+    "prefecture": "愛知県",
+    "city": "日進市",
+    "latitude": 35.124897,
+    "longitude": 137.007507,
+    "official_url": "https://kidokid.bornelund.co.jp/primetree-akaike/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.124897,137.007507",
+    "checked_at": "2026-07-31",
+    "business_hours": "モール10:00〜21:00目安（店舗により異なる）。キドキドは10:00〜19:00（最終入場18:30）",
+    "closed_days": "モール休館日に準ずる（年数回）",
+    "price_text": "モール入場は無料。キドキドは有料（平日：未就学児30分800円+10分毎200円、休日30分1000円+10分毎200円、保護者700円など、詳細は公式サイト参照）",
+    "is_free": null,
+    "target_age_min": 0,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "大型無料駐車場あり",
+    "nursing_room": true,
+    "diaper_changing": true,
+    "stroller_access": true,
+    "food_available": true,
+    "kid_appeal": "買い物や食事のついでに3階の有料キッズ施設「キドキド」に立ち寄れる、雨の日の駆け込みにも便利なモール",
+    "estimated_drive_minutes_from_anjo": 45,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（日進市赤池町屋下1番地1付近）で緯度経度35.124897,137.007507を取得。Googleマップ検索でも同位置0.3km以内で一致。キドキド公式サイトで営業時間10:00-19:00・料金体系を確認済み。編集方針によりmall内施設としてeditorial_scale=Bとし、単独目的地ではなく「ついで/雨の日」の文脈で記述。既存マスターに同名・近接重複なし。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp319",
+    "slug": "aoi-park-hekinan",
+    "name": "あおいパーク（碧南市農業活性化センター）",
+    "summary": "碧南市江口町にある農業体験施設。無料で入園でき、季節の野菜・果物のもぎとり収穫体験や産直市が楽しめる。",
+    "description": "碧南市江口町3丁目にある碧南市農業活性化センター「あおいパーク」。入園は無料で、観賞温室・映像農業館・産直市に加え、季節に応じたもぎとり収穫体験農園（有料、品目・時期により料金は変動）が人気。トマトやいちごなど旬の野菜・果物を子どもと一緒に収穫できる体験型施設で、農業館・温室の入館のみ一般200円・小人100円程度の料金がかかる。",
+    "play_types": [
+      "active",
+      "food"
+    ],
+    "legacy_categories": [
+      "farm_experience",
+      "harvest"
+    ],
+    "tags": [
+      "収穫体験",
+      "もぎとり",
+      "碧南市",
+      "農業体験",
+      "無料入園"
+    ],
+    "prefecture": "愛知県",
+    "city": "碧南市",
+    "latitude": 34.851795,
+    "longitude": 136.968292,
+    "official_url": "https://www.city.hekinan.lg.jp/aoi_park/taiken/1044.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.851795,136.968292",
+    "checked_at": "2026-07-31",
+    "business_hours": "産直市・体験農園・観賞温室・映像農業館 9:00〜17:00",
+    "closed_days": "月曜日（祝休日の場合は営業し、直後の平日が休園）、年末年始、天候等による臨時休園あり",
+    "price_text": "入園無料。農業館・映像農業館・温室の入館は一般200円程度・小人100円程度。もぎとり収穫体験は品目・時期により別料金（詳細は公式サイト・電話で要確認）",
+    "is_free": null,
+    "target_age_min": 0,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "無料駐車場あり",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": true,
+    "food_available": true,
+    "kid_appeal": "無料で入園でき、季節の野菜・果物のもぎとり収穫体験ができる親子で楽しめる農業体験施設",
+    "estimated_drive_minutes_from_anjo": 25,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（碧南市江口町3丁目15番地3）で緯度経度34.851795,136.968292を取得。Googleマップ検索でも同位置0.3km以内で一致。碧南市公式サイトで入園無料・営業時間9-17時・休園日（月曜）を確認済み。もぎとり体験の具体的料金は品目・時期変動のため公式サイト内に詳細記載なく、電話確認が必要な旨を明記。既存マスターに同名・近接重複なし。"
+    },
+    "editorial_scale": "A"
   }
 ]
