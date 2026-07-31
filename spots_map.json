@@ -49,7 +49,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp002",
@@ -101,7 +102,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp003",
@@ -155,7 +157,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp004",
@@ -208,7 +211,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp005",
@@ -261,7 +265,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp006",
@@ -318,7 +323,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp007",
@@ -374,7 +380,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp008",
@@ -429,7 +436,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp009",
@@ -482,7 +490,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp010",
@@ -533,7 +542,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp011",
@@ -588,7 +598,8 @@
       "drive_guide": true
     },
     "editorial_scale": "B",
-    "editorial_scale_note": "モール(キッズ企画中心)"
+    "editorial_scale_note": "モール(キッズ企画中心)",
+    "has_kids_space": false
   },
   {
     "id": "sp012",
@@ -642,7 +653,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp013",
@@ -697,7 +709,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp014",
@@ -750,7 +763,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp015",
@@ -806,7 +820,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp016",
@@ -856,7 +871,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp017",
@@ -906,7 +922,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp018",
@@ -956,7 +973,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp019",
@@ -1008,7 +1026,8 @@
       "drive_guide": true
     },
     "editorial_scale": "A",
-    "editorial_scale_note": "見学2-3h/半日"
+    "editorial_scale_note": "見学2-3h/半日",
+    "has_kids_space": false
   },
   {
     "id": "sp020",
@@ -1057,7 +1076,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp021",
@@ -1108,7 +1128,8 @@
       "drive_guide": true,
       "note": "臨時休館の可能性があるため来館前に公式サイトで開館状況を要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp023",
@@ -1158,7 +1179,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp024",
@@ -1207,7 +1229,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp025",
@@ -1257,7 +1280,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp026",
@@ -1307,7 +1331,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp027",
@@ -1356,7 +1381,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp028",
@@ -1405,7 +1431,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp029",
@@ -1454,7 +1481,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp030",
@@ -1503,7 +1531,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp031",
@@ -1554,7 +1583,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp032",
@@ -1603,7 +1633,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp033",
@@ -1658,7 +1689,8 @@
       "drive_guide": true,
       "region": "西三河"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp034",
@@ -1712,7 +1744,8 @@
       "drive_guide": true,
       "region": "西三河"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp035",
@@ -1766,7 +1799,8 @@
       "drive_guide": true,
       "region": "西三河"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp036",
@@ -1819,7 +1853,8 @@
       "drive_guide": true,
       "region": "西三河"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp037",
@@ -1874,7 +1909,8 @@
       "drive_guide": true,
       "region": "西三河"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp038",
@@ -1929,7 +1965,8 @@
       "drive_guide": true,
       "region": "西三河"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp039",
@@ -1981,7 +2018,8 @@
       "drive_guide": true,
       "region": "西三河"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp040",
@@ -2032,7 +2070,8 @@
       "drive_guide": true,
       "region": "尾張"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp041",
@@ -2085,7 +2124,8 @@
       "drive_guide": true,
       "region": "西三河"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp042",
@@ -2140,7 +2180,8 @@
       "drive_guide": true,
       "region": "知多"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp043",
@@ -2193,7 +2234,8 @@
       "drive_guide": true,
       "region": "知多"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp044",
@@ -2250,7 +2292,8 @@
       "geo_audit_note": "GSI住所検索(公式住所:板山字比沙田78)。第2ソース未取得のためmedium確度",
       "merge_note": "sp044(まきばの館)とsp212(わんぱく広場)を統合(2026-07-30)"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp045",
@@ -2304,7 +2347,8 @@
       "drive_guide": true,
       "region": "知多"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp046",
@@ -2359,7 +2403,8 @@
       "drive_guide": true,
       "region": "知多"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp047",
@@ -2412,7 +2457,8 @@
       "drive_guide": true,
       "region": "東三河"
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp048",
@@ -2464,7 +2510,8 @@
       "drive_guide": true,
       "region": "東三河"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp049",
@@ -2516,7 +2563,8 @@
       "drive_guide": true,
       "region": "東三河"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp050",
@@ -2571,7 +2619,8 @@
       "drive_guide": true,
       "region": "名古屋"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp051",
@@ -2628,7 +2677,8 @@
       "geo_note": "名古屋市公式サイトの住所（港区春田野一丁目3616番地）とGoogleマップ住所表記が完全一致(35.1172215,136.8104172)。",
       "naming_note": "2026年ネーミングライツにより「meitoこどもランド・とだがわ」から「とだがわこどもランド」へ愛称変更（名古屋市公式発表: city.nagoya.jp/houdou/pressr7/3002889/3003816.html）。旧名称meitoこどもランド・とだがわのレコード(sp051)に統合。ラウンド3で重複追加されたsp251は削除済み。"
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp052",
@@ -2683,7 +2733,8 @@
       "drive_guide": true,
       "region": "名古屋"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp053",
@@ -2736,7 +2787,8 @@
       "drive_guide": true,
       "region": "尾張"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp054",
@@ -2790,7 +2842,8 @@
       "region": "尾張"
     },
     "editorial_scale": "S",
-    "editorial_scale_note": "テーマパーク級"
+    "editorial_scale_note": "テーマパーク級",
+    "has_kids_space": false
   },
   {
     "id": "sp055",
@@ -2846,7 +2899,8 @@
       "region": "尾張"
     },
     "editorial_scale": "A",
-    "editorial_scale_note": "国営公園/展望+遊具"
+    "editorial_scale_note": "国営公園/展望+遊具",
+    "has_kids_space": false
   },
   {
     "id": "sp056",
@@ -2899,7 +2953,8 @@
       "drive_guide": true,
       "region": "尾張"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp057",
@@ -2951,7 +3006,8 @@
       "drive_guide": true,
       "region": "尾張"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp058",
@@ -3006,7 +3062,8 @@
       "drive_guide": true,
       "region": "尾張"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp059",
@@ -3060,7 +3117,8 @@
       "drive_guide": true,
       "region": "知多"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp060",
@@ -3113,7 +3171,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp061",
@@ -3166,7 +3225,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "gm001",
@@ -3205,7 +3265,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm002",
@@ -3246,7 +3307,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm003",
@@ -3284,7 +3346,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm004",
@@ -3323,7 +3386,8 @@
     "metadata": {
       "geo_confidence": "verified_gmaps_2026-07-29"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm005",
@@ -3362,7 +3426,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm006",
@@ -3403,7 +3468,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm007",
@@ -3442,7 +3508,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm008",
@@ -3478,7 +3545,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm009",
@@ -3516,7 +3584,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm010",
@@ -3556,7 +3625,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm011",
@@ -3598,7 +3668,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm012",
@@ -3639,7 +3710,8 @@
     "metadata": {
       "geo_confidence": "verified_gmaps_2026-07-29"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm013",
@@ -3680,7 +3752,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm014",
@@ -3718,7 +3791,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm015",
@@ -3758,7 +3832,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm016",
@@ -3799,7 +3874,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm017",
@@ -3841,7 +3917,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm018",
@@ -3878,7 +3955,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm019",
@@ -3913,7 +3991,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm020",
@@ -3948,7 +4027,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "sp062",
@@ -4001,7 +4081,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp063",
@@ -4054,7 +4135,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp064",
@@ -4106,7 +4188,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp065",
@@ -4158,7 +4241,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp066",
@@ -4209,7 +4293,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp067",
@@ -4261,7 +4346,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp068",
@@ -4317,7 +4403,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp069",
@@ -4371,7 +4458,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp070",
@@ -4426,7 +4514,8 @@
       "geo_confidence": "medium",
       "note": "既存sp027「あいち健康の森公園」内の新施設"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp071",
@@ -4479,7 +4568,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp072",
@@ -4533,7 +4623,8 @@
       "geo_confidence": "medium",
       "note": "投稿自体は2022年と古いため公式サイトで最新の企画展・開館状況を要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp073",
@@ -4586,7 +4677,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp074",
@@ -4638,7 +4730,8 @@
     "metadata": {
       "geo_confidence": "low"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp075",
@@ -4692,7 +4785,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp076",
@@ -4745,7 +4839,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp077",
@@ -4797,7 +4892,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp079",
@@ -4852,7 +4948,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp080",
@@ -4907,7 +5004,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp081",
@@ -4961,7 +5059,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp082",
@@ -5018,7 +5117,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp083",
@@ -5073,7 +5173,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp084",
@@ -5129,7 +5230,8 @@
       "drive_guide": true,
       "source_note": "Web調査。Instagram でも人気"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp085",
@@ -5186,7 +5288,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp086",
@@ -5242,7 +5345,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp087",
@@ -5297,7 +5401,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp088",
@@ -5352,7 +5457,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp089",
@@ -5408,7 +5514,8 @@
       "drive_guide": true,
       "source_note": "Web調査。Instagram でも人気"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp090",
@@ -5463,7 +5570,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp091",
@@ -5517,7 +5625,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp092",
@@ -5572,7 +5681,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp093",
@@ -5628,7 +5738,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp094",
@@ -5682,7 +5793,8 @@
       "drive_guide": true,
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp095",
@@ -5739,7 +5851,8 @@
       "drive_guide": true,
       "source_note": "Instagram @rapon.trip"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp096",
@@ -5795,7 +5908,8 @@
       "drive_guide": true,
       "source_note": "Instagram @rapon.trip"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp097",
@@ -5850,7 +5964,8 @@
       "drive_guide": true,
       "source_note": "Instagram @rapon.trip"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp098",
@@ -5906,7 +6021,8 @@
       "drive_guide": true,
       "source_note": "Instagram @rapon.trip"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp099",
@@ -5963,7 +6079,8 @@
       "drive_guide": true,
       "source_note": "Instagram @rapon.trip"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp100",
@@ -6019,7 +6136,8 @@
       "drive_guide": true,
       "source_note": "Instagram @ayankiii_rns（@shinmaiko.marine.park タイアップ投稿）。独立検証は限定的、来場前に公式サイト要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp101",
@@ -6073,7 +6191,8 @@
       "drive_guide": true,
       "source_note": "Instagram @asamama2boys"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp102",
@@ -6127,7 +6246,8 @@
       "drive_guide": true,
       "source_note": "Instagram @asamama2boys"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp103",
@@ -6181,7 +6301,8 @@
       "drive_guide": true,
       "source_note": "Instagram @asamama2boys"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp104",
@@ -6233,7 +6354,8 @@
       "drive_guide": true,
       "source_note": "Instagram @asamama2boys（水遊びエリアの詳細は独立検証不十分、来訪前に要確認）"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp105",
@@ -6289,7 +6411,8 @@
       "drive_guide": true,
       "source_note": "Instagram @asamama2boys"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp106",
@@ -6345,7 +6468,8 @@
       "drive_guide": true,
       "source_note": "Instagram @asamama2boys"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp107",
@@ -6401,7 +6525,8 @@
       "drive_guide": true,
       "source_note": "Instagram @asamama2boys"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp108",
@@ -6454,7 +6579,8 @@
       "source_note": "Web調査"
     },
     "editorial_scale": "S",
-    "editorial_scale_note": "ジブリパーク単体チケット制"
+    "editorial_scale_note": "ジブリパーク単体チケット制",
+    "has_kids_space": false
   },
   {
     "id": "sp109",
@@ -6504,7 +6630,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp110",
@@ -6554,7 +6681,8 @@
       "geo_confidence": "high",
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp111",
@@ -6606,7 +6734,8 @@
       "geo_confidence": "high",
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp112",
@@ -6656,7 +6785,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp113",
@@ -6707,7 +6837,8 @@
       "geo_confidence": "medium",
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp114",
@@ -6759,7 +6890,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp115",
@@ -6811,7 +6943,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp116",
@@ -6862,7 +6995,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp117",
@@ -6913,7 +7047,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp118",
@@ -6965,7 +7100,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp119",
@@ -7015,7 +7151,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp120",
@@ -7067,7 +7204,8 @@
       "geo_confidence": "medium",
       "source_note": "Web調査"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp121",
@@ -7121,7 +7259,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査。季節限定（いちご1〜5月、ぶどう・メロン6〜9月、みかん10〜12月）"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp122",
@@ -7173,7 +7312,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査。季節限定（例年7月中旬〜秋、ぶどう・ブルーベリー狩り）"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp123",
@@ -7224,7 +7364,8 @@
       "geo_confidence": "verified_gmaps_2026-07-29",
       "source_note": "Web調査。季節限定（例年1〜5月頃、いちご狩り）"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "gm021",
@@ -7261,7 +7402,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm022",
@@ -7300,7 +7442,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm023",
@@ -7336,7 +7479,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm024",
@@ -7372,7 +7516,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm025",
@@ -7408,7 +7553,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm026",
@@ -7446,7 +7592,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm027",
@@ -7484,7 +7631,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm028",
@@ -7524,7 +7672,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm029",
@@ -7562,7 +7711,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm030",
@@ -7599,7 +7749,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm031",
@@ -7637,7 +7788,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm032",
@@ -7677,7 +7829,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県名古屋市緑区四本木610-3"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm033",
@@ -7717,7 +7870,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県名古屋市西区上名古屋2丁目4-3"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm034",
@@ -7757,7 +7911,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県名古屋市守山区城土町286-2"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm035",
@@ -7796,7 +7951,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県名古屋市北区山田2-11-62 大曽根住宅1棟1F"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm036",
@@ -7835,7 +7991,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県名古屋市西区五才美町215"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm037",
@@ -7874,7 +8031,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県名古屋市昭和区鶴舞2-16-28"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm038",
@@ -7913,7 +8071,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県名古屋市昭和区村雲町27-15 シャンブル村雲1F"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm040",
@@ -7949,7 +8108,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県一宮市北丹町2番地（療育サポートプラザ チャイブ内）"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm041",
@@ -7985,7 +8145,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県一宮市木曽川町内割田二の通り79-1"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm042",
@@ -8021,7 +8182,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県一宮市浅野字花ノ木39-1"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm043",
@@ -8060,7 +8222,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県春日井市大泉寺町136-3"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm044",
@@ -8097,7 +8260,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県春日井市下条町737-23"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm045",
@@ -8136,7 +8300,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県東海市名和町寺徳1-5（きらめきデンタルクリニック内）"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm046",
@@ -8172,7 +8337,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県半田市中町3-46"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm047",
@@ -8213,7 +8379,8 @@
       "geo_confidence": "medium",
       "geo_address": "愛知県半田市亀崎大洞町3-28"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm048",
@@ -8251,7 +8418,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県知多郡武豊町里中128-1"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm049",
@@ -8287,7 +8455,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県東海市加木屋町鈴井田4-2"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm050",
@@ -8326,7 +8495,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県豊橋市白河町100（サーラプラザ豊橋1F）"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm051",
@@ -8364,7 +8534,8 @@
       "geo_confidence": "medium",
       "geo_address": "愛知県豊橋市駅前大通2-32-1（木島ビル1F）"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm052",
@@ -8402,7 +8573,8 @@
       "geo_confidence": "high",
       "geo_address": "愛知県豊川市桜ケ丘町70-1"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm053",
@@ -8441,7 +8613,8 @@
       "geo_address": "愛知県蒲郡市港町18-27"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm054",
@@ -8486,7 +8659,8 @@
       "geo_address": "愛知県額田郡幸田町大字大草字下六條60-1"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "sp124",
@@ -8530,7 +8704,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp125",
@@ -8574,7 +8749,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp126",
@@ -8618,7 +8794,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp127",
@@ -8662,7 +8839,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp128",
@@ -8706,7 +8884,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp129",
@@ -8750,7 +8929,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp130",
@@ -8801,7 +8981,8 @@
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
     "editorial_scale": "S",
-    "editorial_scale_note": "南知多ビーチランド系列"
+    "editorial_scale_note": "南知多ビーチランド系列",
+    "has_kids_space": false
   },
   {
     "id": "sp132",
@@ -8846,7 +9027,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp133",
@@ -8891,7 +9073,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp134",
@@ -8936,7 +9119,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp135",
@@ -8981,7 +9165,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp136",
@@ -9026,7 +9211,8 @@
       "geo_confidence": "estimated",
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "gm055",
@@ -9065,7 +9251,8 @@
       "geo_confidence": "verified_mapion",
       "note": "Mapion住所検索で座標検証・修正済み(2026-07-29)"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm056",
@@ -9104,7 +9291,8 @@
       "geo_confidence": "verified_mapion",
       "note": "Mapion住所検索で座標検証・修正済み(2026-07-29)"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm058",
@@ -9141,7 +9329,8 @@
       "note": "Mapion住所検索で座標検証・修正済み(2026-07-29)"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm061",
@@ -9178,7 +9367,8 @@
       "note": "Mapion住所検索で座標検証・修正済み(2026-07-29)"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm062",
@@ -9216,7 +9406,8 @@
       "note": "Mapion住所検索で座標検証・修正済み(2026-07-29)"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm064",
@@ -9253,7 +9444,8 @@
       "note": "座標は住所・最寄り駅情報から概算。公式サイトで詳細要確認"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm066",
@@ -9291,7 +9483,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm067",
@@ -9328,7 +9521,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm068",
@@ -9366,7 +9560,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm069",
@@ -9404,7 +9599,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm070",
@@ -9444,7 +9640,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm071",
@@ -9484,7 +9681,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm072",
@@ -9523,7 +9721,8 @@
     "metadata": {
       "geo_confidence": "high"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm073",
@@ -9562,7 +9761,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm074",
@@ -9603,7 +9803,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm075",
@@ -9638,7 +9839,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm076",
@@ -9675,7 +9877,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm077",
@@ -9712,7 +9915,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm078",
@@ -9748,7 +9952,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm079",
@@ -9784,7 +9989,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm080",
@@ -9822,7 +10028,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm081",
@@ -9858,7 +10065,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm082",
@@ -9895,7 +10103,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm083",
@@ -9930,7 +10139,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm084",
@@ -9966,7 +10176,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm085",
@@ -10003,7 +10214,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm086",
@@ -10040,7 +10252,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm087",
@@ -10078,7 +10291,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm090",
@@ -10114,7 +10328,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm091",
@@ -10149,7 +10364,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm092",
@@ -10184,7 +10400,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm093",
@@ -10220,7 +10437,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm094",
@@ -10255,7 +10473,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm095",
@@ -10290,7 +10509,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm096",
@@ -10326,7 +10546,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm097",
@@ -10362,7 +10583,8 @@
       "geo_confidence": "medium"
     },
     "url_label": "食べログ",
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm098",
@@ -10397,7 +10619,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm099",
@@ -10433,7 +10656,8 @@
     "metadata": {
       "geo_confidence": "medium"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "sp137",
@@ -10484,7 +10708,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp138",
@@ -10535,7 +10760,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp139",
@@ -10587,7 +10813,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp140",
@@ -10638,7 +10865,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp141",
@@ -10689,7 +10917,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp142",
@@ -10741,7 +10970,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp143",
@@ -10792,7 +11022,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp144",
@@ -10843,7 +11074,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp145",
@@ -10894,7 +11126,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp146",
@@ -10946,7 +11179,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp147",
@@ -10996,7 +11230,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp148",
@@ -11048,7 +11283,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp149",
@@ -11098,7 +11334,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp150",
@@ -11150,7 +11387,8 @@
       "drive_guide": true
     },
     "editorial_scale": "A",
-    "editorial_scale_note": "見学2-3h/半日"
+    "editorial_scale_note": "見学2-3h/半日",
+    "has_kids_space": false
   },
   {
     "id": "sp151",
@@ -11200,7 +11438,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp152",
@@ -11250,7 +11489,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp153",
@@ -11300,7 +11540,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp154",
@@ -11352,7 +11593,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp155",
@@ -11398,7 +11640,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp156",
@@ -11444,7 +11687,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp157",
@@ -11489,7 +11733,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp158",
@@ -11534,7 +11779,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp159",
@@ -11580,7 +11826,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp160",
@@ -11626,7 +11873,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "gm100",
@@ -11663,7 +11911,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm101",
@@ -11704,7 +11953,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm102",
@@ -11742,7 +11992,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm103",
@@ -11780,7 +12031,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "gm104",
@@ -11821,7 +12073,8 @@
       "source": "Instagram round2調査・GSI住所検索で座標確認",
       "verified_at": "2026-07-29"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "sp161",
@@ -11869,7 +12122,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp162",
@@ -11917,7 +12171,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp163",
@@ -11965,7 +12220,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp164",
@@ -12012,7 +12268,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp165",
@@ -12059,7 +12316,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp166",
@@ -12106,7 +12364,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp167",
@@ -12153,7 +12412,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp168",
@@ -12201,7 +12461,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp169",
@@ -12250,7 +12511,8 @@
       "drive_guide": true,
       "geo_audit_note": "GSI住所検索+mapion電話帳座標で0.03km圏内一致"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp170",
@@ -12298,7 +12560,8 @@
       "drive_guide": true,
       "geo_audit_note": "GSI住所検索+mapion電話帳座標で0.02km圏内一致"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp171",
@@ -12346,7 +12609,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp172",
@@ -12394,7 +12658,8 @@
       "drive_guide": true,
       "geo_audit_note": "GSI住所検索(公式住所:余野六丁目439番地)。第2ソース未取得のためmedium確度"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp173",
@@ -12441,7 +12706,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp174",
@@ -12489,7 +12755,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp175",
@@ -12536,7 +12803,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp176",
@@ -12583,7 +12851,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp177",
@@ -12630,7 +12899,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp179",
@@ -12677,7 +12947,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp180",
@@ -12724,7 +12995,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp181",
@@ -12771,7 +13043,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp182",
@@ -12818,7 +13091,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp183",
@@ -12867,7 +13141,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp184",
@@ -12913,7 +13188,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp186",
@@ -12962,7 +13238,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp187",
@@ -13010,7 +13287,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp188",
@@ -13058,7 +13336,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp189",
@@ -13106,7 +13385,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp190",
@@ -13155,7 +13435,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp192",
@@ -13204,7 +13485,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp194",
@@ -13252,7 +13534,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp195",
@@ -13302,7 +13585,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp197",
@@ -13350,7 +13634,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp198",
@@ -13398,7 +13683,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp199",
@@ -13447,7 +13733,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp201",
@@ -13495,7 +13782,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp203",
@@ -13542,7 +13830,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp204",
@@ -13590,7 +13879,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp205",
@@ -13639,7 +13929,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp206",
@@ -13687,7 +13978,8 @@
       "drive_guide": true,
       "geo_audit_note": "GSI住所検索+mapion電話帳(いきいき広場)座標で0.05km圏内一致"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp207",
@@ -13737,7 +14029,8 @@
       "drive_guide": true,
       "geo_audit_note": "GSI住所検索+mapion施設座標で0.05km圏内一致"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp208",
@@ -13785,7 +14078,8 @@
       "drive_guide": true,
       "geo_audit_note": "GSI住所検索+mapion佐屋小学校近隣座標で2ソース一致(0.3km以内)"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp209",
@@ -13832,7 +14126,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp211",
@@ -13880,7 +14175,8 @@
       "drive_guide": true,
       "geo_audit_note": "GSI住所検索+mapion平島地点座標で0.15km圏内一致"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp214",
@@ -13927,7 +14223,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp215",
@@ -13975,7 +14272,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp217",
@@ -14025,7 +14323,8 @@
       "drive_guide": true,
       "geo_audit_note": "公式ページ住所とGSI住所検索が完全一致(奥田字奥田前1番地1)"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp219",
@@ -14073,7 +14372,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp220",
@@ -14124,7 +14424,8 @@
       "drive_guide": true,
       "geo_audit_note": "GSI住所検索+mapion三河田原駅近隣座標で0.5km圏内一致"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp221",
@@ -14173,7 +14474,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp222",
@@ -14222,7 +14524,8 @@
       "geo_confidence": "medium",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp224",
@@ -14270,7 +14573,8 @@
       "geo_confidence": "low",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp225",
@@ -14320,7 +14624,8 @@
       "region": "尾張",
       "geo_audit_note": "GSI住所検索+Googleマップ名称検索で座標一致確認"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp226",
@@ -14373,7 +14678,8 @@
       "region": "名古屋",
       "geo_audit_note": "GSI住所検索(六野2丁目5-19)+Googleマップ名称検索で座標一致確認(誤差約0.1km)"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp227",
@@ -14426,7 +14732,8 @@
       "region": "海部",
       "geo_audit_note": "GSI住所検索(花常フケ53-2)+Googleマップ名称検索で座標一致確認(誤差約0.25km)"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp229",
@@ -14479,7 +14786,8 @@
       "region": "名古屋",
       "geo_audit_note": "GSI住所検索(道徳新町5丁目)+Googleマップ名称検索で座標一致確認(誤差約0.02km)"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp230",
@@ -14532,7 +14840,8 @@
       "region": "名古屋",
       "geo_audit_note": "GSI住所検索(服部3丁目)+Googleマップ名称検索で座標一致確認(誤差約0.35km、公園規模による)"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp228",
@@ -14587,7 +14896,8 @@
       "region": "名古屋",
       "geo_audit_note": "広大な里山緑地のためGoogleマップ上のグリーン広場ピン位置を画面座標から推定。既存sp126(牧野ヶ池緑地)とは別施設"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp231",
@@ -14641,7 +14951,8 @@
       "drive_guide": true,
       "source_note": "Instagram @odekake___mii"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp232",
@@ -14694,7 +15005,8 @@
       "drive_guide": true,
       "source_note": "Instagram @mame.navi"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp233",
@@ -14752,7 +15064,8 @@
       "drive_guide": true,
       "source_note": "Instagram @kotokoto.family（要予約・日帰り利用可を公式で確認）"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp234",
@@ -14805,7 +15118,8 @@
       "drive_guide": true,
       "source_note": "Instagram @odekake___mii"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp235",
@@ -14859,7 +15173,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp236",
@@ -14913,7 +15228,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp237",
@@ -14967,7 +15283,8 @@
       "drive_guide": true,
       "geo_note": "GSIは町丁目までの地名解決のためGoogleマップの座標を採用"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp238",
@@ -15020,7 +15337,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp239",
@@ -15073,7 +15391,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(刈谷市東境町吉野55→35.041622,137.050552)とGoogleマップ名称検索(35.0421053,137.0482589)の2ソースで0.22km以内の一致を確認。旧座標(35.0883,137.0061)は約7km離れた別地点（豊明市付近）を指す誤りだったためGoogleマップ座標に修正。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp240",
@@ -15126,7 +15445,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(豊田市千石町7-2→35.084568,137.171265)とNAVITIME掲載座標(35.086103,137.171403)の2ソースで0.2km以内の一致を確認。既存座標(35.086112,137.171388)は妥当と判断し変更なし。"
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp241",
@@ -15180,7 +15500,8 @@
       "drive_guide": true,
       "geo_note": "常滑市公式座標(34.824551,136.868155)とhomemate座標(34.823757,136.867611)がほぼ一致するため平均値を採用"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp242",
@@ -15232,7 +15553,8 @@
       "geo_confidence": "high",
       "drive_guide": true
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp243",
@@ -15286,7 +15608,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(刈谷市井ケ谷町洲原4番地→35.048508,137.050446)はGoogleマップの施設ピン(35.0547224,137.0558165、住所表記が完全一致)と0.85kmずれており、GSI側が広域の住所代表点を返した可能性が高いため、施設名で特定できたGoogleマップ座標を正として採用。旧座標(35.0564055,137.0533138)からは約0.3km補正。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp244",
@@ -15340,7 +15663,8 @@
       "drive_guide": true,
       "geo_note": "MapFan座標(34.9781852,137.0797297)と安城市公式サイト埋め込み座標(34.979184,137.080905)が約0.15km差で一致"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp245",
@@ -15394,7 +15718,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索は「安城市大東町」の町丁目レベルまでしか解決できず（1675番地の番地レベル不可）、Googleマップで住所「大東町25-1675番2」が完全一致する施設ピン(34.9677682,137.0845934)を正として採用。旧座標(35.0252877,136.9054849)は安城市内の全く別地点（明治本町付近、約17km離れた場所）を指す誤りだったため修正。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp246",
@@ -15447,7 +15772,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(常滑市金山字石坂183→34.914349,136.851318)とGoogleマップ名称検索(前山ダム公園 展望広場/親水広場、前山池北岸)で0.2km以内の一致を確認。既存座標(34.9141521,136.8533837)は妥当と判断し変更なし。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp247",
@@ -15501,7 +15827,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(田原市田原町西滝頭6→34.669872,137.244308)とGoogleマップ名称検索(34.6699615,137.2441549、住所完全一致)がほぼ完全に一致（差15m）したため、より精度の高いGoogleマップ座標を採用。旧座標(34.6689,137.245)からは約0.14kmの補正。駐車場位置の懸念は解消（公園入口付近で妥当）。"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp248",
@@ -15553,7 +15880,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(愛知県幸田町大字野場井戸田211番地)と既存座標の差約0.03km。2ソース照合により座標確定。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp249",
@@ -15606,7 +15934,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(愛知県刈谷市東刈谷町二丁目14番)と既存座標の差約0.02km。2ソース照合により座標確定。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp250",
@@ -15660,7 +15989,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索は「碧南市港南町二丁目」(番地なし・丁目レベル)のため精度が粗く、既存座標との差が約0.85km生じた。Googleマップの施設名検索「JERA park」でヒットした施設ピン(34.8321728,136.9643256)を採用。既存座標との差は約0.25kmで許容範囲内。"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp252",
@@ -15714,7 +16044,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(愛知県東海市元浜町64番地)と既存座標の差約0.19km。2ソース照合により座標確定。"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp253",
@@ -15768,7 +16099,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(愛知県蒲郡市竹島町2番2号)と既存座標の差約0.17km。2ソース照合により座標確定。"
     },
-    "editorial_scale": "S"
+    "editorial_scale": "S",
+    "has_kids_space": false
   },
   {
     "id": "sp254",
@@ -15821,7 +16153,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(愛知県豊橋市高師町北原)と既存座標の差約0.16km。2ソース照合により座標確定。"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp255",
@@ -15873,7 +16206,8 @@
       "drive_guide": true,
       "geo_note": "GSI住所検索(愛知県小牧市本庄1020番地)と既存座標の差約0.06km。2ソース照合により座標確定。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp256",
@@ -15926,7 +16260,8 @@
       "geo_note": "公式ページ記載住所(東海市荒尾町西廻間2-1)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
       "round": 4
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp257",
@@ -15979,7 +16314,8 @@
       "geo_note": "公式ページ記載住所(東海市荒尾町中切1)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
       "round": 4
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp258",
@@ -16031,7 +16367,8 @@
       "geo_note": "公式ページ記載住所(春日井市鳥居松町5丁目44番地)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
       "round": 4
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": true
   },
   {
     "id": "sp259",
@@ -16083,7 +16420,8 @@
       "geo_note": "公式ページ記載住所(田原市緑が浜四号1-1)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
       "round": 4
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp260",
@@ -16135,7 +16473,8 @@
       "geo_note": "観光協会ページ記載住所(田原市田原町蔵王5)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
       "round": 4
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp261",
@@ -16187,7 +16526,8 @@
       "geo_note": "公式ページ記載住所(尾張旭市東大道町原田2600-1)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
       "round": 4
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "business_hours": "水曜〜月曜(開館日は要確認)",
@@ -16241,7 +16581,8 @@
       "児童館"
     ],
     "target_age_max": null,
-    "target_age_min": null
+    "target_age_min": null,
+    "has_kids_space": true
   },
   {
     "business_hours": "9:30〜17:30",
@@ -16295,7 +16636,8 @@
       "児童館"
     ],
     "target_age_max": null,
-    "target_age_min": null
+    "target_age_min": null,
+    "has_kids_space": true
   },
   {
     "business_hours": "4〜9月9:00〜18:00/10〜3月9:00〜17:00(木曜午前は利用不可)",
@@ -16349,7 +16691,8 @@
       "児童館"
     ],
     "target_age_max": null,
-    "target_age_min": null
+    "target_age_min": null,
+    "has_kids_space": true
   },
   {
     "business_hours": null,
@@ -16401,7 +16744,8 @@
       "ラウンド5追加"
     ],
     "target_age_max": null,
-    "target_age_min": null
+    "target_age_min": null,
+    "has_kids_space": false
   },
   {
     "business_hours": null,
@@ -16454,7 +16798,8 @@
       "ラウンド5追加"
     ],
     "target_age_max": null,
-    "target_age_min": null
+    "target_age_min": null,
+    "has_kids_space": true
   },
   {
     "business_hours": null,
@@ -16507,7 +16852,8 @@
       "ラウンド5追加"
     ],
     "target_age_max": null,
-    "target_age_min": null
+    "target_age_min": null,
+    "has_kids_space": false
   },
   {
     "business_hours": "じゃぶじゃぶ池は例年7月中旬〜8月下旬・24時間稼働",
@@ -16560,7 +16906,8 @@
       "ラウンド5追加"
     ],
     "target_age_max": null,
-    "target_age_min": null
+    "target_age_min": null,
+    "has_kids_space": false
   },
   {
     "business_hours": "水遊びは例年7/15〜9/15予定 10:00〜16:00",
@@ -16613,7 +16960,8 @@
       "ラウンド5追加"
     ],
     "target_age_max": null,
-    "target_age_min": null
+    "target_age_min": null,
+    "has_kids_space": false
   },
   {
     "business_hours": null,
@@ -16665,7 +17013,8 @@
       "ラウンド5追加"
     ],
     "target_age_max": null,
-    "target_age_min": null
+    "target_age_min": null,
+    "has_kids_space": false
   },
   {
     "id": "sp271",
@@ -16718,7 +17067,8 @@
     "image_source": null,
     "featured": false,
     "status": "published",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.819321,137.247156"
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.819321,137.247156",
+    "has_kids_space": true
   },
   {
     "id": "sp272",
@@ -16771,7 +17121,8 @@
     "image_source": null,
     "featured": false,
     "status": "published",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9217806,136.9499741"
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9217806,136.9499741",
+    "has_kids_space": false
   },
   {
     "id": "sp273",
@@ -16824,7 +17175,8 @@
     "image_source": null,
     "featured": false,
     "status": "published",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8899471,136.9132708"
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8899471,136.9132708",
+    "has_kids_space": false
   },
   {
     "id": "sp274",
@@ -16878,7 +17230,8 @@
     "image_source": null,
     "featured": false,
     "status": "published",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8897961,137.0064998"
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8897961,137.0064998",
+    "has_kids_space": false
   },
   {
     "id": "sp275",
@@ -16932,7 +17285,8 @@
     "image_source": null,
     "featured": false,
     "status": "published",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8912191,136.9761895"
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8912191,136.9761895",
+    "has_kids_space": false
   },
   {
     "id": "sp276",
@@ -16986,7 +17340,8 @@
     "image_source": null,
     "featured": false,
     "status": "published",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.2389166,137.083774"
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.2389166,137.083774",
+    "has_kids_space": true
   },
   {
     "id": "sp277",
@@ -17039,7 +17394,8 @@
     "image_source": null,
     "featured": false,
     "status": "published",
-    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8623953,136.8806137"
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.8623953,136.8806137",
+    "has_kids_space": false
   },
   {
     "prefecture": "愛知県",
@@ -17090,7 +17446,8 @@
     ],
     "legacy_categories": [
       "free"
-    ]
+    ],
+    "has_kids_space": false
   },
   {
     "prefecture": "愛知県",
@@ -17141,7 +17498,8 @@
     ],
     "legacy_categories": [
       "free"
-    ]
+    ],
+    "has_kids_space": false
   },
   {
     "prefecture": "愛知県",
@@ -17192,7 +17550,8 @@
     ],
     "legacy_categories": [
       "free"
-    ]
+    ],
+    "has_kids_space": false
   },
   {
     "prefecture": "愛知県",
@@ -17243,7 +17602,8 @@
     ],
     "legacy_categories": [
       "free"
-    ]
+    ],
+    "has_kids_space": false
   },
   {
     "prefecture": "愛知県",
@@ -17295,7 +17655,8 @@
     ],
     "legacy_categories": [
       "paid"
-    ]
+    ],
+    "has_kids_space": false
   },
   {
     "prefecture": "愛知県",
@@ -17347,7 +17708,8 @@
     ],
     "legacy_categories": [
       "free"
-    ]
+    ],
+    "has_kids_space": false
   },
   {
     "prefecture": "愛知県",
@@ -17398,7 +17760,8 @@
     ],
     "legacy_categories": [
       "free"
-    ]
+    ],
+    "has_kids_space": false
   },
   {
     "prefecture": "愛知県",
@@ -17449,7 +17812,8 @@
     ],
     "legacy_categories": [
       "free"
-    ]
+    ],
+    "has_kids_space": false
   },
   {
     "id": "sp286",
@@ -17502,7 +17866,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（中川区八幡本通2-40）で緯度経度を取得し座標採用。0.3km以内の乖離なし。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp287",
@@ -17555,7 +17920,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（天白区池場五丁目1801）で緯度経度を取得し座標採用。0.3km以内の乖離なし。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp288",
@@ -17608,7 +17974,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（守山区小幡一丁目3-15）で緯度経度を取得し座標採用。0.3km以内の乖離なし。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp289",
@@ -17661,7 +18028,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（熱田区四番二丁目10-10）で緯度経度を取得し座標採用。0.3km以内の乖離なし。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp290",
@@ -17712,7 +18080,8 @@
       "geo_confidence": "high",
       "geo_note": "既存収録の「一宮地域文化広場 プラネタリウム館」（sp119）と同一敷地内だが、屋外アスレチックという別施設のため新規登録。GSI住所検索で座標を取得し、既存プラネタリウム館の座標と0.1km以内で一致することを確認。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp291",
@@ -17761,7 +18130,8 @@
       "geo_confidence": "medium",
       "geo_note": "GSI住所検索（一宮市起字西生出33）で座標取得。開館時間・休館日は一宮市公式児童館一覧ページに個別記載がなく他館の一般的な運用時間を参考値として記載。利用前に一宮市への確認を推奨。"
     },
-    "editorial_scale": "C"
+    "editorial_scale": "C",
+    "has_kids_space": true
   },
   {
     "id": "sp292",
@@ -17813,7 +18183,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（常滑市栄町3-91）で緯度経度を取得し座標採用。電話予約制（0569-34-2094）、事前予約必須。対象年齢は小学生以上。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp293",
@@ -17866,7 +18237,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（南知多町豊浜汐見台36）で緯度経度を取得し座標採用。季節営業のため訪問前に公式サイト・Instagramで最新の営業状況を要確認。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp294",
@@ -17918,7 +18290,8 @@
       "geo_confidence": "medium",
       "geo_note": "GSI住所検索（新城市下吉田沢谷下25-3、駐車場付近）で座標取得。滝そのものは駐車場から徒歩約15分の山中にあるため、座標は駐車場位置を示す点に留意。川遊びの安全管理・監視員の有無は現地未確認のため、利用者は増水時等に十分注意する必要がある。"
     },
-    "editorial_scale": "C"
+    "editorial_scale": "C",
+    "has_kids_space": false
   },
   {
     "id": "sp295",
@@ -17971,7 +18344,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（一宮市今伊勢町新神戸字乾31-1）で緯度経度を取得。字地番のため町丁目中心座標（0.3km以内目安）。一宮市公式ページ（施設案内）で読み聞かせ会・年中行事の具体的記載を確認済み。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp296",
@@ -18024,7 +18398,8 @@
       "geo_confidence": "medium",
       "geo_note": "GSI住所検索（豊田市王滝町）で座標取得（町丁目レベル・渓谷内の具体的地点は住所番地がないため中心座標）。愛知県公式観光サイトAichi Nowで所在地・駐車場情報を確認済み。既存マスターに同名・近接施設の重複なしを確認。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp297",
@@ -18078,7 +18453,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（岡崎市石原町字牧原日影2-2）で緯度経度を取得。愛知県公式観光サイトAichi Nowで住所・駐車場・アクティビティ内容を確認済み。既存マスターに同名施設の重複なし。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "sp298",
@@ -18131,7 +18507,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（豊山町大字豊場、ターミナルビル所在の字レベル）で座標取得。県営名古屋空港公式サイトで展望デッキ・無料の記載を確認済み。既存マスターに空港・展望デッキ関連スポットの重複なし。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp299",
@@ -18184,7 +18561,8 @@
       "geo_note": "公式住所（豊田市若宮町一丁目57番地・T-FACE）をGSI住所検索で座標取得。既存マスターに同名施設なし、重複なしを確認。",
       "reservation_required": false
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp300",
@@ -18238,7 +18616,8 @@
       "geo_note": "公式住所（豊田市畝部東町船場8番地）をGSI住所検索で座標取得。既存マスターに同名施設なし。",
       "reservation_required": false
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp301",
@@ -18291,7 +18670,8 @@
       "geo_note": "公式住所（豊田市金谷町二丁目10番地）をGSI住所検索で座標取得。子連れ設備（キッズスペース・お座敷）を公式サイトで裏取り済み。",
       "reservation_required": false
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "sp302",
@@ -18344,7 +18724,8 @@
       "geo_note": "公式住所（豊田市前田町七丁目8番地1）は番地までの確定情報がなく、GSI座標は町丁目レベル（前田町七丁目）にとどまる。既存マスターに同名施設なし。",
       "reservation_required": false
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "sp303",
@@ -18396,7 +18777,8 @@
       "geo_note": "公式住所（豊橋市吉川町125番地2）をGSI住所検索で座標取得。既存マスターに同名施設なし。",
       "reservation_required": "プログラムにより異なる（開放時間は予約不要、フリーサークル等は要予約）"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp304",
@@ -18449,7 +18831,8 @@
       "geo_note": "公式住所（豊橋市植田町字一本木116番地）をGSI住所検索で座標取得。既存マスターに同名施設なし。",
       "reservation_required": false
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp305",
@@ -18501,7 +18884,8 @@
       "geo_note": "公式住所（豊橋市曙町字松並101番地）をGSI住所検索で座標取得。既存マスターに同名施設なし。",
       "reservation_required": null
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp306",
@@ -18553,7 +18937,8 @@
       "geo_note": "公式住所（豊橋市大岩町字境目5番地・東山保育園内）をGSI住所検索で座標取得。開放時間の詳細は公式サイトに未掲載のため電話確認推奨と明記。既存マスターに同名施設なし。",
       "reservation_required": null
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp307",
@@ -18604,7 +18989,8 @@
       "geo_note": "公式住所（豊橋市南区三本木町95番地1）はGSI住所検索で番地未確定（町丁目レベルの座標）。既存マスターに同名施設なし。",
       "reservation_required": null
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp308",
@@ -18655,7 +19041,8 @@
       "geo_note": "公式住所（岡崎市西蔵前町季平45番地1）をGSI住所検索で座標取得。プレイルームの対象年齢・予約要否は公式サイトに明記なく、地元の親の口コミが根拠。既存マスターに同名施設なし。",
       "reservation_required": null
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp309",
@@ -18706,7 +19093,8 @@
       "geo_note": "公式住所（岡崎市上地二丁目39番地1）をGSI住所検索で座標取得。既存マスターに同名施設なし。",
       "reservation_required": null
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp310",
@@ -18757,7 +19145,8 @@
       "geo_note": "公式住所（岡崎市矢作町尊所45番地1）をGSI住所検索で座標取得。既存マスターに同名施設なし。",
       "reservation_required": null
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp311",
@@ -18808,7 +19197,8 @@
       "geo_note": "公式住所（岡崎市藤川町田中19番地）をGSI住所検索で座標取得。既存マスターに同名施設なし。",
       "reservation_required": null
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp312",
@@ -18859,7 +19249,8 @@
       "geo_note": "公式住所（岡崎市中島町上丸ノ内7番地4）をGSI住所検索で座標取得。既存マスターに同名施設なし。",
       "reservation_required": null
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp313",
@@ -18910,7 +19301,8 @@
       "geo_note": "公式ページで「城北保育園3階」に所在することを確認し、公式住所（岡崎市八帖北町4番9・城北保育園）をGSI住所検索で座標取得。既存マスターの地域交流センター（なごみん等）とは異なる岡崎市中央の総合子育て支援センターであり重複なしを確認。",
       "reservation_required": null
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp314",
@@ -18963,7 +19355,8 @@
       "geo_note": "公式住所（刈谷市神田町一丁目39番地3）をGSI住所検索で座標取得（既存sp002 刈谷市交通児童遊園 34.987261,137.014322 から約0.25km、隣接する別施設と確認）。既存マスターに同名施設なし。",
       "reservation_required": false
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": false
   },
   {
     "id": "gm105",
@@ -19001,7 +19394,8 @@
       "source": "Instagram round2調査・公式サイト(banyan-cafe.vercel.app)およびGSI住所検索/Googleマップで座標確認",
       "verified_at": "2026-07-31"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": true
   },
   {
     "id": "gm106",
@@ -19041,7 +19435,8 @@
       "source": "Instagram round2調査・食べログ/GoogleマップおよびGSI住所検索で座標確認",
       "verified_at": "2026-07-31"
     },
-    "editorial_scale": "meal"
+    "editorial_scale": "meal",
+    "has_kids_space": false
   },
   {
     "id": "sp315",
@@ -19095,7 +19490,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（豊田市西町3丁目60番地）で緯度経度35.08374,137.156235を取得。Googleマップ検索でも同施設の位置と0.3km以内で一致することを確認。豊田市公式サイト・とよた科学体験館公式サイトでプラネタリウム料金（一般300円/4歳〜高校生100円）・開館時間・休館日（月曜、祝日除く）を確認済み。既存マスターの「一宮地域文化広場」とは別施設で重複なし。"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp316",
@@ -19149,7 +19545,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（刈谷市半城土北町1丁目402番地）で緯度経度34.985264,137.025223を取得。Googleマップ検索でも同位置0.3km以内で一致。刈谷市公式サイト・刈谷知立環境組合公式サイトで営業時間9:00-21:00、休館日（月末月曜等）、料金（大人500円/子供200円/未就学児100円）を確認済み。既存マスター395件に同名・近接重複なし。"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp317",
@@ -19203,7 +19600,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（安城市和泉町大下23番地）で緯度経度34.912357,137.042847を取得。Googleマップ検索でも同位置0.3km以内で一致。るるぶ・アソビュー等の情報サイトで営業時間（火水木金13-20時／日土祝10-20時、夏休み延長）、休館日（月曜）、料金（大人510円/子供200円）を確認済み。既存マスターに同名・近接重複なし。"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   },
   {
     "id": "sp318",
@@ -19256,7 +19654,8 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（日進市赤池町屋下1番地1付近）で緯度経度35.124897,137.007507を取得。Googleマップ検索でも同位置0.3km以内で一致。キドキド公式サイトで営業時間10:00-19:00・料金体系を確認済み。編集方針によりmall内施設としてeditorial_scale=Bとし、単独目的地ではなく「ついで/雨の日」の文脈で記述。既存マスターに同名・近接重複なし。"
     },
-    "editorial_scale": "B"
+    "editorial_scale": "B",
+    "has_kids_space": true
   },
   {
     "id": "sp319",
@@ -19310,6 +19709,7 @@
       "geo_confidence": "high",
       "geo_note": "GSI住所検索（碧南市江口町3丁目15番地3）で緯度経度34.851795,136.968292を取得。Googleマップ検索でも同位置0.3km以内で一致。碧南市公式サイトで入園無料・営業時間9-17時・休園日（月曜）を確認済み。もぎとり体験の具体的料金は品目・時期変動のため公式サイト内に詳細記載なく、電話確認が必要な旨を明記。既存マスターに同名・近接重複なし。"
     },
-    "editorial_scale": "A"
+    "editorial_scale": "A",
+    "has_kids_space": false
   }
 ]
