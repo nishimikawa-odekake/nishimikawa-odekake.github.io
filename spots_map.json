@@ -18964,5 +18964,83 @@
       "reservation_required": false
     },
     "editorial_scale": "B"
+  },
+  {
+    "id": "gm105",
+    "slug": "gajumaru-cafe-oji",
+    "name": "ガジュマルCafe",
+    "summary": "ナチュラルウッドに包まれたキッズスペース完備のカフェ。月替わり・週替わりランチが人気。",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "キッズスペース完備",
+      "子連れ歓迎"
+    ],
+    "kid_appeal": "キッズスペースでお子様を遊ばせながらゆっくりランチが楽しめる",
+    "prefecture": "愛知県",
+    "city": "海部郡大治町",
+    "latitude": 35.1644192,
+    "longitude": 136.8291799,
+    "official_url": "https://banyan-cafe.vercel.app",
+    "shop_instagram": "@banyan0409",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.1644192,136.8291799",
+    "checked_at": "2026-07-31",
+    "business_hours": "8:30〜17:00(モーニング8:30-10:30/ランチ11:00-14:00/ティータイム14:00-17:00)",
+    "closed_days": "第4木曜(土日変則営業あり)",
+    "price_text": "ランチ1,000〜2,000円程度",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 45,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @pyon_mama_aichi 紹介・公式サイトでキッズスペース完備を確認(拡充ラウンド11)",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "source": "Instagram round2調査・公式サイト(banyan-cafe.vercel.app)およびGSI住所検索/Googleマップで座標確認",
+      "verified_at": "2026-07-31"
+    },
+    "editorial_scale": "meal"
+  },
+  {
+    "id": "gm106",
+    "slug": "panel-cafe-kariya",
+    "name": "Panel Cafe 刈谷店",
+    "summary": "刈谷駅南口すぐ、ふわふわパンケーキとハンバーガーの完全個室カフェ。",
+    "play_types": [
+      "food"
+    ],
+    "kid_features": [
+      "完全個室あり(2〜8人用)",
+      "子供可(乳児可・未就学児可・小学生可)",
+      "ベビーカー入店可"
+    ],
+    "kid_appeal": "完全個室で周りを気にせず子連れランチが楽しめる",
+    "prefecture": "愛知県",
+    "city": "刈谷市",
+    "latitude": 34.9906888,
+    "longitude": 137.0077575,
+    "official_url": "https://tabelog.com/aichi/A2305/A230503/23075788/",
+    "url_label": "食べログ",
+    "shop_instagram": "@panelcafe_kariya",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.9906888,137.0077575",
+    "checked_at": "2026-07-31",
+    "business_hours": "11:00〜17:00(L.O.16:00)",
+    "closed_days": "不定休",
+    "price_text": "1,000〜2,000円程度",
+    "is_free": false,
+    "estimated_drive_minutes_from_anjo": 15,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "source_note": "Instagram @mikawa.ouen まとめ投稿紹介・食べログで個室/子連れ設備を確認(拡充ラウンド11)。既存掲載の「Cafe Rob 刈谷店」(gm002)とは別店舗・別座標。",
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "source": "Instagram round2調査・食べログ/GoogleマップおよびGSI住所検索で座標確認",
+      "verified_at": "2026-07-31"
+    },
+    "editorial_scale": "meal"
   }
 ]
