@@ -15874,5 +15874,319 @@
       "geo_note": "GSI住所検索(愛知県小牧市本庄1020番地)と既存座標の差約0.06km。2ソース照合により座標確定。"
     },
     "editorial_scale": "B"
+  },
+  {
+    "id": "sp256",
+    "slug": "shurakuen-park-tokai",
+    "name": "聚楽園公園",
+    "summary": "大型ローラースライダーとじゃぶじゃぶ池が揃う東海市の広大な公園。",
+    "description": "東海市荒尾町西廻間にある「東海市しあわせ村」内の公園(供用面積18.9ha)。トリム広場に大型ローラースライダーやアスレチック・コンビネーション遊具、じゃぶじゃぶ池があるほか、健康ふれあい交流館(温浴施設・プール、有料)、キャンプ場、ハーブ園も併設。",
+    "play_types": [
+      "active",
+      "water"
+    ],
+    "legacy_categories": [
+      "free",
+      "park"
+    ],
+    "tags": [
+      "東海市",
+      "ラウンド4追加"
+    ],
+    "prefecture": "愛知県",
+    "city": "東海市",
+    "latitude": 35.042252,
+    "longitude": 136.906693,
+    "official_url": "https://www.city.tokai.aichi.jp/shisetsu/1005655/1005664/1005723.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.042252,136.906693",
+    "checked_at": "2026-07-31",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "公園利用無料(健康ふれあい交流館の温浴・プールはプール共通520円)",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり(一般・障がい者用)",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "大型ローラースライダーとじゃぶじゃぶ池で1日中遊べる",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": false,
+      "geo_note": "公式ページ記載住所(東海市荒尾町西廻間2-1)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
+      "round": 4
+    },
+    "editorial_scale": "A"
+  },
+  {
+    "id": "sp257",
+    "slug": "kaya-park-merhen-mori-tokai",
+    "name": "加家公園(メルヘンの森)",
+    "summary": "小川のせせらぎで水遊びができる東海市の緑豊かな公園。",
+    "description": "東海市荒尾町中切にある総面積9.2haの公園。園内を流れる小川で水遊びができ、広い芝生広場もある。星城大学北側の展望台からは聚楽園公園の大仏や名古屋港を一望できる。",
+    "play_types": [
+      "water",
+      "active"
+    ],
+    "legacy_categories": [
+      "free",
+      "park"
+    ],
+    "tags": [
+      "東海市",
+      "ラウンド4追加"
+    ],
+    "prefecture": "愛知県",
+    "city": "東海市",
+    "latitude": 35.033772,
+    "longitude": 136.899597,
+    "official_url": "https://www.city.tokai.aichi.jp/shisetsu/1005655/1005664/1003649.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.033772,136.899597",
+    "checked_at": "2026-07-31",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入園無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり(一般・障がい者用)",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "小川のせせらぎで気軽に水遊びができ、広い芝生でピクニックもできる",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": false,
+      "geo_note": "公式ページ記載住所(東海市荒尾町中切1)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
+      "round": 4
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp258",
+    "slug": "guringurin-kasugai",
+    "name": "春日井市子ども屋内遊び場 ぐりんぐりん",
+    "summary": "予約制・雨の日も安心な春日井市の室内遊び場。3歳未満は無料。",
+    "description": "春日井市鳥居松町の市施設内にある子ども屋内遊び場。ボーネルンドの玩具など複数エリアがあり、4クール制(9:00-11:00/11:20-13:20/13:40-15:40/16:00-18:00)で運営。学期中の平日は予約不要、土日祝・長期休み期間は予約推奨。3歳未満と保護者は無料、3歳以上は100円。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "paid",
+      "park"
+    ],
+    "tags": [
+      "春日井市",
+      "ラウンド4追加"
+    ],
+    "prefecture": "愛知県",
+    "city": "春日井市",
+    "latitude": 35.247383,
+    "longitude": 136.972458,
+    "official_url": "https://www.city.kasugai.lg.jp/shisei/shisetsu/kosodate/1026859/1029514.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.247383,136.972458",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜18:00(4クール制)",
+    "closed_days": null,
+    "price_text": "3歳未満・保護者無料、3歳以上100円",
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "専用駐車場あり",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "雨の日でも予約制でゆったり遊べる室内遊び場で乳幼児は無料",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": false,
+      "geo_note": "公式ページ記載住所(春日井市鳥居松町5丁目44番地)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
+      "round": 4
+    },
+    "editorial_scale": "A"
+  },
+  {
+    "id": "sp259",
+    "slug": "midorigahama-park-tahara",
+    "name": "田原市緑が浜公園",
+    "summary": "芝生広場とアスレチック広場が広がる田原市の総合公園。",
+    "description": "田原市緑が浜四号にある総合公園。多目的広場・芝生広場・アスレチック広場のほか、野球場やテニスコートも備え、釣りやバーベキューも楽しめる。",
+    "play_types": [
+      "active"
+    ],
+    "legacy_categories": [
+      "paid",
+      "park"
+    ],
+    "tags": [
+      "田原市",
+      "ラウンド4追加"
+    ],
+    "prefecture": "愛知県",
+    "city": "田原市",
+    "latitude": 34.702099,
+    "longitude": 137.289734,
+    "official_url": "https://www.city.tahara.aichi.jp/shisetsu/sports/1001333/1001334.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.702099,137.289734",
+    "checked_at": "2026-07-31",
+    "business_hours": "多目的広場8:00〜21:00(季節により変動)",
+    "closed_days": "月曜(祝日の場合翌平日)、12/28〜1/4",
+    "price_text": "広場利用は原則無料(一部施設は有料・要予約)",
+    "is_free": null,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "広い芝生広場でピクニックしながらアスレチックでも遊べる",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": false,
+      "geo_note": "公式ページ記載住所(田原市緑が浜四号1-1)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
+      "round": 4
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp260",
+    "slug": "gongennomori-tahara",
+    "name": "権現の森",
+    "summary": "蔵王山の麓、木製遊具とターザンロープで遊べる田原市の公園。",
+    "description": "田原市田原町蔵王の蔵王山麓にある公園。木製の複合遊具のほかターザンロープ・シーソー・平均台があり、遊具の下にはネットが敷かれ小さな子でも安心。木陰が多く夏でも遊びやすい。ハイキングコースの入口でもある。",
+    "play_types": [
+      "active"
+    ],
+    "legacy_categories": [
+      "free",
+      "park"
+    ],
+    "tags": [
+      "田原市",
+      "ラウンド4追加"
+    ],
+    "prefecture": "愛知県",
+    "city": "田原市",
+    "latitude": 34.67926,
+    "longitude": 137.261826,
+    "official_url": "https://www.taharakankou.gr.jp/spot/spot.php?search_category1=&spot_id=411",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.67926,137.261826",
+    "checked_at": "2026-07-31",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入園無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり(無料)",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "木製遊具とターザンロープで冒険気分、下のネットで安心して見守れる",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": false,
+      "geo_note": "観光協会ページ記載住所(田原市田原町蔵王5)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
+      "round": 4
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp261",
+    "slug": "shiroyama-park-skypark-owariasahi",
+    "name": "城山公園(スカイパーク)",
+    "summary": "乳幼児向けから大型遊具まで揃う尾張旭市の人気公園。",
+    "description": "尾張旭市東大道町原田にある都市公園。スカイパークには乳幼児向け遊具(概ね0〜3歳)から大型遊具まで年齢を問わず楽しめる遊具が揃い、バスケットゴールも設置。",
+    "play_types": [
+      "active"
+    ],
+    "legacy_categories": [
+      "free",
+      "park"
+    ],
+    "tags": [
+      "尾張旭市",
+      "ラウンド4追加"
+    ],
+    "prefecture": "愛知県",
+    "city": "尾張旭市",
+    "latitude": 35.217331,
+    "longitude": 137.03569,
+    "official_url": "https://www.city.owariasahi.lg.jp/page/2463.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.217331,137.03569",
+    "checked_at": "2026-07-31",
+    "business_hours": null,
+    "closed_days": null,
+    "price_text": "入園無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "0〜3歳向け遊具から大型遊具まであり兄弟で一緒に遊べる",
+    "estimated_drive_minutes_from_anjo": null,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "drive_guide": false,
+      "geo_note": "公式ページ記載住所(尾張旭市東大道町原田2600-1)のGSI座標と、施設名でのGoogle検索結果の位置情報を照合し0.3km以内で一致。",
+      "round": 4
+    },
+    "editorial_scale": "B"
   }
 ]
