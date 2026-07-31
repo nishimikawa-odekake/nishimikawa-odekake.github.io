@@ -648,10 +648,42 @@ function buildPool(date,w){
   });
   // score + attach distance
   cand.forEach(s=>{ const dm=driveMinutesFrom(o,s); s.__sc=scoreSpot(s,date,w,start+dm); s.__dm=dm; });
-  // sort by score desc then distance asc
-  cand.sort((a,b)=> b.__sc-a.__sc || a.__dm-b.__dm);
+  // Drive-time preference is treated as "outing mood", not just an upper-limit filter:
+  // - 20分: near-first stays as-is (already a nearby/quick outing).
+  // - 40分: distance-neutral — shuffle away the near-first tiebreak so 20〜40分圏のA級 mixes in naturally.
+  // - 60分/any: tiering is applied afterward (see generatePlans), so a plain shuffle tiebreak is fine here too.
+  if(state.driveTime==='20'){
+    cand.sort((a,b)=> b.__sc-a.__sc || a.__dm-b.__dm);
+  } else {
+    cand=shuffle(cand);
+    cand.sort((a,b)=> b.__sc-a.__sc);
+  }
   // full pool (candidate-count check for drive-time expansion needs the true count)
   return cand;
+}
+// Reorder a scored pool so the drive-time "mood" is honored when picking mains:
+// - 60分 ("せっかくの遠出"): prefer A/S spots that are actually 30分+ away; only fall back to
+//   near/B spots if nothing qualifies (caller sets state.nearFallback in that case).
+// - any ("遠くてもOK"): put S級 (1日がかり目的地) spots first.
+function applyDriveMoodTier(pool){
+  state.nearFallback=false; state.sFeatured=false;
+  if(!pool.length) return pool;
+  if(state.driveTime==='60'){
+    const preferred=pool.filter(s=>(s.editorial_scale==='S'||s.editorial_scale==='A')&&s.__dm>=30);
+    if(preferred.length) return preferred;
+    state.nearFallback=true;
+    return pool;
+  }
+  if(state.driveTime==='any'){
+    const sTier=pool.filter(s=>s.editorial_scale==='S');
+    if(sTier.length){
+      state.sFeatured=true;
+      const rest=pool.filter(s=>s.editorial_scale!=='S');
+      return sTier.concat(rest);
+    }
+    return pool;
+  }
+  return pool;
 }
 function pickLunch(main,date){
   const o=state.origin;
@@ -780,9 +812,10 @@ function generatePlans(date,w){
   }
   CURRENT_CAP=cap;
   if(!pool.length) return [];
+  const tiered=applyDriveMoodTier(pool);
   // variety: distinct mains for up to 3 variants
   const mains=[];
-  for(const s of pool){ if(!mains.includes(s)) mains.push(s); if(mains.length>=3) break; }
+  for(const s of tiered){ if(!mains.includes(s)) mains.push(s); if(mains.length>=3) break; }
   return mains.map(m=>buildPlan(m,date,w));
 }
 
@@ -841,6 +874,12 @@ function parentSummary(){
   }
   if(state.expandedDrive){
     base+=' 近場に候補が少なかったので少し範囲を広げました。';
+  }
+  if(state.nearFallback){
+    base+=' 少し遠出向けの候補が見当たらなかったため、近場中心になりました。';
+  }
+  if(state.sFeatured){
+    base+=' せっかくなので1日たっぷり系を主役にしました。';
   }
   return base;
 }
