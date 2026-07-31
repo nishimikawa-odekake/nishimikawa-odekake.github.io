@@ -17919,5 +17919,218 @@
       "geo_note": "GSI住所検索（新城市下吉田沢谷下25-3、駐車場付近）で座標取得。滝そのものは駐車場から徒歩約15分の山中にあるため、座標は駐車場位置を示す点に留意。川遊びの安全管理・監視員の有無は現地未確認のため、利用者は増水時等に十分注意する必要がある。"
     },
     "editorial_scale": "C"
+  },
+  {
+    "id": "sp295",
+    "slug": "ichinomiya-imaise-jidokan",
+    "name": "今伊勢児童館",
+    "summary": "一宮市今伊勢町にある無料の児童館。毎月第4月曜に読み聞かせ会（大型絵本・紙芝居・パネルシアター）を開催。",
+    "description": "一宮市今伊勢町新神戸にある一宮市立今伊勢児童館。乳幼児から中学生以上まで利用できる無料の室内施設。毎月第4月曜には大型絵本・紙芝居・パネルシアターに加え体操・手遊び・工作・マジックを組み合わせた読み聞かせ会を開催しているほか、ふれあいまつり・七夕まつり・クリスマス会など季節の行事も実施している。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "free",
+      "childcare_facility"
+    ],
+    "tags": [
+      "無料",
+      "屋内",
+      "児童館",
+      "一宮市",
+      "読み聞かせ"
+    ],
+    "prefecture": "愛知県",
+    "city": "一宮市",
+    "latitude": 35.314445,
+    "longitude": 136.789566,
+    "official_url": "https://www.city.ichinomiya.aichi.jp/shisetsu/hoikugakko/1008923/1009077.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.314445,136.789566",
+    "checked_at": "2026-07-31",
+    "business_hours": "午前9時30分〜午後5時30分",
+    "closed_days": "日曜日・祝休日・年末年始（12/29〜1/3）",
+    "price_text": "利用無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "駐車場あり",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "毎月第4月曜の読み聞かせ会（大型絵本・紙芝居・パネルシアター・工作・マジック）や季節行事が充実した無料児童館",
+    "estimated_drive_minutes_from_anjo": 60,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（一宮市今伊勢町新神戸字乾31-1）で緯度経度を取得。字地番のため町丁目中心座標（0.3km以内目安）。一宮市公式ページ（施設案内）で読み聞かせ会・年中行事の具体的記載を確認済み。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp296",
+    "slug": "otaki-keikoku",
+    "name": "王滝渓谷",
+    "summary": "豊田市王滝町にある渓谷。清流でのバーベキューや川遊びが楽しめ、吊り橋や王滝湖かけ橋など見どころも多い。",
+    "description": "豊田市王滝町、仁王川沿いに広がる渓谷。渓谷内には5つの園地、2つの吊り橋、全長90mの王滝湖かけ橋があり、清流での川遊びやバーベキューを楽しむ家族連れで賑わう。駐車場はBBQ場付近など5か所。",
+    "play_types": [
+      "water"
+    ],
+    "legacy_categories": [
+      "nature",
+      "river_play"
+    ],
+    "tags": [
+      "川遊び",
+      "渓谷",
+      "豊田市",
+      "バーベキュー",
+      "自然"
+    ],
+    "prefecture": "愛知県",
+    "city": "豊田市",
+    "latitude": 35.071217,
+    "longitude": 137.238403,
+    "official_url": "https://aichinow.pref.aichi.jp/spots/detail/2234/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.071217,137.238403",
+    "checked_at": "2026-07-31",
+    "business_hours": "常時開放（管理事務所なし）",
+    "closed_days": "特になし（増水時等は利用注意）",
+    "price_text": "入場無料（駐車場・BBQ場は施設により有料の場合あり）",
+    "is_free": null,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり（BBQ場付近など5か所）。身体障がい者専用駐車場なし",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": false,
+    "food_available": null,
+    "kid_appeal": "吊り橋やかけ橋を渡りながら清流での川遊び・バーベキューが楽しめる自然スポット",
+    "estimated_drive_minutes_from_anjo": 60,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "geo_note": "GSI住所検索（豊田市王滝町）で座標取得（町丁目レベル・渓谷内の具体的地点は住所番地がないため中心座標）。愛知県公式観光サイトAichi Nowで所在地・駐車場情報を確認済み。既存マスターに同名・近接施設の重複なしを確認。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp297",
+    "slug": "kuragari-keikoku-camp",
+    "name": "くらがり渓谷キャンプ場",
+    "summary": "岡崎市石原町にあるキャンプ場。渓流での水遊びやマス釣り、ハイキングが楽しめる日帰り利用も可能な施設。",
+    "description": "岡崎市石原町字牧原日影にある県立自然公園内のキャンプ場。テント設営・バーベキューに加え、マス釣りや夏の渓流での水遊び・森林浴・ハイキングが楽しめる。ミニログハウス等の宿泊施設もあり、本宮山からは南アルプスや三河湾も望める。駐車場は通常無料（繁忙期は1台500円・300台収容）。",
+    "play_types": [
+      "water"
+    ],
+    "legacy_categories": [
+      "nature",
+      "river_play",
+      "camp"
+    ],
+    "tags": [
+      "川遊び",
+      "デイキャンプ",
+      "岡崎市",
+      "マス釣り",
+      "渓谷"
+    ],
+    "prefecture": "愛知県",
+    "city": "岡崎市",
+    "latitude": 34.936424,
+    "longitude": 137.392365,
+    "official_url": "https://aichinow.pref.aichi.jp/spots/detail/3236/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.936424,137.392365",
+    "checked_at": "2026-07-31",
+    "business_hours": "日帰り利用可（詳細は公式サイトで要確認）",
+    "closed_days": "施設点検日等あり（要事前確認）",
+    "price_text": "駐車場は通常無料。繁忙期（2026年は4/25〜5/10・7/11〜8/31・11/7〜30）は1台500円",
+    "is_free": null,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり（通常無料・繁忙期は有料500円/台・300台収容）",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": false,
+    "food_available": null,
+    "kid_appeal": "渓流での水遊びやマス釣りが楽しめ、日帰りデイキャンプにも対応する自然体験スポット",
+    "estimated_drive_minutes_from_anjo": 60,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（岡崎市石原町字牧原日影2-2）で緯度経度を取得。愛知県公式観光サイトAichi Nowで住所・駐車場・アクティビティ内容を確認済み。既存マスターに同名施設の重複なし。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp298",
+    "slug": "aichi-prefectural-nagoya-airport-deck",
+    "name": "県営名古屋空港 展望デッキ",
+    "summary": "豊山町にある県営名古屋空港（小牧）の無料展望デッキ。FDA機など離着陸する飛行機を間近に見られる。",
+    "description": "豊山町大字豊場にある県営名古屋空港（小牧空港）の旅客ターミナルビル屋上にある無料展望デッキ。滑走路に近く、フジドリームエアラインズ（FDA）など離着陸する飛行機を間近に見学できる。乗り物好きの子どもの遊び場として定番。",
+    "play_types": [
+      "vehicle"
+    ],
+    "legacy_categories": [
+      "airport",
+      "free"
+    ],
+    "tags": [
+      "飛行機",
+      "展望デッキ",
+      "無料",
+      "豊山町",
+      "乗り物好き"
+    ],
+    "prefecture": "愛知県",
+    "city": "西春日井郡豊山町",
+    "latitude": 35.243748,
+    "longitude": 136.902573,
+    "official_url": "https://nagoya-airport.jp/facilities/service.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.243748,136.902573",
+    "checked_at": "2026-07-31",
+    "business_hours": "ターミナルビル開館時間に準ずる（詳細は公式サイトで要確認）",
+    "closed_days": "特になし（ターミナルビル休館日を除く）",
+    "price_text": "展望デッキ利用無料",
+    "is_free": true,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "有料駐車場あり",
+    "nursing_room": true,
+    "diaper_changing": true,
+    "stroller_access": true,
+    "food_available": true,
+    "kid_appeal": "無料で飛行機の離着陸を間近に見られ、ターミナル内の飲食・売店も利用できる乗り物好きの子の定番スポット",
+    "estimated_drive_minutes_from_anjo": 55,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（豊山町大字豊場、ターミナルビル所在の字レベル）で座標取得。県営名古屋空港公式サイトで展望デッキ・無料の記載を確認済み。既存マスターに空港・展望デッキ関連スポットの重複なし。"
+    },
+    "editorial_scale": "B"
   }
 ]
