@@ -17450,5 +17450,474 @@
     "legacy_categories": [
       "free"
     ]
+  },
+  {
+    "id": "sp286",
+    "slug": "nagoya-nakagawa-jidokan",
+    "name": "名古屋市中川児童館",
+    "summary": "中川区にある無料の児童館。乳幼児から高校生世代まで利用できる室内の遊び場。",
+    "description": "名古屋市中川区八幡本通にある「なごホーム（中川児童館）」。乳幼児の親子遊びから小中高生の居場所まで幅広く利用できる無料の室内施設。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "free",
+      "childcare_facility"
+    ],
+    "tags": [
+      "無料",
+      "屋内",
+      "児童館",
+      "中川区",
+      "名古屋市"
+    ],
+    "prefecture": "愛知県",
+    "city": "名古屋市中川区",
+    "latitude": 35.146778,
+    "longitude": 136.87944,
+    "official_url": "https://www.city.nagoya.jp/kodomoseishonen/page/0000096170.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.146778,136.87944",
+    "checked_at": "2026-07-31",
+    "business_hours": "8:45〜17:00（金曜は中高生世代のみ20:00まで）",
+    "closed_days": "月曜（学校長期休暇中は日曜）・祝日・年末年始(12/29〜1/3)",
+    "price_text": "利用無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 18,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "駐車場なし（公共交通機関の利用を推奨）",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "乳幼児の親子遊びスペースから学童・中高生の居場所まで無料で使える",
+    "estimated_drive_minutes_from_anjo": 55,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（中川区八幡本通2-40）で緯度経度を取得し座標採用。0.3km以内の乖離なし。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp287",
+    "slug": "nagoya-tenpaku-jidokan",
+    "name": "名古屋市天白児童館",
+    "summary": "天白区にある無料の児童館。乳幼児から高校生世代まで利用できる室内の遊び場。",
+    "description": "名古屋市天白区池場にある「なごホーム（天白児童館）」。乳幼児の親子遊びから小中高生の居場所まで幅広く利用できる無料の室内施設。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "free",
+      "childcare_facility"
+    ],
+    "tags": [
+      "無料",
+      "屋内",
+      "児童館",
+      "天白区",
+      "名古屋市"
+    ],
+    "prefecture": "愛知県",
+    "city": "名古屋市天白区",
+    "latitude": 35.118305,
+    "longitude": 136.983307,
+    "official_url": "https://city.nagoya.jp/kodomoseishonen/page/0000096205.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.118305,136.983307",
+    "checked_at": "2026-07-31",
+    "business_hours": "8:45〜17:00（金曜は中高生世代のみ20:00まで）",
+    "closed_days": "月曜（学校長期休暇中は日曜）・祝日・年末年始(12/29〜1/3)",
+    "price_text": "利用無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 18,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "駐車場なし（公共交通機関の利用を推奨）",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "乳幼児の親子遊びスペースから学童・中高生の居場所まで無料で使える",
+    "estimated_drive_minutes_from_anjo": 60,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（天白区池場五丁目1801）で緯度経度を取得し座標採用。0.3km以内の乖離なし。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp288",
+    "slug": "nagoya-moriyama-jidokan",
+    "name": "名古屋市守山児童館",
+    "summary": "守山区にある無料の児童館。乳幼児から高校生世代まで利用できる室内の遊び場。",
+    "description": "名古屋市守山区小幡にある「なごホーム（守山児童館）」。乳幼児の親子遊びから小中高生の居場所まで幅広く利用できる無料の室内施設。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "free",
+      "childcare_facility"
+    ],
+    "tags": [
+      "無料",
+      "屋内",
+      "児童館",
+      "守山区",
+      "名古屋市"
+    ],
+    "prefecture": "愛知県",
+    "city": "名古屋市守山区",
+    "latitude": 35.202984,
+    "longitude": 136.97702,
+    "official_url": "https://www.city.nagoya.jp/kodomoseishonen/page/0000096196.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.202984,136.97702",
+    "checked_at": "2026-07-31",
+    "business_hours": "8:45〜17:00（金曜は中高生世代のみ20:00まで）",
+    "closed_days": "月曜（学校長期休暇中は日曜）・祝日・年末年始(12/29〜1/3)",
+    "price_text": "利用無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 18,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "乳幼児の親子遊びスペースから学童・中高生の居場所まで無料で使える",
+    "estimated_drive_minutes_from_anjo": 55,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（守山区小幡一丁目3-15）で緯度経度を取得し座標採用。0.3km以内の乖離なし。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp289",
+    "slug": "nagoya-atsuta-jidokan",
+    "name": "名古屋市熱田児童館",
+    "summary": "熱田区にある無料の児童館。老人福祉センターと一体で世代間交流もできる室内の遊び場。",
+    "description": "名古屋市熱田区四番にある「なごホーム（熱田児童館）」。老人福祉センターと一体化しており、乳幼児の親子遊びから世代間交流まで楽しめる無料の室内施設。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "free",
+      "childcare_facility"
+    ],
+    "tags": [
+      "無料",
+      "屋内",
+      "児童館",
+      "熱田区",
+      "名古屋市"
+    ],
+    "prefecture": "愛知県",
+    "city": "名古屋市熱田区",
+    "latitude": 35.121185,
+    "longitude": 136.89093,
+    "official_url": "https://www.city.nagoya.jp/kodomoseishonen/page/0000096189.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.121185,136.89093",
+    "checked_at": "2026-07-31",
+    "business_hours": "8:45〜17:00（木曜は中高生世代のみ20:00まで）",
+    "closed_days": "月曜・祝日・年末年始(12/29〜1/3)",
+    "price_text": "利用無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 18,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "駐車場少なめ（公共交通機関の利用を推奨）",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "老人福祉センターと一体化し世代間交流もできる無料の室内遊び場",
+    "estimated_drive_minutes_from_anjo": 50,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（熱田区四番二丁目10-10）で緯度経度を取得し座標採用。0.3km以内の乖離なし。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp290",
+    "slug": "ichinomiya-chiikibunka-hiroba-athletic",
+    "name": "一宮地域文化広場 フィールドアスレチック",
+    "summary": "一宮地域文化広場内にある無料のフィールドアスレチック。",
+    "description": "一宮市時之島の一宮地域文化広場内にある屋外フィールドアスレチック。同施設内のプラネタリウム館とは別の屋外遊具エリアで、無料で利用できる。",
+    "play_types": [
+      "active"
+    ],
+    "legacy_categories": [
+      "free",
+      "park"
+    ],
+    "tags": [
+      "無料",
+      "アスレチック",
+      "一宮市"
+    ],
+    "prefecture": "愛知県",
+    "city": "一宮市",
+    "latitude": 35.324604,
+    "longitude": 136.845123,
+    "official_url": "https://www.hamada-sports.com/ichinomiya_chiikibunka/athletic",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.324604,136.845123",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜16:30",
+    "closed_days": "月曜（祝日の場合は翌日）・1/1〜1/4・12/28〜12/31・荒天時",
+    "price_text": "無料",
+    "is_free": true,
+    "target_age_min": 4,
+    "target_age_max": 12,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり（詳細は公式駐車場MAP参照）",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "同じ広場内のプラネタリウムとあわせて一日遊べる無料アスレチック",
+    "estimated_drive_minutes_from_anjo": 70,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "既存収録の「一宮地域文化広場 プラネタリウム館」（sp119）と同一敷地内だが、屋外アスレチックという別施設のため新規登録。GSI住所検索で座標を取得し、既存プラネタリウム館の座標と0.1km以内で一致することを確認。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp291",
+    "slug": "ichinomiya-oki-jidokan",
+    "name": "一宮市起児童館",
+    "summary": "一宮市木曽川沿いの起地区にある児童館。市内2館目として収録。",
+    "description": "一宮市起字西生出にある一宮市立起児童館。乳幼児の親子遊びから学童保育まで利用できる地域の児童館。",
+    "play_types": [
+      "indoor"
+    ],
+    "legacy_categories": [
+      "childcare_facility"
+    ],
+    "tags": [
+      "児童館",
+      "一宮市"
+    ],
+    "prefecture": "愛知県",
+    "city": "一宮市",
+    "latitude": 35.305721,
+    "longitude": 136.739716,
+    "official_url": "https://www.city.ichinomiya.aichi.jp/kodomokatei/kosodateshien/1009989/1001344.html",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=35.305721,136.739716",
+    "checked_at": "2026-07-31",
+    "business_hours": "9:00〜17:00頃（詳細は一宮市公式サイト要確認）",
+    "closed_days": "月曜・祝日・年末年始（詳細は一宮市公式サイト要確認）",
+    "price_text": "利用無料",
+    "is_free": true,
+    "target_age_min": 0,
+    "target_age_max": 18,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": null,
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "一宮市内で貴船児童館に続く2館目の登録。起地区の親子が利用しやすい地域の児童館",
+    "estimated_drive_minutes_from_anjo": 75,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "geo_note": "GSI住所検索（一宮市起字西生出33）で座標取得。開館時間・休館日は一宮市公式児童館一覧ページに個別記載がなく他館の一般的な運用時間を参考値として記載。利用前に一宮市への確認を推奨。"
+    },
+    "editorial_scale": "C"
+  },
+  {
+    "id": "sp292",
+    "slug": "tokoname-tougei-seiko",
+    "name": "陶芸体験教室 晴光",
+    "summary": "常滑やきもの散歩道にある手びねり陶芸体験教室。小学生から体験可能。",
+    "description": "常滑市栄町のやきもの散歩道内にある陶芸体験教室。手びねりで茶碗や湯飲み、マグカップ、お皿などから1点を約40分で製作でき、40種類以上の釉薬から色を選べる。小学生から体験可能で、観光や散歩のついでに立ち寄りやすい。",
+    "play_types": [
+      "create"
+    ],
+    "legacy_categories": [
+      "workshop",
+      "craft"
+    ],
+    "tags": [
+      "陶芸体験",
+      "手びねり",
+      "常滑市",
+      "常滑焼"
+    ],
+    "prefecture": "愛知県",
+    "city": "常滑市",
+    "latitude": 34.888355,
+    "longitude": 136.8405,
+    "official_url": "https://www.tougei-seiko.com/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.888355,136.8405",
+    "checked_at": "2026-07-31",
+    "business_hours": "平日10:00〜15:00、土日11:00〜17:00",
+    "closed_days": "不定休",
+    "price_text": "手びねり体験 3,300円（子ども・大人同一料金）",
+    "is_free": false,
+    "target_age_min": 6,
+    "target_age_max": null,
+    "indoor_or_outdoor": "indoor",
+    "rain_friendly": true,
+    "parking": "無料あり（8台）",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": null,
+    "kid_appeal": "約40分で世界に一つだけの器を手びねりで作れる。やきもの散歩道の観光と組み合わせやすい",
+    "estimated_drive_minutes_from_anjo": 50,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（常滑市栄町3-91）で緯度経度を取得し座標採用。電話予約制（0569-34-2094）、事前予約必須。対象年齢は小学生以上。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp293",
+    "slug": "blueberry-farm-minamichita",
+    "name": "ブルーベリーファーム南知多",
+    "summary": "南知多町にあるブルーベリー狩り農園。時間無制限・食べ放題で夏季の土日限定営業。",
+    "description": "知多郡南知多町豊浜にあるブルーベリー狩り農園。夏季（例年6月下旬〜）の土曜・日曜限定で営業し、時間無制限の食べ放題でブルーベリー狩りが楽しめる。",
+    "play_types": [
+      "create",
+      "food"
+    ],
+    "legacy_categories": [
+      "harvest",
+      "seasonal"
+    ],
+    "tags": [
+      "ブルーベリー狩り",
+      "収穫体験",
+      "南知多町",
+      "夏季限定"
+    ],
+    "prefecture": "愛知県",
+    "city": "知多郡南知多町",
+    "latitude": 34.706017,
+    "longitude": 136.94278,
+    "official_url": "https://blueberry-minamichita.hp.peraichi.com/",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.706017,136.94278",
+    "checked_at": "2026-07-31",
+    "business_hours": "夏季の土日9:00〜15:00（例年6月下旬〜）",
+    "closed_days": "平日（土日のみ営業）",
+    "price_text": "食べ放題・時間無制限 大人（中学生以上）2,500円、小学生1,500円、幼児(3歳以上)500円",
+    "is_free": false,
+    "target_age_min": 3,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": null,
+    "food_available": true,
+    "kid_appeal": "時間無制限の食べ放題でブルーベリー狩りができ、水洗トイレも完備",
+    "estimated_drive_minutes_from_anjo": 60,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "high",
+      "geo_note": "GSI住所検索（南知多町豊浜汐見台36）で緯度経度を取得し座標採用。季節営業のため訪問前に公式サイト・Instagramで最新の営業状況を要確認。"
+    },
+    "editorial_scale": "B"
+  },
+  {
+    "id": "sp294",
+    "slug": "atera-nanataki",
+    "name": "阿寺の七滝",
+    "summary": "新城市の名瀑・阿寺の七滝。夏は川遊びや涼を求めて訪れる家族連れも多い。",
+    "description": "新城市下吉田にある「日本の滝百選」にも選ばれた阿寺の七滝。駐車場から滝までは徒歩約15分。夏場は周辺の川で水遊びを楽しむ家族連れも見られる。",
+    "play_types": [
+      "water"
+    ],
+    "legacy_categories": [
+      "nature",
+      "river_play"
+    ],
+    "tags": [
+      "川遊び",
+      "滝",
+      "新城市",
+      "自然"
+    ],
+    "prefecture": "愛知県",
+    "city": "新城市",
+    "latitude": 34.916492,
+    "longitude": 137.620972,
+    "official_url": "https://www.okuminavi.jp/search/detail.php?id=172",
+    "google_maps_url": "https://www.google.com/maps/search/?api=1&query=34.916492,137.620972",
+    "checked_at": "2026-07-31",
+    "business_hours": "常時開放（管理事務所なし）",
+    "closed_days": "豪雨時など通行止めの可能性あり（事前に道路状況を要確認）",
+    "price_text": "駐車場 普通車300円・オートバイ100円・マイクロバス1,000円・大型バス1,500円",
+    "is_free": false,
+    "target_age_min": null,
+    "target_age_max": null,
+    "indoor_or_outdoor": "outdoor",
+    "rain_friendly": false,
+    "parking": "あり（約120台、有料）",
+    "nursing_room": null,
+    "diaper_changing": null,
+    "stroller_access": false,
+    "food_available": null,
+    "kid_appeal": "涼やかな滝と清流での川遊びが楽しめる奥三河の自然スポット",
+    "estimated_drive_minutes_from_anjo": 60,
+    "image_url": null,
+    "image_credit": null,
+    "image_source": null,
+    "featured": false,
+    "status": "published",
+    "metadata": {
+      "geo_confidence": "medium",
+      "geo_note": "GSI住所検索（新城市下吉田沢谷下25-3、駐車場付近）で座標取得。滝そのものは駐車場から徒歩約15分の山中にあるため、座標は駐車場位置を示す点に留意。川遊びの安全管理・監視員の有無は現地未確認のため、利用者は増水時等に十分注意する必要がある。"
+    },
+    "editorial_scale": "C"
   }
 ]
