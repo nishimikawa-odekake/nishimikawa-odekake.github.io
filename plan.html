@@ -630,6 +630,10 @@ function scoreSpot(s,date,w,arrivalMin){
   }
   return sc;
 }
+// 児童館・子育て支援センター系(is_jidokan===true)はプランナーの対象外。
+// マップ上の🏠チップ専用スポットという設計であり、メイン/ランチ/余力のどの枠にも入れない。
+// 「遠出の帰り道に児童センター系には寄らない」というユーザー方針のガードをここに一本化する。
+function isJidokan(s){ return s&&s.is_jidokan===true; }
 function budgetPass(s){
   if(state.budget==='any') return true;
   if(state.budget==='free') return s.is_free===true;
@@ -650,7 +654,7 @@ function buildPool(date,w){
   const start=startMinutes();
   let cand=SPOTS.filter(s=>{
     if(s.latitude==null) return false;
-    if(s.is_jidokan===true) return false; // 児童館はメイン候補から除外（立ち寄りスポット扱い）
+    if(isJidokan(s)) return false; // 児童館・子育て支援センター系はプランナー対象外（🏠チップ専用）
     const pt=s.play_types||[];
     if(pt.length===1&&pt[0]==='food') return false; // pure food -> lunch only
     const dm=driveMinutesFrom(o,s);
@@ -713,6 +717,7 @@ function pickLunch(main,date){
   const o=state.origin;
   const c=SPOTS.filter(s=>{
     if(s===main||s.latitude==null) return false;
+    if(isJidokan(s)) return false; // 児童館・子育て支援センター系はプランナー対象外（🏠チップ専用）
     if(isSameComplex(s,main)) return false; // 同一敷地はメイン↔ランチでも除外（距離は例外だが施設名一致は除外）
     if(!(s.play_types||[]).includes('food')) return false;
     if(isClosedOn(s,date)) return false;
@@ -730,6 +735,7 @@ function pickSub(main,lunch,mainDriveMin,date,w){
   const rain=w&&w.precip!=null&&w.precip>=50;
   const c=SPOTS.filter(s=>{
     if(s===main||s.latitude==null) return false;
+    if(isJidokan(s)) return false; // 児童館・子育て支援センター系は余力枠からも除外（帰り道に寄らない）
     if(s.is_free!==true) return false;
     // 同一敷地・近接排除: メイン/ランチとの重複は不可（メイン↔ランチのみが距離例外）
     if(isSamePlace(s,main,1.0)) return false;
