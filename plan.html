@@ -1003,6 +1003,23 @@ function rowHtml(r){
     '<div class="body">'+body+'</div></div>';
 }
 function track(w){ if(typeof gtag==='function') gtag('event','plan_outlink',{link:w}); }
+// build a Google Maps directions URL for the plan's route: 出発地(現在地 or 市町村代表座標) -> メイン -> ランチ -> (余力枠)
+function buildRouteUrl(p){
+  const o=state.origin;
+  if(!o||o.lat==null||o.lng==null) return null;
+  const spots=p.rows.filter(r=>r.type==='spot').map(r=>r.spot).filter(Boolean);
+  if(!spots.length) return null;
+  const dest=spots[spots.length-1];
+  const waypoints=spots.slice(0,-1);
+  let url='https://www.google.com/maps/dir/?api=1'+
+    '&origin='+encodeURIComponent(o.lat+','+o.lng)+
+    '&destination='+encodeURIComponent(dest.latitude+','+dest.longitude)+
+    '&travelmode=driving';
+  if(waypoints.length){
+    url+='&waypoints='+encodeURIComponent(waypoints.map(s=>s.latitude+','+s.longitude).join('|'));
+  }
+  return url;
+}
 function showResult(){
   const res=document.getElementById('result');
   res.style.display='block';
@@ -1013,6 +1030,7 @@ function showResult(){
     return;
   }
   const p=state.plans[state.variant%state.plans.length];
+  const routeUrl=buildRouteUrl(p);
   const total=Math.floor(p.totalDrive/60), tm=p.totalDrive%60;
   const driveStr=(total?total+'時間':'')+(tm?tm+'分':'')||'0分';
   let html='';
@@ -1040,6 +1058,14 @@ function showResult(){
     html+='<div class="summary" style="color:var(--sub);font-size:.82rem;font-weight:600">※料金不明のスポットが含まれます。公式サイトでご確認ください</div>';
   }
   html+='</div>';
+  if(routeUrl){
+    html+='<div class="gmaps-route" style="text-align:center;margin:14px 0 18px">'+
+      '<a class="act-gmaps" href="'+esc(routeUrl)+'" target="_blank" rel="noopener" onclick="track(\'gmaps_route\')" '+
+      'style="display:inline-block;width:100%;box-sizing:border-box;padding:14px;border-radius:14px;background:#1a73e8;color:#fff;font-weight:800;font-size:.95rem;text-decoration:none">'+
+      '🚗 このルートをGoogleマップで開く</a>'+
+      '<div style="font-size:.72rem;color:var(--sub);margin-top:6px">※ルートはGoogleマップ上で編集できます</div>'+
+      '</div>';
+  }
   html+='<div class="share">📸 スクショして家族に送ってね！</div>';
   html+='<div class="actions">';
   html+='<button class="act-reroll" onclick="reroll()">🔄 別のプランにする</button>';
