@@ -100,6 +100,11 @@ select.origin{width:100%;padding:14px;font-size:1rem;border:2px solid var(--line
 .act-reroll{background:var(--accent);color:#fff;border:none}
 .act-map{background:#fff;color:var(--accent-d);border:2px solid var(--accent)}
 .act-restart{background:transparent;color:var(--sub);border:none;text-decoration:underline;font-weight:600;font-size:.9rem;padding:6px}
+.act-share{background:#fff;color:var(--accent-d);border:2px solid var(--accent);width:100%;box-sizing:border-box}
+.sharedbanner{text-align:center;font-size:.8rem;font-weight:700;color:var(--accent-d);background:#fff6ee;border-radius:10px;padding:8px 10px;margin:0 0 10px}
+.sharedbanner a{color:var(--accent-d);text-decoration:underline}
+#shareToast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#333;color:#fff;padding:10px 18px;border-radius:20px;font-size:.85rem;font-weight:700;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s}
+#shareToast.show{opacity:1}
 .share{text-align:center;font-size:.86rem;color:var(--accent-d);font-weight:700;background:#fff6ee;border-radius:12px;padding:12px;margin:6px 0}
 .notice{font-size:.74rem;color:var(--sub);line-height:1.5;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:16px}
 .empty{text-align:center;padding:30px 14px;color:var(--sub)}
@@ -763,11 +768,11 @@ function startMinutes(){
   if(d&&d.mode==='slot') return d.slot==='noon'?13*60:9*60+30;
   return 9*60+30; // 9:30 fallback
 }
-function buildPlan(main,date,w){
+function buildPlan(main,date,w,shareOverride){
   const o=state.origin;
-  const lunch=pickLunch(main,date);
+  const lunch=shareOverride?(shareOverride.lunch||null):pickLunch(main,date);
   const dm=driveMinutesFrom(o,main)||30;
-  let sub=pickSub(main,lunch,dm,date,w);
+  let sub=shareOverride?(shareOverride.sub||null):pickSub(main,lunch,dm,date,w);
   let t=startMinutes();
   const rows=[];
   const originName=(o.name==='現在地')?'出発地周辺':(o.isAnjo?'出発地周辺':o.name+'周辺');
@@ -908,6 +913,7 @@ async function generate(){
   const date=targetDate(state.when);
   state.shownMains=[];
   state.cycledNote=false;
+  state.isSharedView=false;
   state.plans=generatePlans(date,state.weather);
   state.variant=0;
 
@@ -1020,6 +1026,141 @@ function buildRouteUrl(p){
   }
   return url;
 }
+/* ===== share ===== */
+function buildShareUrl(p){
+  const parts=['share=1'];
+  const originName=state.origin?state.origin.name:'安城市';
+  parts.push('from='+encodeURIComponent(originName));
+  if(originName==='現在地'&&state.origin){
+    parts.push('lat='+state.origin.lat.toFixed(5));
+    parts.push('lng='+state.origin.lng.toFixed(5));
+  }
+  parts.push('drive='+encodeURIComponent(state.driveTime||'any'));
+  parts.push('when='+encodeURIComponent(state.when||'today'));
+  if(state.depart){
+    const d=state.depart;
+    parts.push('depart='+encodeURIComponent(d.mode==='offset'?('offset:'+d.min):('slot:'+d.slot)));
+  }
+  parts.push('age='+encodeURIComponent([...state.ages].join(',')));
+  parts.push('budget='+encodeURIComponent(state.budget||'any'));
+  const spots=p.rows.filter(r=>r.type==='spot');
+  const mainRow=spots.find(r=>r.tag==='メイン');
+  if(mainRow) parts.push('main='+encodeURIComponent(mainRow.spot.name));
+  const lunchRow=spots.find(r=>r!==mainRow&&!r.opt);
+  const subRow=spots.find(r=>r.opt);
+  if(lunchRow) parts.push('lunch='+encodeURIComponent(lunchRow.spot.name));
+  if(subRow) parts.push('sub='+encodeURIComponent(subRow.spot.name));
+  return location.origin+location.pathname+'?'+parts.join('&');
+}
+function showToast(msg){
+  let t=document.getElementById('shareToast');
+  if(!t){ t=document.createElement('div'); t.id='shareToast'; document.body.appendChild(t); }
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(t._h);
+  t._h=setTimeout(()=>{ t.classList.remove('show'); },2200);
+}
+function copyToClipboard(text){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text);
+  }
+  return new Promise((resolve,reject)=>{
+    try{
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      const ok=document.execCommand('copy');
+      document.body.removeChild(ta);
+      ok?resolve():reject(new Error('copy failed'));
+    }catch(e){ reject(e); }
+  });
+}
+async function sharePlan(){
+  if(!state.plans.length) return;
+  const p=state.plans[state.variant%state.plans.length];
+  const url=buildShareUrl(p);
+  const text=parentSummary();
+  if(navigator.share){
+    try{
+      await navigator.share({title:'きょうのおでかけプラン',text,url});
+      if(typeof gtag==='function') gtag('event','plan_share',{method:'webshare'});
+    }catch(e){ /* user cancelled share sheet */ }
+    return;
+  }
+  try{
+    await copyToClipboard(url);
+    showToast('リンクをコピーしました');
+    if(typeof gtag==='function') gtag('event','plan_share',{method:'copy'});
+  }catch(e){
+    showToast('コピーに失敗しました');
+  }
+}
+// rebuild wizard state + a concrete plan from share URL params; returns the plan object or null
+function restoreFromShare(qs){
+  const mainName=qs.get('main');
+  const mainSpot=mainName?SPOTS.find(s=>s.name===mainName):null;
+  if(!mainSpot) return null;
+  const from=qs.get('from')||'安城市';
+  let lat=qs.has('lat')?parseFloat(qs.get('lat')):NaN;
+  let lng=qs.has('lng')?parseFloat(qs.get('lng')):NaN;
+  let originName=from;
+  if(isNaN(lat)||isNaN(lng)){
+    if(from==='安城市'){ lat=ANJO[0]; lng=ANJO[1]; }
+    else {
+      const c=CITIES.find(c=>c[0]===from);
+      if(c){ lat=c[1]; lng=c[2]; } else { lat=ANJO[0]; lng=ANJO[1]; originName='安城市'; }
+    }
+  }
+  state.origin={name:originName,lat,lng,isAnjo:originName==='安城市'};
+  const drive=qs.get('drive');
+  state.driveTime=['20','40','60'].includes(drive)?drive:'any';
+  const when=qs.get('when');
+  state.when=['today','tomorrow','sat','sun'].includes(when)?when:'today';
+  const departRaw=qs.get('depart')||'';
+  if(departRaw.indexOf('offset:')===0){
+    state.depart={mode:'offset',min:parseInt(departRaw.slice(7),10)||60};
+  } else if(departRaw.indexOf('slot:')===0){
+    state.depart={mode:'slot',slot:departRaw.slice(5)==='noon'?'noon':'am'};
+  } else {
+    state.depart=state.when==='today'?{mode:'offset',min:60}:{mode:'slot',slot:'am'};
+  }
+  const ageRaw=(qs.get('age')||'').split(',').filter(a=>['0-2','3-5','elem'].includes(a));
+  state.ages=new Set(ageRaw.length?ageRaw:['3-5']);
+  const budget=qs.get('budget');
+  state.budget=['free','1000','3000','any'].includes(budget)?budget:'any';
+  const lunchName=qs.get('lunch');
+  const subName=qs.get('sub');
+  const lunchSpot=lunchName?(SPOTS.find(s=>s.name===lunchName)||null):null;
+  const subSpot=subName?(SPOTS.find(s=>s.name===subName)||null):null;
+  return {mainSpot,lunchSpot,subSpot};
+}
+async function initFromShareOrWizard(){
+  const qs=new URLSearchParams(location.search);
+  if(qs.get('share')==='1'){
+    const r=restoreFromShare(qs);
+    if(r){
+      document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+      document.getElementById('dots').style.display='none';
+      document.getElementById('loading').style.display='block';
+      document.getElementById('result').style.display='none';
+      try{
+        state.weather=await fetchWeather();
+        const date=targetDate(state.when);
+        const plan=buildPlan(r.mainSpot,date,state.weather,{lunch:r.lunchSpot,sub:r.subSpot});
+        state.plans=[plan];
+        state.variant=0;
+        state.shownMains=[r.mainSpot];
+        state.isSharedView=true;
+        document.getElementById('loading').style.display='none';
+        showResult();
+        return;
+      }catch(e){
+        // fall through to normal wizard on unexpected failure
+      }
+    }
+  }
+  render(); refreshNext();
+}
 function showResult(){
   const res=document.getElementById('result');
   res.style.display='block';
@@ -1034,6 +1175,9 @@ function showResult(){
   const total=Math.floor(p.totalDrive/60), tm=p.totalDrive%60;
   const driveStr=(total?total+'時間':'')+(tm?tm+'分':'')||'0分';
   let html='';
+  if(state.isSharedView){
+    html+='<div class="sharedbanner">共有されたプランです ・ <a href="./plan.html">自分のプランを作る →</a></div>';
+  }
   html+='<div style="text-align:center">'+weatherBadge()+'</div>';
   html+='<div class="parentline">🗣 '+esc(parentSummary())+'</div>';
   html+='<div class="plancard">';
@@ -1068,6 +1212,7 @@ function showResult(){
   }
   html+='<div class="share">📸 スクショして家族に送ってね！</div>';
   html+='<div class="actions">';
+  html+='<button class="act-share" onclick="sharePlan()">📤 このプランを共有</button>';
   html+='<button class="act-reroll" onclick="reroll()">🔄 別のプランにする</button>';
   html+='<a class="act-map" href="./index.html" onclick="track(\'map\')">🗺 地図でこのへんを見る</a>';
   html+='<button class="act-restart" onclick="restart()">最初からやり直す</button>';
@@ -1084,6 +1229,7 @@ function showResult(){
 }
 function reroll(){
   if(typeof gtag==='function') gtag('event','plan_reroll');
+  state.isSharedView=false;
   const date=targetDate(state.when);
   const newPlan=nextVarietyPlan(date,state.weather);
   if(newPlan){
@@ -1095,7 +1241,7 @@ function reroll(){
   showResult();
 }
 function restart(){
-  state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.plans=[]; state.expandedDrive=false;
+  state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.plans=[]; state.expandedDrive=false; state.isSharedView=false;
   document.querySelectorAll('.bigbtn.on').forEach(b=>b.classList.remove('on'));
   document.getElementById('departWrap').style.display='none';
   document.getElementById('result').style.display='none';
@@ -1106,7 +1252,7 @@ function restart(){
 }
 
 /* init */
-render(); refreshNext();
+initFromShareOrWizard();
 </script>
 </body>
 </html>
