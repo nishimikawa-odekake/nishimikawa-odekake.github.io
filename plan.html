@@ -986,7 +986,7 @@ function rowHtml(r){
   const isFood=(s.play_types||[]).includes('food');
   const links='<div class="links">'+
     (s.official_url?'<a href="'+esc(s.official_url)+'" target="_blank" rel="noopener" onclick="track(\'official\')">'+(/tabelog\.com/.test(s.official_url)?'詳細情報(食べログ)↗':'公式サイト↗')+'</a>':'')+
-    (s.google_maps_url?'<a class="map" href="'+esc(s.google_maps_url)+'" target="_blank" rel="noopener" onclick="track(\'maps\')">地図で見る↗</a>':'')+
+    '<a class="map" href="'+esc('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.name+' '+(s.city||'')))+'" target="_blank" rel="noopener" onclick="track(\'maps\')">地図で見る↗</a>'+
     '</div>';
   let body='';
   body+=(r.opt?'<span class="opt">⏱ 余力があれば</span><br>':'');

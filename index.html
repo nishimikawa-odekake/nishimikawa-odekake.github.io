@@ -693,7 +693,8 @@ function cardHTML(s,i){
     const linkLabel=s.url_label ? s.url_label+' →' : (isTabelog ? '詳細情報(食べログ) →' : '公式サイト →');
     actions+=`<a class="btn primary" href="${esc(s.official_url)}" target="_blank" rel="noopener">${esc(linkLabel)} </a>`;
   }
-  if(s.google_maps_url) actions+=`<a class="btn map" href="${esc(s.google_maps_url)}" target="_blank" rel="noopener">🗺 Googleマップ</a>`;
+  const gmapsSearchUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.name+' '+(s.city||''));
+  actions+=`<a class="btn map" href="${esc(gmapsSearchUrl)}" target="_blank" rel="noopener">🗺 Googleマップ</a>`;
   // 文脈アフィリボタン（PR）: water優先、次に屋外active
   const pt=s.play_types||[];
   let aff='';

@@ -384,7 +384,8 @@ function sheetHTML(s){
   if(s.is_jidokan===true) badges+='<span class="badge free">🏠 児童館</span>';
   let actions='';
   if(s.official_url) actions+='<a class="btn primary" href="'+esc(s.official_url)+'" target="_blank" rel="noopener">公式サイト →</a>';
-  if(s.google_maps_url) actions+='<a class="btn map" href="'+esc(s.google_maps_url)+'" target="_blank" rel="noopener">🗺 Googleマップ</a>';
+  var gmapsSearchUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.name+' '+(s.city||''));
+  actions+='<a class="btn map" href="'+esc(gmapsSearchUrl)+'" target="_blank" rel="noopener">🗺 Googleマップ</a>';
   return '<h3>'+esc(s.name)+'</h3>'+
     '<p class="city">'+esc(s.city||'')+'</p>'+
     (s.kid_appeal?'<p class="appeal">'+esc(s.kid_appeal)+'</p>':'')+
