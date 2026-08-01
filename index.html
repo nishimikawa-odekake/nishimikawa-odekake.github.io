@@ -311,7 +311,6 @@ footer p{margin:0 0 6px}
       <button class="chip play" data-t="water"   aria-pressed="false">💦 水</button>
       <button class="chip play" data-t="create"  aria-pressed="false">🔬 つくる</button>
       <button class="chip play" data-t="vehicle" aria-pressed="false">🚃 のりもの</button>
-      <button class="chip play" data-t="indoor"  aria-pressed="false">☔ 室内</button>
       <button class="chip play" data-t="food"    aria-pressed="false">🍽 ごはん</button>
     </div>
     <div class="frow" role="group" aria-label="出発地からの所要時間で絞り込み">
@@ -325,8 +324,7 @@ footer p{margin:0 0 6px}
     <div class="frow">
       <button class="chip" data-f="rain" aria-pressed="false">☔ 雨でもOK</button>
       <button class="chip" data-f="free" aria-pressed="false">🆓 無料</button>
-      <button class="chip" data-f="kids" aria-pressed="false">🧸 キッズスペース</button>
-      <button class="chip" data-f="jidokan" aria-pressed="false">🏠 児童館</button>
+      <button class="chip" data-f="jidokan" aria-pressed="false">🐥 児童館</button>
       <span class="count" id="count" aria-live="polite">該当32件</span>
       <button class="reset" id="reset">リセット</button>
     </div>
@@ -334,6 +332,7 @@ footer p{margin:0 0 6px}
       <span class="flabel">ごはん店の条件</span>
       <button class="chip" data-f="zashiki" aria-pressed="false">🍵 座敷あり</button>
       <button class="chip" data-f="kids_chair" aria-pressed="false">🪑 子ども椅子</button>
+      <button class="chip" data-f="kids" aria-pressed="false">🧸 キッズスペース</button>
     </div>
   </div>
 </div>
@@ -579,7 +578,7 @@ try{
   // spot markers
   SPOTS.forEach((s,i)=>{
     if(s.latitude==null||s.longitude==null) return;
-    const p=primary(s), col=PLAY[p].c, emo=PLAY[p].e;
+    const p=primary(s), col=PLAY[p].c, emo=(s.is_jidokan===true?'🐥':PLAY[p].e);
     const icon=L.divIcon({className:'',html:`<div class="pin" style="background:${col}"><span>${emo}</span></div>`,iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-30]});
     const m=L.marker([s.latitude,s.longitude],{icon,title:s.name});
     // popup content is generated on each open so drive-minutes always reflect the current origin
@@ -687,7 +686,7 @@ function cardHTML(s,i){
   if(s.has_zashiki===true&&!kfHasZashiki) badges+=`<span class="badge free">🍵 座敷あり</span>`;
   const kfHasKidsChair=Array.isArray(s.kid_features)&&s.kid_features.some(f=>/キッズチェア|子ども椅子|子供椅子|ハイチェア|ベビーチェア|まめイス/.test(f));
   if(s.has_kids_chair===true&&!kfHasKidsChair) badges+=`<span class="badge free">🪑 子ども椅子</span>`;
-  if(s.is_jidokan===true) badges+=`<span class="badge free">🏠 児童館</span>`;
+  if(s.is_jidokan===true) badges+=`<span class="badge free">🐥 児童館</span>`;
   // info
   let info='';
   if(s.price_text) info+=`<p class="info"><b>料金</b><span>${esc(s.price_text)}</span></p>`;
@@ -751,14 +750,14 @@ function matches(s){
   }
   if(state.rain){ if(!(s.rain_friendly===true||s.indoor_or_outdoor==='indoor')) return false; }
   if(state.free){ if(s.is_free!==true) return false; }
-  if(state.kids){ if(s.has_kids_space!==true) return false; }
+  if(state.kids){ if(!(s.has_kids_space===true&&(s.play_types||[]).includes('food'))) return false; }
   if(state.jidokan){ if(s.is_jidokan!==true) return false; }
   else { if(s.is_jidokan===true) return false; }
   if(state.zashiki){ if(s.has_zashiki!==true) return false; }
   if(state.kids_chair){ if(s.has_kids_chair!==true) return false; }
   // 条件チップ単独時（ごはんチップ未選択）は、foodのみのスポット（飲食店）を除外
   const pts0=s.play_types||[];
-  if(pts0.length&&pts0.every(t=>t==='food')&&!state.play.has('food')&&(state.rain||state.free||state.kids||state.drive!=null)) return false;
+  if(pts0.length&&pts0.every(t=>t==='food')&&!state.play.has('food')&&(state.rain||state.free||state.drive!=null)) return false;
   return true;
 }
 
@@ -797,7 +796,7 @@ function updateFoodSubChips(){
   el.style.display=show?'':'none';
   if(!show){
     let changed=false;
-    ['zashiki','kids_chair'].forEach(f=>{
+    ['zashiki','kids_chair','kids'].forEach(f=>{
       if(state[f]){ state[f]=false; changed=true; }
     });
     document.querySelectorAll('#foodSubChips .chip').forEach(c=>{c.classList.remove('on');c.setAttribute('aria-pressed','false')});
@@ -859,7 +858,6 @@ function setChip(sel){const c=document.querySelector(sel);if(c){c.classList.add(
     const params=new URLSearchParams();
     if(state.rain) params.set('filter','rain');
     else if(state.free) params.set('filter','free');
-    else if(state.kids) params.set('filter','kids');
     else if(state.jidokan) params.set('filter','jidokan');
     else if(state.play.size) params.set('filter',[...state.play][0]);
     if(!origin.isAnjo){

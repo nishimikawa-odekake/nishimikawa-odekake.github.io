@@ -85,7 +85,8 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
 .chip.play[data-t="food"].on{background:var(--food)}
 .chip[data-f="rain"].on{background:#3FA9D6}
 .chip[data-f="free"].on{background:var(--accent-d)}
-.chip[data-f="zashiki"].on,.chip[data-f="kids_chair"].on{background:var(--accent)}
+.chip[data-f="zashiki"].on,.chip[data-f="kids_chair"].on,.chip[data-f="kids"].on{background:var(--accent)}
+.chip[data-f="jidokan"].on{background:var(--accent-d)}
 
 /* bottom sheet */
 .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:600;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -132,15 +133,14 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
   <button class="chip play" data-t="water">💦 水</button>
   <button class="chip play" data-t="create">🔬 つくる</button>
   <button class="chip play" data-t="vehicle">🚃 のりもの</button>
-  <button class="chip play" data-t="indoor">☔ 室内</button>
   <button class="chip play" data-t="food">🍽 ごはん</button>
   <button class="chip" data-f="rain">☔ 雨でもOK</button>
   <button class="chip" data-f="free">🆓 無料</button>
-  <button class="chip" data-f="kids">🧸 キッズスペース</button>
-  <button class="chip" data-f="jidokan">🏠 児童館</button>
+  <button class="chip" data-f="jidokan">🐥 児童館</button>
   <span id="foodSubChipsM" style="display:none">
     <button class="chip" data-f="zashiki">🍵 座敷あり</button>
     <button class="chip" data-f="kids_chair">🪑 子ども椅子</button>
+    <button class="chip" data-f="kids">🧸 キッズスペース</button>
   </span>
 </div>
 
@@ -277,7 +277,7 @@ try{
 
   SPOTS.forEach((s,i)=>{
     if(s.latitude==null||s.longitude==null) return;
-    const p=primary(s), col=PLAY[p].c, emo=PLAY[p].e;
+    const p=primary(s), col=PLAY[p].c, emo=(s.is_jidokan===true?'🐥':PLAY[p].e);
     const icon=L.divIcon({className:'',html:'<div class="pin" style="background:'+col+'"><span>'+emo+'</span></div>',iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-30]});
     const m=L.marker([s.latitude,s.longitude],{icon,title:s.name});
     m._spotIndex=i;
@@ -320,14 +320,14 @@ function matches(s){
   }
   if(state.rain){ if(!(s.rain_friendly===true||s.indoor_or_outdoor==='indoor')) return false; }
   if(state.free){ if(s.is_free!==true) return false; }
-  if(state.kids){ if(s.has_kids_space!==true) return false; }
+  if(state.kids){ if(!(s.has_kids_space===true&&(s.play_types||[]).includes('food'))) return false; }
   if(state.jidokan){ if(s.is_jidokan!==true) return false; }
   else { if(s.is_jidokan===true) return false; }
   if(state.zashiki){ if(s.has_zashiki!==true) return false; }
   if(state.kids_chair){ if(s.has_kids_chair!==true) return false; }
   // 条件チップ単独時（ごはんチップ未選択）は、foodのみのスポット（飲食店）を除外
   const pts0=s.play_types||[];
-  if(pts0.length&&pts0.every(t=>t==='food')&&!state.play.has('food')&&(state.rain||state.free||state.kids)) return false;
+  if(pts0.length&&pts0.every(t=>t==='food')&&!state.play.has('food')&&(state.rain||state.free)) return false;
   return true;
 }
 
@@ -348,7 +348,7 @@ function updateFoodSubChipsM(){
   const show=state.play.has('food');
   el.style.display=show?'':'none';
   if(!show){
-    ['zashiki','kids_chair'].forEach(f=>{ state[f]=false; });
+    ['zashiki','kids_chair','kids'].forEach(f=>{ state[f]=false; });
     el.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
   }
 }
@@ -386,7 +386,7 @@ function sheetHTML(s){
   if(s.has_zashiki===true&&!kfHasZashiki) badges+='<span class="badge free">🍵 座敷あり</span>';
   var kfHasKidsChair=Array.isArray(s.kid_features)&&s.kid_features.some(function(f){return /キッズチェア|子ども椅子|子供椅子|ハイチェア|ベビーチェア|まめイス/.test(f);});
   if(s.has_kids_chair===true&&!kfHasKidsChair) badges+='<span class="badge free">🪑 子ども椅子</span>';
-  if(s.is_jidokan===true) badges+='<span class="badge free">🏠 児童館</span>';
+  if(s.is_jidokan===true) badges+='<span class="badge free">🐥 児童館</span>';
   let actions='';
   if(s.official_url) actions+='<a class="btn primary" href="'+esc(s.official_url)+'" target="_blank" rel="noopener">公式サイト →</a>';
   var gmapsSearchUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.name+' '+(s.city||''));
@@ -513,12 +513,22 @@ if(recenterBtn){
 // --- URL param handoff ---
 (function(){
   const qs=new URLSearchParams(location.search);
-  const filter=qs.get('filter');
+  let filter=qs.get('filter');
   const from=qs.get('from');
+  // 旧リンク互換: 室内チップ廃止に伴い filter=indoor は雨でもOK扱い（データのindoorは維持）
+  if(filter==='indoor') filter='rain';
   if(filter){
-    if(filter==='rain'||filter==='free'||filter==='kids'||filter==='jidokan'){
+    if(filter==='rain'||filter==='free'||filter==='jidokan'){
       state[filter]=true;
       const c=document.querySelector('.chip[data-f="'+filter+'"]');
+      if(c){c.classList.add('on');}
+    }else if(filter==='kids'){
+      // キッズスペースはごはん店の二次チップになったため、ごはんチップも同時にON
+      state.play.add('food');
+      const fc=document.querySelector('.chip.play[data-t="food"]');
+      if(fc){fc.classList.add('on');}
+      state.kids=true;
+      const c=document.querySelector('.chip[data-f="kids"]');
       if(c){c.classList.add('on');}
     }else if(PLAY[filter]){
       state.play.add(filter);
