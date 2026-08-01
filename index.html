@@ -851,7 +851,11 @@ function setChip(sel){const c=document.querySelector(sel);if(c){c.classList.add(
     else if(state.kids) params.set('filter','kids');
     else if(state.jidokan) params.set('filter','jidokan');
     else if(state.play.size) params.set('filter',[...state.play][0]);
-    if(!origin.isAnjo) params.set('from',origin.name);
+    if(!origin.isAnjo){
+      params.set('from',origin.name);
+      // 現在地はCITIESに無いため座標も渡し、全画面側で現在地設定を維持する
+      if(origin.name==='現在地'){ params.set('flat',origin.lat.toFixed(5)); params.set('flng',origin.lng.toFixed(5)); }
+    }
     const qs=params.toString();
     location.href='./map.html'+(qs?('?'+qs):'');
   });

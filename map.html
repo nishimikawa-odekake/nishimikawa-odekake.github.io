@@ -522,7 +522,14 @@ if(recenterBtn){
     }
     updateFoodSubChipsM();
   }
-  if(from){
+  if(from==='現在地'){
+    // index.htmlで現在地を選んだまま全画面にした場合: 座標を引き継ぎ現在地設定を維持する
+    const flat=parseFloat(qs.get('flat')), flng=parseFloat(qs.get('flng'));
+    if(isFinite(flat)&&isFinite(flng)){
+      setOrigin('現在地',flat,flng);
+      placeUserDot(flat,flng);
+    }
+  }else if(from){
     const match=CITIES.find(c=>c[0]===from);
     if(match){
       originSel.value=match[1]+','+match[2];
