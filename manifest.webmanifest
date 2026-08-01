@@ -1,0 +1,12 @@
+{
+  "name": "あいち子育ておでかけマップ",
+  "short_name": "おでかけマップ",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#e08a5b",
+  "background_color": "#faf6ef",
+  "icons": [
+    { "src": "/favicon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/favicon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
