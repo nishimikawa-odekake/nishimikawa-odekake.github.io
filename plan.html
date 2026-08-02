@@ -121,6 +121,8 @@ footer a{color:var(--sub)}
 .foodtags{margin:2px 0 6px}
 .foodtags .ftline{font-size:.78rem;color:#5a4632;background:#fbeee0;display:inline-block;border-radius:6px;padding:2px 8px;margin:0 4px 4px 0}
 .foodnote{font-size:.72rem;color:var(--sub);margin:0 0 6px}
+.whybadges{display:flex;flex-wrap:wrap;gap:5px;margin:3px 0 6px}
+.whybadges .wpill{display:inline-block;font-size:.68rem;font-weight:700;color:var(--accent-d);background:#fff6ee;border:1px solid var(--accent);border-radius:999px;padding:2px 8px;line-height:1.45}
 .hourwarn{font-size:.74rem;color:#b5601f;font-weight:700;margin:2px 0 6px;background:#fff2e0;border-radius:6px;padding:4px 8px;display:inline-block}
 .eveningwarn{font-size:.74rem;color:#6b6248;font-weight:700;margin:2px 0 6px;background:#f0ead9;border-radius:6px;padding:4px 8px;display:inline-block}
 .moveline{font-size:.82rem;color:var(--sub)}
@@ -1013,14 +1015,26 @@ function parentSummary(){
   } else if(isToddlerOnly){
     base='小さいお子さん連れなので、無理のない軽めのプランにしています。';
   } else if(state.driveTime==='20'){
-    base='車20分圏内でまとめた、ご近所プランです。';
+    base=(state.origin&&state.origin.name?state.origin.name+'から':'')+'車20分圏内でまとめた、ご近所プランです。';
   } else if(state.driveTime==='40'){
-    base='車40分圏内で無理なく楽しめるプランにしています。';
+    base=(state.origin&&state.origin.name?state.origin.name+'から':'')+'車40分圏内で無理なく楽しめるプランにしています。';
   } else if(state.driveTime==='60'){
-    base='車60分圏内で少し足を延ばすプランにしています。';
+    base=(state.origin&&state.origin.name?state.origin.name+'から':'')+'車60分圏内で少し足を延ばすプランにしています。';
   } else {
     base='お子さんの年齢に合わせて、無理なく楽しめるプランにしています。';
   }
+  // second sentence: restate the chosen conditions (origin / drive range / age / budget) — no invention
+  const o=state.origin;
+  const ageMap={'0-2':'0〜2歳','3-5':'3〜5歳','elem':'小学生'};
+  const agesTxt=[...state.ages].map(a=>ageMap[a]).filter(Boolean).join('・');
+  const budMap={'free':'無料スポット中心','1000':'予算1人1,000円以内目安','3000':'予算1人3,000円以内目安'};
+  const condParts=[];
+  const baseMentionsDrive=/車\d+分圏内/.test(base);
+  if(o&&o.name&&['20','40','60'].includes(state.driveTime)&&!baseMentionsDrive) condParts.push(o.name+'から車'+state.driveTime+'分圏内');
+  else if(o&&o.name&&base.indexOf(o.name)===-1) condParts.push(o.name+'発');
+  if(agesTxt) condParts.push(agesTxt+'のお子さん向け');
+  if(budMap[state.budget]) condParts.push(budMap[state.budget]);
+  if(condParts.length) base+=' '+condParts.join('・')+'で組み立てています。';
   if(state.expandedDrive){
     base+=' 近場に候補が少なかったので少し範囲を広げました。';
   }
@@ -1034,6 +1048,22 @@ function parentSummary(){
     base+=' （候補を一巡したので、また最初の方の候補から出しています）';
   }
   return base;
+}
+// "why this spot" mini badges — built ONLY from confirmed data fields (no invention)
+function whyBadges(s,r){
+  const b=[];
+  const pt=s.play_types||[];
+  if(s.rain_friendly===true||s.indoor_or_outdoor==='indoor'||pt.includes('indoor')) b.push('☔ 屋内で雨でも安心');
+  if(s.is_free===true) b.push('🆓 入場無料');
+  if(s.has_zashiki===true) b.push('🍵 座敷あり');
+  if(s.has_kids_chair===true) b.push('🪑 子ども椅子あり');
+  if(pt.includes('food')&&s.has_kids_space===true) b.push('🧸 キッズスペースあり');
+  if(r&&r.tag==='メイン'&&state.origin){
+    const dm=driveMinutesFrom(state.origin,s);
+    if(dm!=null) b.push('🚗 出発地から約'+dm+'分');
+  }
+  if(!b.length) return '';
+  return '<div class="whybadges">'+b.slice(0,4).map(x=>'<span class="wpill">'+esc(x)+'</span>').join('')+'</div>';
 }
 function rowHtml(r){
   if(r.type==='branch'){
@@ -1055,14 +1085,17 @@ function rowHtml(r){
   let body='';
   body+=(r.opt?'<span class="opt">⏱ 余力があれば</span><br>':'');
   body+='<div class="sname">'+esc(s.name)+'<br><small style="font-weight:600;color:var(--sub);font-size:.75rem">'+esc(r.tag)+'・'+esc(s.city)+'</small>'+(r.paynote?'<br><small style="font-weight:600;color:var(--sub);font-size:.72rem">※飲食代は別途、1人あたりの目安です</small>':'')+'</div>';
+  body+=whyBadges(s,r);
   if(isFood){
     body+=foodTagLines(s);
     if(s.kid_appeal) body+='<div class="appeal">'+esc(s.kid_appeal)+'</div>';
-    body+='<div class="foodnote">※営業時間・定休日は来店前に確認してください</div>';
   } else if(s.kid_appeal){
     body+='<div class="appeal">'+esc(s.kid_appeal)+'</div>';
   }
-  body+='<div class="meta">💴 '+esc(priceLabel(s))+(s.business_hours?'　🕐 '+esc(s.business_hours):'')+'</div>';
+  const metaParts=[];
+  if(parsePrice(s)!=null) metaParts.push('💴 '+esc(priceLabel(s)));
+  if(s.business_hours) metaParts.push('🕐 '+esc(s.business_hours));
+  if(metaParts.length) body+='<div class="meta">'+metaParts.join('　')+'</div>';
   if(r.closeNote) body+='<div class="hourwarn">'+esc(r.closeNote)+'</div>';
   if(r.waterNote) body+='<div class="hourwarn">'+esc(r.waterNote)+'</div>';
   if(r.bonusNote) body+='<div class="eveningwarn">'+esc(r.bonusNote)+'</div>';
@@ -1267,6 +1300,7 @@ function showResult(){
   if((state.budget==='1000'||state.budget==='3000')&&p.hasUnknown){
     html+='<div class="summary" style="color:var(--sub);font-size:.82rem;font-weight:600">※料金不明のスポットが含まれます。公式サイトでご確認ください</div>';
   }
+  html+='<div class="foodnote" style="margin:8px 2px 0">※営業時間・料金等は変更される場合があります。出発前に公式情報をご確認ください。</div>';
   html+='</div>';
   if(routeUrl){
     html+='<div class="gmaps-route" style="text-align:center;margin:14px 0 18px">'+
@@ -1283,11 +1317,11 @@ function showResult(){
   html+='<a class="act-map" href="./index.html" onclick="track(\'map\')">🗺 地図でこのへんを見る</a>';
   html+='<button class="act-restart" onclick="restart()">最初からやり直す</button>';
   html+='</div>';
-  html+='<div class="notice">⚠ 所要時間・料金・営業時間は目安です。おでかけ前に各公式サイトをご確認ください。'+
-    (state.weather?'':'<br>※ 現在お天気情報を取得できなかったため、天気条件なしでプランを作成しています。')+'</div>';
+  if(!state.weather){
+    html+='<div class="notice">※ 現在お天気情報を取得できなかったため、天気条件なしでプランを作成しています。</div>';
+  }
   html+='<div class="noticebottom">'+
     '※飲食代は別途。表示金額は1人あたりの目安です<br>'+
-    '営業時間・料金・休業日は変更される場合があります。お出かけ前に公式サイト等で最新情報をご確認ください<br>'+
     '移動時間は目安です。道路状況や駐車場の混雑により前後します'+
     '</div>';
   res.innerHTML=html;
