@@ -898,8 +898,8 @@ function buildPlan(main,date,w,shareOverride){
   spotsUsed.forEach(s=>{ const p=parsePrice(s); if(p==null)hasUnknown=true; else{known+=p; if(p>0)allFree=false;} });
   let cost;
   if(allFree&&!hasUnknown) cost='料金: 無料（大人1人あたり）';
-  else if(known===0&&hasUnknown) cost='料金は各公式サイトで確認';
-  else cost='大人1人あたり 目安 '+known.toLocaleString()+'円目安'+(hasUnknown?'（一部要確認）':'');
+  else if(known===0&&hasUnknown) cost='料金は公式サイトで確認';
+  else cost='大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'');
   const homePriority = onlyToddler && !sub;
   return {rows,main,totalDrive,cost,hasUnknown,homePriority};
 }
@@ -1007,7 +1007,7 @@ function parentSummary(){
   const isToddlerOnly=state.ages.has('0-2')&&state.ages.size===1;
   let base;
   if(w&&w.precip!=null&&w.precip>=50){
-    base='雨予報のため、屋内スポット中心にしています。';
+    base='';
   } else if(t>=16*60){
     base='今日は夕方出発なので、短時間で遊んで夕食を済ませる軽めのプランです。';
   } else if(w&&w.tmax!=null&&w.tmax>=34){
@@ -1034,7 +1034,7 @@ function parentSummary(){
   else if(o&&o.name&&base.indexOf(o.name)===-1) condParts.push(o.name+'発');
   if(agesTxt) condParts.push(agesTxt+'のお子さん向け');
   if(budMap[state.budget]) condParts.push(budMap[state.budget]);
-  if(condParts.length) base+=' '+condParts.join('・')+'で組み立てています。';
+  if(condParts.length) base+=(base?' ':'')+condParts.join('・')+'で組み立てています。';
   if(state.expandedDrive){
     base+=' 近場に候補が少なかったので少し範囲を広げました。';
   }
@@ -1047,7 +1047,7 @@ function parentSummary(){
   if(state.cycledNote){
     base+=' （候補を一巡したので、また最初の方の候補から出しています）';
   }
-  return base;
+  return base.trim();
 }
 // "why this spot" mini badges — built ONLY from confirmed data fields (no invention)
 function whyBadges(s,r){
@@ -1297,9 +1297,6 @@ function showResult(){
     html+='<div class="homepriority" style="color:#8a7a4a;background:#f6ede0">👣 余力がある場合のみ、上の「余力があれば」スポットへどうぞ</div>';
   }
   html+='<div class="summary">🚗 移動の目安 <b>約'+driveStr+'</b>（往復）　／　💰 <b>'+esc(p.cost)+'</b></div>';
-  if((state.budget==='1000'||state.budget==='3000')&&p.hasUnknown){
-    html+='<div class="summary" style="color:var(--sub);font-size:.82rem;font-weight:600">※料金不明のスポットが含まれます。公式サイトでご確認ください</div>';
-  }
   html+='<div class="foodnote" style="margin:8px 2px 0">※営業時間・料金等は変更される場合があります。出発前に公式情報をご確認ください。</div>';
   html+='</div>';
   if(routeUrl){
@@ -1310,9 +1307,8 @@ function showResult(){
       '<div style="font-size:.72rem;color:var(--sub);margin-top:6px">※ルートはGoogleマップ上で編集できます</div>'+
       '</div>';
   }
-  html+='<div class="share">📸 スクショして家族に送ってね！</div>';
   html+='<div class="actions">';
-  html+='<button class="act-share" onclick="sharePlan()">📤 このプランを共有</button>';
+  html+='<button class="act-share" onclick="sharePlan()">📤 家族に送る（共有）</button>';
   html+='<button class="act-reroll" onclick="reroll()">🔄 別のプランにする</button>';
   html+='<a class="act-map" href="./index.html" onclick="track(\'map\')">🗺 地図でこのへんを見る</a>';
   html+='<button class="act-restart" onclick="restart()">最初からやり直す</button>';
