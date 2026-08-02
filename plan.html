@@ -461,7 +461,7 @@ function transitLabel(fromName,toName,minutes){
 }
 
 /* ===== state ===== */
-const state={origin:null,driveTime:null,when:null,depart:null,ages:new Set(),budget:null,weather:null,variant:0,plans:[],expandedDrive:false,shownMains:[],cycledNote:false};
+const state={origin:null,driveTime:null,when:null,depart:null,ages:new Set(),budget:null,weather:null,variant:0,plans:[],expandedDrive:false,shownMains:[],shownLunches:[],shownSubs:[],cycledNote:false};
 let step=0;
 let CURRENT_CAP=Infinity;
 function capFor(dt){
@@ -719,6 +719,25 @@ function applyDriveMoodTier(pool){
   }
   return pool;
 }
+// 「別のプランにする」の多様化: メイン枠と同じ履歴+上位シャッフル方式をランチ枠・余力枠にも適用。
+// sorted(適合スコア降順)の上位topN程度から、まだ出していないものをシャッフルで選ぶ。
+// 全部出し切ったら履歴をリセット（直前のものだけは連続回避）して一巡させる。
+function pickVariety(sorted,historyKey,topCount){
+  if(!sorted.length) return null;
+  const topN=sorted.slice(0,Math.min(topCount||10,sorted.length));
+  const candidates=topN.length>=3?topN:sorted.slice(0,Math.min(10,sorted.length));
+  if(!state[historyKey]) state[historyKey]=[];
+  let fresh=candidates.filter(s=>!state[historyKey].includes(s));
+  if(!fresh.length){
+    const last=state[historyKey][state[historyKey].length-1];
+    state[historyKey]=[];
+    fresh=candidates.filter(s=>s!==last);
+    if(!fresh.length) fresh=candidates;
+  }
+  const picked=shuffle(fresh)[0];
+  state[historyKey].push(picked);
+  return picked;
+}
 function pickLunch(main,date){
   const o=state.origin;
   const c=SPOTS.filter(s=>{
@@ -733,8 +752,16 @@ function pickLunch(main,date){
     if(dmO==null||dmO>CURRENT_CAP) return false;
     s.__km=km; return true;
   });
-  c.sort((a,b)=>a.__km-b.__km);
-  return c[0]||null;
+  // 適合スコア: 近さを基本に、座敷・キッズ対応で加点。上位10前後からシャッフル選択で多様化。
+  c.forEach(s=>{
+    const feats=(s.kid_features||[]).join(' ');
+    let sc=-s.__km*0.5;
+    if(/座敷|お座敷/.test(feats)) sc+=2;
+    if(/キッズチェア|キッズメニュー|子供椅子|お子様/.test(feats)) sc+=1;
+    s.__lsc=sc;
+  });
+  c.sort((a,b)=> b.__lsc-a.__lsc || a.__km-b.__km);
+  return pickVariety(c,'shownLunches',10);
 }
 function pickSub(main,lunch,mainDriveMin,date,w){
   const o=state.origin;
@@ -758,7 +785,8 @@ function pickSub(main,lunch,mainDriveMin,date,w){
     s.__subkm=km; s.__dmO=dmO; return true;
   });
   c.sort((a,b)=>a.__subkm-b.__subkm);
-  return c[0]||null;
+  // 余力枠も履歴+上位シャッフルで多様化（近い順の上位8前後から）
+  return pickVariety(c,'shownSubs',8);
 }
 function startMinutes(){
   const d=state.depart;
@@ -775,6 +803,7 @@ function buildPlan(main,date,w,shareOverride){
   const dm=driveMinutesFrom(o,main)||30;
   let sub=shareOverride?(shareOverride.sub||null):pickSub(main,lunch,dm,date,w);
   let t=startMinutes();
+  const startMin=t;
   const rows=[];
   const originName=(o.name==='現在地')?'出発地周辺':(o.isAnjo?'出発地周辺':o.name+'周辺');
   rows.push({type:'move',time:t,label:'🚗 移動（約'+dm+'分）',sub:transitLabel(originName,main.name,dm)});
@@ -802,7 +831,39 @@ function buildPlan(main,date,w,shareOverride){
   // age-based fatigue: 0-2 -> no additional post-meal spot, go home; 3-5 -> max 1 extra spot (bonus tier);
   if(onlyToddler) sub=null;
   let bonusNote=null;
-  if(sub){
+  // 午前出発(概ね11時以前)は、ランチで終わらず午後スポットを1つ確定枠で入れて
+  // 15〜16時ごろ帰着の構成にする（滞在90分前後・昼寝配慮）。
+  // 到着時に閉まっている等の場合は従来の「余力があれば」枝分かれ表示にフォールバック。
+  let afternoonMode=false;
+  if(sub&&lunch&&startMin<=11*60){
+    const sdm0=Math.max(5,Math.round(haversineKm(lastLat,lastLng,sub.latitude,sub.longitude)*2.2/5)*5);
+    const arr0=t+sdm0;
+    const ci0=closingInfo(sub,arr0);
+    if(!ci0.exclude){
+      afternoonMode=true;
+      rows.push({type:'move',time:t,label:'🚗 移動（約'+sdm0+'分）',sub:transitLabel(lastName,sub.name,sdm0)});
+      t=arr0;
+      const tt0=((t%1440)+1440)%1440;
+      let waterNote0=null;
+      if((sub.play_types||[]).includes('water')&&tt0>=16*60){
+        waterNote0='※水遊びする場合は着替え・タオル持参がおすすめです／※夕方のため、水遊びは短時間利用がおすすめです';
+      }
+      rows.push({type:'spot',time:t,spot:sub,tag:'午後スポット',closeNote:ci0.note,waterNote:waterNote0});
+      const bdm0=Math.max(5,Math.round(haversineKm(sub.latitude,sub.longitude,o.lat,o.lng)*2.2/5)*5);
+      // 滞在90分前後（昼寝配慮）。帰着が15時前になりそうな場合のみ最大120分まで延ばし、15〜16時ごろ帰着に寄せる
+      let stayA=90;
+      if(t+stayA+bdm0<15*60){
+        stayA=Math.min(120,Math.ceil((15*60+15-bdm0-t)/15)*15);
+        if(stayA<90) stayA=90;
+      }
+      t+=stayA;
+      lastName=sub.name; lastLat=sub.latitude; lastLng=sub.longitude;
+      rows.push({type:'move',time:t,label:'🚗 帰路（約'+bdm0+'分）',sub:transitLabel(lastName,'ご自宅',bdm0)+'／帰着めやす '+fmtTime(t+bdm0)+'ごろ'});
+    }
+  }
+  if(afternoonMode){
+    // 午後スポット確定枠で帰路まで出力済み
+  } else if(sub){
     // 帰路は一本化: 「🏠帰り道に寄るなら」の枝分かれ見出しの下に余力枠を置き、
     // 通常の帰路行(直帰)は出さず、寄った場合の帰路は余力枠カード内に小さく表示する。
     rows.push({type:'branch',time:t,label:'🏠 帰り道に寄るなら'});
@@ -913,6 +974,8 @@ async function generate(){
   state.weather=await fetchWeather();
   const date=targetDate(state.when);
   state.shownMains=[];
+  state.shownLunches=[];
+  state.shownSubs=[];
   state.cycledNote=false;
   state.isSharedView=false;
   state.plans=generatePlans(date,state.weather);
@@ -1151,6 +1214,8 @@ async function initFromShareOrWizard(){
         state.plans=[plan];
         state.variant=0;
         state.shownMains=[r.mainSpot];
+        state.shownLunches=r.lunchSpot?[r.lunchSpot]:[];
+        state.shownSubs=r.subSpot?[r.subSpot]:[];
         state.isSharedView=true;
         document.getElementById('loading').style.display='none';
         showResult();
@@ -1242,7 +1307,7 @@ function reroll(){
   showResult();
 }
 function restart(){
-  state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.plans=[]; state.expandedDrive=false; state.isSharedView=false;
+  state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.plans=[]; state.expandedDrive=false; state.isSharedView=false; state.shownMains=[]; state.shownLunches=[]; state.shownSubs=[];
   document.querySelectorAll('.bigbtn.on').forEach(b=>b.classList.remove('on'));
   document.getElementById('departWrap').style.display='none';
   document.getElementById('result').style.display='none';
