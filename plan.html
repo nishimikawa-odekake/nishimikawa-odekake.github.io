@@ -238,8 +238,8 @@ footer a{color:var(--sub)}
 
   <!-- STEP 5: 予算 -->
   <section class="step" data-step="4">
-    <div class="q">予算は？</div>
-    <p class="qsub">入場料など、1人あたりのおおよその予算を選んでね</p>
+    <div class="q">予算は？（ランチ代は別）</div>
+    <p class="qsub">入場料など、1人あたりのおおよその予算を選んでね<br>※お昼ごはん代は含みません</p>
     <div class="bigbtns" id="budgetBtns">
       <button class="bigbtn" data-budget="free">🆓 無料メイン<small>お金をかけずに遊びたい</small></button>
       <button class="bigbtn" data-budget="1000">1人あたり〜1,000円</button>
@@ -326,13 +326,24 @@ function isSamePlace(a,b,minKm){
   if(isSameComplex(a,b)) return true;
   return tooClose(a,b,minKm==null?1.0:minKm);
 }
+// ランチ枠の1人あたり上限（予算条件とは独立の固定上限）
+const LUNCH_MAX_YEN=2000;
+// 余力枠(=直前スポットからの寄り道)の移動上限（分）
+const SUB_MAX_DRIVE_MIN=25;
 // minutes ≈ 18.3 + 1.244*km (回帰式)
+// 出発地↔スポットの所要時間。同一ペアなら往路・復路で必ず同じ値になる（引数の順序に依存しない）。
 function driveMinutesFrom(o,s){
   if(s.latitude==null||s.longitude==null) return null;
   if(o.isAnjo && s.estimated_drive_minutes_from_anjo!=null) return s.estimated_drive_minutes_from_anjo;
   const km=haversineKm(o.lat,o.lng,s.latitude,s.longitude);
   let m=Math.round((18.3+1.244*km)/5)*5;
   return m<5?5:m;
+}
+// スポット↔スポット間の所要時間。2点間距離のみに依存するので対称。
+function legMinutes(aLat,aLng,bLat,bLng){
+  if(aLat==null||aLng==null||bLat==null||bLng==null) return 5;
+  const km=haversineKm(aLat,aLng,bLat,bLng);
+  return Math.max(5,Math.round(km*2.2/5)*5);
 }
 const PLAY={
   animal:{e:'🦁'},active:{e:'🛝'},water:{e:'💦'},create:{e:'🔬'},
@@ -465,7 +476,7 @@ function transitLabel(fromName,toName,minutes){
 }
 
 /* ===== state ===== */
-const state={origin:null,driveTime:null,when:null,depart:null,ages:new Set(),budget:null,weather:null,variant:0,plans:[],expandedDrive:false,shownMains:[],shownLunches:[],shownSubs:[],cycledNote:false};
+const state={origin:null,driveTime:null,when:null,depart:null,ages:new Set(),budget:null,weather:null,variant:0,planNo:1,plans:[],expandedDrive:false,shownMains:[],shownLunches:[],shownSubs:[],cycledNote:false};
 let step=0;
 let CURRENT_CAP=Infinity;
 function capFor(dt){
@@ -749,7 +760,11 @@ function pickLunch(main,date){
     if(isJidokan(s)) return false; // 児童館・子育て支援センター系はプランナー対象外（🏠チップ専用）
     if(isSameComplex(s,main)) return false; // 同一敷地はメイン↔ランチでも除外（距離は例外だが施設名一致は除外）
     if(!(s.play_types||[]).includes('food')) return false;
-    if(!budgetPass(s)) return false;
+    // ランチは予算条件の対象外（昼食代はどのみち発生する別会計）だが、
+    // 1人あたり LUNCH_MAX_YEN 円を超える価格が読み取れる店は常に除外する。
+    // 価格不明(null)は通す（food候補の大半が価格未記載のため）。
+    const lp=parsePrice(s);
+    if(lp!=null && lp>LUNCH_MAX_YEN) return false;
     if(isClosedOn(s,date)) return false;
     const km=haversineKm(main.latitude,main.longitude,s.latitude,s.longitude);
     if(km>15) return false;
@@ -771,6 +786,9 @@ function pickLunch(main,date){
 function pickSub(main,lunch,mainDriveMin,date,w){
   const o=state.origin;
   const rain=w&&w.precip!=null&&w.precip>=50;
+  // 余力枠は「直前のスポットから近くでもう一箇所」の趣旨。実際に直前になる地点(ランチがあればランチ)からの
+  // 移動が SUB_MAX_DRIVE_MIN を超えるものは除外する。
+  const prev=lunch||main;
   const c=SPOTS.filter(s=>{
     if(s===main||s.latitude==null) return false;
     if(isJidokan(s)) return false; // 児童館・子育て支援センター系は余力枠からも除外（帰り道に寄らない）
@@ -781,6 +799,7 @@ function pickSub(main,lunch,mainDriveMin,date,w){
     const km=haversineKm(main.latitude,main.longitude,s.latitude,s.longitude);
     // ~20 min ≈ within about 12km locally
     if(km>12) return false;
+    if(legMinutes(prev.latitude,prev.longitude,s.latitude,s.longitude)>SUB_MAX_DRIVE_MIN) return false;
     if(isClosedOn(s,date)) return false;
     if(rain && !(s.indoor_or_outdoor==='indoor'||s.rain_friendly)) return false;
     const dmO=driveMinutesFrom(o,s);
@@ -810,17 +829,22 @@ function buildPlan(main,date,w,shareOverride){
   let t=startMinutes();
   const startMin=t;
   const rows=[];
+  // タイムライン上に実際に出した「本編(=余力枠以外)」の移動時間を積み上げ、合計表示に使う。
+  // 画面に出ている区間の数字の単純合計＝合計表示、になるようにする。
+  let legSum=0;
   const originName=(o.name==='現在地')?'出発地周辺':(o.isAnjo?'出発地周辺':o.name+'周辺');
   rows.push({type:'move',time:t,label:'🚗 移動（約'+dm+'分）',sub:transitLabel(originName,main.name,dm)});
+  legSum+=dm;
   t+=dm;
   const stay=stayMinutes(main);
   rows.push({type:'spot',time:t,spot:main,tag:'メイン',closeNote:main.__closeNote});
   t+=stay;
-  let lastName=main.name, lastLat=main.latitude, lastLng=main.longitude;
+  let lastName=main.name, lastLat=main.latitude, lastLng=main.longitude, lastSpot=main;
   const onlyToddler=state.ages.has('0-2')&&state.ages.size===1;
   if(lunch){
-    const ldm=Math.max(5,Math.round(haversineKm(lastLat,lastLng,lunch.latitude,lunch.longitude)*2.2/5)*5);
+    const ldm=legMinutes(lastLat,lastLng,lunch.latitude,lunch.longitude);
     rows.push({type:'move',time:t,label:'🚗 移動（約'+ldm+'分）',sub:transitLabel(lastName,lunch.name,ldm)});
+    legSum+=ldm;
     t+=ldm;
     const mealTag=mealLabelFor(t);
     const arrivalCi=closingInfo(lunch,t);
@@ -831,7 +855,7 @@ function buildPlan(main,date,w,shareOverride){
     }
     rows.push({type:'spot',time:t,spot:lunch,tag:mealTag,food:true,paynote:state.budget==='free',closeNote:arrivalCi.note,waterNote});
     t+=60;
-    lastName=lunch.name; lastLat=lunch.latitude; lastLng=lunch.longitude;
+    lastName=lunch.name; lastLat=lunch.latitude; lastLng=lunch.longitude; lastSpot=lunch;
   }
   // age-based fatigue: 0-2 -> no additional post-meal spot, go home; 3-5 -> max 1 extra spot (bonus tier);
   if(onlyToddler) sub=null;
@@ -841,12 +865,13 @@ function buildPlan(main,date,w,shareOverride){
   // 到着時に閉まっている等の場合は従来の「余力があれば」枝分かれ表示にフォールバック。
   let afternoonMode=false;
   if(sub&&lunch&&startMin<=11*60){
-    const sdm0=Math.max(5,Math.round(haversineKm(lastLat,lastLng,sub.latitude,sub.longitude)*2.2/5)*5);
+    const sdm0=legMinutes(lastLat,lastLng,sub.latitude,sub.longitude);
     const arr0=t+sdm0;
     const ci0=closingInfo(sub,arr0);
     if(!ci0.exclude){
       afternoonMode=true;
       rows.push({type:'move',time:t,label:'🚗 移動（約'+sdm0+'分）',sub:transitLabel(lastName,sub.name,sdm0)});
+      legSum+=sdm0;
       t=arr0;
       const tt0=((t%1440)+1440)%1440;
       let waterNote0=null;
@@ -854,7 +879,8 @@ function buildPlan(main,date,w,shareOverride){
         waterNote0='※水遊びする場合は着替え・タオル持参がおすすめです／※夕方のため、水遊びは短時間利用がおすすめです';
       }
       rows.push({type:'spot',time:t,spot:sub,tag:'午後スポット',closeNote:ci0.note,waterNote:waterNote0});
-      const bdm0=Math.max(5,Math.round(haversineKm(sub.latitude,sub.longitude,o.lat,o.lng)*2.2/5)*5);
+      // 帰路は「出発地↔そのスポット」なので driveMinutesFrom を使う（往路と同じ算出＝対称）
+      const bdm0=driveMinutesFrom(o,sub)||legMinutes(sub.latitude,sub.longitude,o.lat,o.lng);
       // 滞在90分前後（昼寝配慮）。帰着が15時前になりそうな場合のみ最大120分まで延ばし、15〜16時ごろ帰着に寄せる
       let stayA=90;
       if(t+stayA+bdm0<15*60){
@@ -862,18 +888,22 @@ function buildPlan(main,date,w,shareOverride){
         if(stayA<90) stayA=90;
       }
       t+=stayA;
-      lastName=sub.name; lastLat=sub.latitude; lastLng=sub.longitude;
+      lastName=sub.name; lastLat=sub.latitude; lastLng=sub.longitude; lastSpot=sub;
       rows.push({type:'move',time:t,label:'🚗 帰路（約'+bdm0+'分）',sub:transitLabel(lastName,'ご自宅',bdm0)+'／帰着めやす '+fmtTime(t+bdm0)+'ごろ'});
+      legSum+=bdm0;
     }
   }
   if(afternoonMode){
     // 午後スポット確定枠で帰路まで出力済み
   } else if(sub){
-    // 帰路は一本化: 「🏠帰り道に寄るなら」の枝分かれ見出しの下に余力枠を置き、
-    // 通常の帰路行(直帰)は出さず、寄った場合の帰路は余力枠カード内に小さく表示する。
+    // 合計時間＝タイムライン上の区間合計にするため、直帰の帰路をここで1回出してから
+    // 「🏠帰り道に寄るなら」の枝分かれ見出し＋余力枠を置く。
+    const homeDm=driveMinutesFrom(o,lastSpot)||legMinutes(lastLat,lastLng,o.lat,o.lng);
+    rows.push({type:'move',time:t,label:'🚗 帰路（約'+homeDm+'分）',sub:transitLabel(lastName,'ご自宅',homeDm)+'／帰着めやす '+fmtTime(t+homeDm)+'ごろ'});
+    legSum+=homeDm;
     rows.push({type:'branch',time:t,label:'🏠 帰り道に寄るなら'});
     let bt=t;
-    const sdm=Math.max(5,Math.round(haversineKm(lastLat,lastLng,sub.latitude,sub.longitude)*2.2/5)*5);
+    const sdm=legMinutes(lastLat,lastLng,sub.latitude,sub.longitude);
     const arrival=bt+sdm;
     const tt=((arrival%1440)+1440)%1440;
     const pt=sub.play_types||[];
@@ -888,21 +918,26 @@ function buildPlan(main,date,w,shareOverride){
     const ci=closingInfo(sub,arrival);
     rows.push({type:'move',time:bt,label:'🚗 移動（約'+sdm+'分）',sub:transitLabel(lastName,sub.name,sdm),opt:true});
     bt=arrival;
-    const bdm=Math.max(5,Math.round(haversineKm(sub.latitude,sub.longitude,o.lat,o.lng)*2.2/5)*5);
+    const bdm=driveMinutesFrom(o,sub)||legMinutes(sub.latitude,sub.longitude,o.lat,o.lng);
     rows.push({type:'spot',time:bt,spot:sub,tag:'余力があれば',opt:true,closeNote:ci.note,bonusNote,waterNote,returnNote:'寄った場合の帰路 約'+bdm+'分'});
   } else {
-    // 余力枠が無い通常ケース: 帰路はここで1回だけ表示
-    rows.push({type:'move',time:t,label:'🚗 帰路（約'+dm+'分）',sub:transitLabel(lastName,'ご自宅',dm)});
+    // 余力枠が無い通常ケース: 帰路はここで1回だけ表示（最後に居る場所からの帰路）
+    const homeDm2=driveMinutesFrom(o,lastSpot)||legMinutes(lastLat,lastLng,o.lat,o.lng);
+    rows.push({type:'move',time:t,label:'🚗 帰路（約'+homeDm2+'分）',sub:transitLabel(lastName,'ご自宅',homeDm2)});
+    legSum+=homeDm2;
   }
   // totals
   const spotsUsed=[main].concat(lunch?[lunch]:[],sub?[sub]:[]);
-  let totalDrive=dm*2;
+  // 合計＝本編タイムライン上に表示した全区間の単純合計（余力枠の区間は含めない）
+  let totalDrive=legSum;
   let known=0, hasUnknown=false, allFree=true;
-  spotsUsed.forEach(s=>{ const p=parsePrice(s); if(p==null)hasUnknown=true; else{known+=p; if(p>0)allFree=false;} });
+  // 入場料などスポットの費用のみを合計する（ランチ＝食事枠は別会計なので合計から除外）
+  const costSpots=spotsUsed.filter(s=>!((s.play_types||[]).includes('food')));
+  costSpots.forEach(s=>{ const p=parsePrice(s); if(p==null)hasUnknown=true; else{known+=p; if(p>0)allFree=false;} });
   let cost;
-  if(allFree&&!hasUnknown) cost='料金: 無料（大人1人あたり）';
-  else if(known===0&&hasUnknown) cost='料金は公式サイトで確認';
-  else cost='大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'');
+  if(allFree&&!hasUnknown) cost='入場料など 無料（大人1人あたり・ランチ代は別）';
+  else if(known===0&&hasUnknown) cost='入場料などは公式サイトで確認（ランチ代は別）';
+  else cost='入場料など 大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'')+'・ランチ代は別';
   const homePriority = onlyToddler && !sub;
   return {rows,main,totalDrive,cost,hasUnknown,homePriority};
 }
@@ -937,6 +972,7 @@ function nextVarietyPlan(date,w){
   let cap=capFor(state.driveTime);
   CURRENT_CAP=cap;
   let pool=buildPool(date,w);
+  state.expandedDrive=false; // 前回の結果を引きずらない（拡張したときだけ注記を出す）
   while(pool.length<3 && cap!==Infinity){
     const widerCap=nextCap(cap);
     CURRENT_CAP=widerCap;
@@ -985,6 +1021,7 @@ async function generate(){
   state.isSharedView=false;
   state.plans=generatePlans(date,state.weather);
   state.variant=0;
+  state.planNo=1; // 表示用の通し番号（案1,2,3…）: plans配列のindexとは独立に1ずつ増やす
 
   document.getElementById('loading').style.display='none';
   showResult();
@@ -1038,9 +1075,6 @@ function parentSummary(){
   if(agesTxt) condParts.push(agesTxt+'のお子さん向け');
   if(budMap[state.budget]) condParts.push(budMap[state.budget]);
   if(condParts.length) base+=(base?' ':'')+condParts.join('・')+'で組み立てています。';
-  if(state.expandedDrive){
-    base+=' 近場に候補が少なかったので少し範囲を広げました。';
-  }
   if(state.nearFallback){
     base+=' 少し遠出向けの候補が見当たらなかったため、近場中心になりました。';
   }
@@ -1097,6 +1131,7 @@ function rowHtml(r){
   }
   const metaParts=[];
   if(parsePrice(s)!=null) metaParts.push('💴 '+esc(priceLabel(s)));
+  else if(isFood && s.price_text) metaParts.push('💴 '+esc(s.price_text));
   if(s.business_hours) metaParts.push('🕐 '+esc(s.business_hours));
   if(metaParts.length) body+='<div class="meta">'+metaParts.join('　')+'</div>';
   if(r.closeNote) body+='<div class="hourwarn">'+esc(r.closeNote)+'</div>';
@@ -1146,8 +1181,9 @@ function buildShareUrl(p){
   const spots=p.rows.filter(r=>r.type==='spot');
   const mainRow=spots.find(r=>r.tag==='メイン');
   if(mainRow) parts.push('main='+encodeURIComponent(mainRow.spot.name));
-  const lunchRow=spots.find(r=>r!==mainRow&&!r.opt);
-  const subRow=spots.find(r=>r.opt);
+  const MEAL_TAGS=['ランチ','カフェ・休憩','夕食','食事'];
+  const lunchRow=spots.find(r=>r!==mainRow&&(r.food===true||MEAL_TAGS.includes(r.tag)));
+  const subRow=spots.find(r=>r!==mainRow&&r!==lunchRow&&(r.tag==='午後スポット'||r.tag==='余力があれば'));
   if(lunchRow) parts.push('lunch='+encodeURIComponent(lunchRow.spot.name));
   if(subRow) parts.push('sub='+encodeURIComponent(subRow.spot.name));
   return location.origin+location.pathname+'?'+parts.join('&');
@@ -1249,6 +1285,7 @@ async function initFromShareOrWizard(){
         const plan=buildPlan(r.mainSpot,date,state.weather,{lunch:r.lunchSpot,sub:r.subSpot});
         state.plans=[plan];
         state.variant=0;
+        state.planNo=1;
         state.shownMains=[r.mainSpot];
         state.shownLunches=r.lunchSpot?[r.lunchSpot]:[];
         state.shownSubs=r.subSpot?[r.subSpot]:[];
@@ -1283,7 +1320,7 @@ function showResult(){
   html+='<div style="text-align:center">'+weatherBadge()+'</div>';
   html+='<div class="parentline">🗣 '+esc(parentSummary())+'</div>';
   html+='<div class="plancard">';
-  html+='<div class="plantitle">🎯 '+esc(state.origin.name)+'発 きょうのプラン <small>'+esc(whenLabel())+' / 案'+(state.variant%state.plans.length+1)+'</small></div>';
+  html+='<div class="plantitle">🎯 '+esc(state.origin.name)+'発 きょうのプラン <small>'+esc(whenLabel())+' / 案'+(state.planNo||1)+'</small></div>';
   // split main-tier rows and bonus-tier rows, insert a heading before the bonus tier
   const mainRows=[], bonusRows=[];
   p.rows.forEach(r=>{ (r.opt?bonusRows:mainRows).push(r); });
@@ -1319,6 +1356,10 @@ function showResult(){
   if(!state.weather){
     html+='<div class="notice">※ 現在お天気情報を取得できなかったため、天気条件なしでプランを作成しています。</div>';
   }
+  if(state.expandedDrive){
+    const dlab=['20','40','60'].includes(state.driveTime)?('〜'+state.driveTime+'分'):'ご希望';
+    html+='<div class="notice">※ '+esc(dlab)+'圏内では条件に合う候補が少なかったため、少し範囲を広げています。</div>';
+  }
   html+='<div class="noticebottom">'+
     '※飲食代は別途。表示金額は1人あたりの目安です<br>'+
     '移動時間は目安です。道路状況や駐車場の混雑により前後します'+
@@ -1337,10 +1378,11 @@ function reroll(){
   } else {
     state.variant=state.plans.length?(state.variant+1)%state.plans.length:0;
   }
+  state.planNo=(state.planNo||1)+1;
   showResult();
 }
 function restart(){
-  state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.plans=[]; state.expandedDrive=false; state.isSharedView=false; state.shownMains=[]; state.shownLunches=[]; state.shownSubs=[];
+  state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.planNo=1; state.plans=[]; state.expandedDrive=false; state.isSharedView=false; state.shownMains=[]; state.shownLunches=[]; state.shownSubs=[];
   document.querySelectorAll('.bigbtn.on').forEach(b=>b.classList.remove('on'));
   document.getElementById('departWrap').style.display='none';
   document.getElementById('result').style.display='none';
