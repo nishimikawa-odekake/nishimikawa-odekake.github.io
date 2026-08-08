@@ -815,6 +815,13 @@ h1{font-size:1.42rem;line-height:1.45;margin:10px 0 8px;letter-spacing:.01em}
   border-radius:999px;padding:12px 10px;color:#fff}
 .cta .m{background:#E9702A}
 .cta .p{background:#2E64C7}
+.cta .w{background:#3f8f5c;flex:1 1 100%}
+
+.wbanner{margin:16px 0 0;border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.7;
+  background:#e9f5ec;border:1px solid #7fbf95}
+.wbanner p{margin:0}
+.wbanner.is-over{background:#fdecea;border-color:#e0705f}
+.wbanner a{font-weight:700}
 
 .notice{background:#fdf1e9;border:1px solid var(--accent);border-radius:12px;
   padding:12px 14px;font-size:13px;line-height:1.75;margin:18px 0}
@@ -837,11 +844,19 @@ article.card{background:var(--card);border:1px solid var(--line);border-radius:1
 .c-place{font-size:12.5px;color:var(--sub);margin:0 0 9px}
 .city{display:inline-block;background:#f3ead9;color:var(--accent-d);border-radius:6px;
   font-size:11.5px;font-weight:700;padding:1px 7px;margin-right:7px}
+a.city{text-decoration:none;border-bottom:1px solid rgba(201,113,63,.45)}
 dl.c-meta{display:grid;grid-template-columns:3.6em 1fr;gap:3px 8px;margin:0;font-size:13px}
 dl.c-meta dt{color:var(--sub);font-size:12px}
 dl.c-meta dd{margin:0}
 .c-link{margin:10px 0 0;font-size:13px;font-weight:700}
 .c-link a{text-decoration:none}
+
+.archives{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 26px}
+.archives h2{font-size:1.02rem;margin:0 0 8px;border:0;padding:0}
+.archives .anote{font-size:12.5px;color:var(--sub);margin:0 0 8px;line-height:1.7}
+.archives ul{margin:0;padding-left:1.1em}
+.archives li{font-size:13.5px;margin:4px 0}
+.archives .adate{color:var(--sub);font-size:12px}
 
 footer.f{border-top:1px solid var(--line);margin-top:34px;padding:20px 0 40px;font-size:12.5px;color:var(--sub);line-height:1.9}
 footer.f b{color:var(--ink)}
@@ -859,7 +874,7 @@ footer.f b{color:var(--ink)}
 
 <header class="hero">
   <div class="wrap">
-    <p class="crumb"><a href="/">あいち子育ておでかけマップ</a> ＞ 今週末のイベント</p>
+    <p class="crumb"><a href="/">あいち子育ておでかけマップ</a> ＞ <a href="/weekend/">今週末のイベント</a></p>
     <span class="badge">📅 毎週金曜更新</span>
     <h1>【8月8日・9日】愛知の週末イベント28選｜子連れ・家族向け</h1>
     <p class="lede">2026.8.7(金)–9(日)に愛知県内で開催される、子連れで楽しめるイベント28件をまとめました。花火・夏まつり・水あそび・夜のおでかけ・雨でも安心の屋内スポットまで、<b>日時・料金・雨天規定・駐車場</b>を一覧で確認できます。掲載している28件は<b>すべて主催者の公式サイトで開催を確認済み</b>（2026年8月6日確認）です。このページは<b>毎週金曜に最新の週末イベントへ更新</b>しています。</p>
@@ -897,7 +912,7 @@ footer.f b{color:var(--ink)}
       <h2>🎋 夏まつり・盆踊り（入場無料）<span class="cnt">6件</span></h2>
       <article class="card">
         <h3 class="c-name"><a href="https://anjo-tanabata.jp/" target="_blank" rel="noopener">第73回 安城七夕まつり</a></h3>
-        <p class="c-place"><span class="city">安城市</span>JR安城駅周辺一帯</p>
+        <p class="c-place"><a class="city" href="/city-anjo.html">安城市</a>JR安城駅周辺一帯</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/7(金)〜9(日) 10:00〜20:00頃</dd>
           <dt>料金</dt><dd>観覧無料</dd>
@@ -908,7 +923,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://okazaki-kanko.jp/event/674" target="_blank" rel="noopener">岡崎城下家康公夏まつり</a></h3>
-        <p class="c-place"><span class="city">岡崎市</span>籠田公園前ほか</p>
+        <p class="c-place"><a class="city" href="/city-okazaki.html">岡崎市</a>籠田公園前ほか</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/9(日) 17:00〜20:45</dd>
           <dt>料金</dt><dd>観覧無料</dd>
@@ -919,7 +934,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.toyokawa-map.net/event/000043.html" target="_blank" rel="noopener">国府夏まつり</a></h3>
-        <p class="c-place"><span class="city">豊川市</span>大社神社・国府地区</p>
+        <p class="c-place"><a class="city" href="/city-toyokawa.html">豊川市</a>大社神社・国府地区</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/7(金)〜9(日)</dd>
           <dt>料金</dt><dd>観覧無料</dd>
@@ -930,7 +945,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.nagoyajo.city.nagoya.jp/event/2026/07/20260708_4897.html" target="_blank" rel="noopener">名古屋城夏まつり 大盆踊り</a></h3>
-        <p class="c-place"><span class="city">名古屋市中区</span>名古屋城</p>
+        <p class="c-place"><a class="city" href="/city-nagoya.html">名古屋市中区</a>名古屋城</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土)〜16(日) 夜間</dd>
           <dt>料金</dt><dd>入場料 大人500円</dd>
@@ -941,7 +956,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.umiminato-gamagori.jp/umibeno_bonodori_night/index.html" target="_blank" rel="noopener">海みなと蒲郡 海辺のBON踊りナイト</a></h3>
-        <p class="c-place"><span class="city">蒲郡市</span>ラグーナ フェスティバルマーケット</p>
+        <p class="c-place"><a class="city" href="/city-gamagori.html">蒲郡市</a>ラグーナ フェスティバルマーケット</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土)・9(日) 10:00〜20:30</dd>
           <dt>料金</dt><dd>入場無料</dd>
@@ -952,7 +967,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://asuke.info/event/aug/entry-701.html" target="_blank" rel="noopener">たんころりんの夕涼み</a></h3>
-        <p class="c-place"><span class="city">豊田市</span>足助の古い町並み</p>
+        <p class="c-place"><a class="city" href="/city-toyota.html">豊田市</a>足助の古い町並み</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土)〜15(金) 日没後〜21:00</dd>
           <dt>料金</dt><dd>観覧無料</dd>
@@ -967,7 +982,7 @@ footer.f b{color:var(--ink)}
       <h2>🎆 花火が見られるイベント<span class="cnt">8件</span></h2>
       <article class="card">
         <h3 class="c-name"><a href="https://hanabi.walkerplus.com/detail/ar0623e01066/" target="_blank" rel="noopener">デンパーク 夏の花火ショー</a></h3>
-        <p class="c-place"><span class="city">安城市</span>安城産業文化公園デンパーク</p>
+        <p class="c-place"><a class="city" href="/city-anjo.html">安城市</a>安城産業文化公園デンパーク</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土) 19:30〜19:40</dd>
           <dt>料金</dt><dd>入園料</dd>
@@ -978,7 +993,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.nishimikawanavi.jp/spots/detail/1514/" target="_blank" rel="noopener">巴川金魚花火</a></h3>
-        <p class="c-place"><span class="city">豊田市</span>松平・九久平地区</p>
+        <p class="c-place"><a class="city" href="/city-toyota.html">豊田市</a>松平・九久平地区</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土) 17:00〜21:00</dd>
           <dt>料金</dt><dd>観覧無料</dd>
@@ -989,7 +1004,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.city.tokai.aichi.jp/bunka/1002737/1006610/1009628.html" target="_blank" rel="noopener">第57回 東海まつり花火大会</a></h3>
-        <p class="c-place"><span class="city">東海市</span>大池公園</p>
+        <p class="c-place"><a class="city" href="/city-tokai.html">東海市</a>大池公園</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土) 19:20〜20:30</dd>
           <dt>料金</dt><dd>観覧無料／有料席あり</dd>
@@ -1000,7 +1015,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://hanabi.walkerplus.com/detail/ar0623e00522/" target="_blank" rel="noopener">宵の明治村「花火競演」</a></h3>
-        <p class="c-place"><span class="city">犬山市</span>博物館明治村</p>
+        <p class="c-place"><a class="city" href="/city-inuyama.html">犬山市</a>博物館明治村</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土)〜16(日) 20:00〜</dd>
           <dt>料金</dt><dd>入村料 大人2,500円ほか</dd>
@@ -1011,7 +1026,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.skylanternassociation.com/info/?p=11631" target="_blank" rel="noopener">リトルワールド 花火ショー</a></h3>
-        <p class="c-place"><span class="city">犬山市</span>野外民族博物館リトルワールド</p>
+        <p class="c-place"><a class="city" href="/city-inuyama.html">犬山市</a>野外民族博物館リトルワールド</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土)・9(日) 20:00〜</dd>
           <dt>料金</dt><dd>入園料</dd>
@@ -1022,7 +1037,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://inuyama.gr.jp/event/detail/2/" target="_blank" rel="noopener">日本ライン夏まつり ロングラン花火</a></h3>
-        <p class="c-place"><span class="city">犬山市</span>木曽川河畔</p>
+        <p class="c-place"><a class="city" href="/city-inuyama.html">犬山市</a>木曽川河畔</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/1(土)〜10(月) 毎晩20:00〜</dd>
           <dt>料金</dt><dd>観覧無料</dd>
@@ -1033,7 +1048,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.city.shinshiro.lg.jp/kanko/event/kanko/noryo-hanabi.html" target="_blank" rel="noopener">第57回 新城納涼花火大会</a></h3>
-        <p class="c-place"><span class="city">新城市</span>桜淵公園</p>
+        <p class="c-place"><a class="city" href="/city-shinshiro.html">新城市</a>桜淵公園</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/9(日) 19:20〜20:45</dd>
           <dt>料金</dt><dd>観覧無料</dd>
@@ -1044,7 +1059,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://aichinow.pref.aichi.jp/events/detail/2980/" target="_blank" rel="noopener">モンパの夜まつり</a></h3>
-        <p class="c-place"><span class="city">犬山市</span>日本モンキーパーク</p>
+        <p class="c-place"><a class="city" href="/city-inuyama.html">犬山市</a>日本モンキーパーク</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土) 花火19:45〜</dd>
           <dt>料金</dt><dd>入園料</dd>
@@ -1059,7 +1074,7 @@ footer.f b{color:var(--ink)}
       <h2>💦 水あそび・プール<span class="cnt">3件</span></h2>
       <article class="card">
         <h3 class="c-name"><a href="https://denpark.jp/event-detail.php?id=82" target="_blank" rel="noopener">デンパーク 流しそうめん体験</a></h3>
-        <p class="c-place"><span class="city">安城市</span>安城産業文化公園デンパーク</p>
+        <p class="c-place"><a class="city" href="/city-anjo.html">安城市</a>安城産業文化公園デンパーク</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土)・9(日) 10:00〜</dd>
           <dt>料金</dt><dd>1食700円＋入園料</dd>
@@ -1070,7 +1085,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://mitsui-shopping-park.com/lalaport/anjo/event/3527334.html" target="_blank" rel="noopener">ららぽーと安城 屋上ウォーターパーク</a></h3>
-        <p class="c-place"><span class="city">安城市</span>ららぽーと安城 RF屋上</p>
+        <p class="c-place"><a class="city" href="/city-anjo.html">安城市</a>ららぽーと安城 RF屋上</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>開催中〜8/16 10:00〜18:00</dd>
           <dt>料金</dt><dd>500円(現金のみ)</dd>
@@ -1081,7 +1096,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.lagunatenbosch.co.jp/event/summer/index.html" target="_blank" rel="noopener">ラグナシア サマー（プール＆花火）</a></h3>
-        <p class="c-place"><span class="city">蒲郡市</span>ラグーナテンボス ラグナシア</p>
+        <p class="c-place"><a class="city" href="/city-gamagori.html">蒲郡市</a>ラグーナテンボス ラグナシア</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>会期中〜9/23 デイ9:30〜17:00／ナイト18:00〜21:30</dd>
           <dt>料金</dt><dd>入園＋プール料金</dd>
@@ -1096,7 +1111,7 @@ footer.f b{color:var(--ink)}
       <h2>🌙 夜のおでかけ（ナイトイベント）<span class="cnt">4件</span></h2>
       <article class="card">
         <h3 class="c-name"><a href="https://www.nonhoi.jp/nightzoo2026/" target="_blank" rel="noopener">のんほいパーク ナイトZOO</a></h3>
-        <p class="c-place"><span class="city">豊橋市</span>豊橋総合動植物公園</p>
+        <p class="c-place"><a class="city" href="/city-toyohashi.html">豊橋市</a>豊橋総合動植物公園</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土)・9(日) 17:00〜21:00</dd>
           <dt>料金</dt><dd>当日 一般1,600円／小中800円</dd>
@@ -1118,7 +1133,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://nagoyaaqua.jp/news/news/30314/" target="_blank" rel="noopener">名古屋港水族館 サマーナイトアクアリウム</a></h3>
-        <p class="c-place"><span class="city">名古屋市港区</span>名古屋港水族館</p>
+        <p class="c-place"><a class="city" href="/city-nagoya.html">名古屋市港区</a>名古屋港水族館</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>会期中〜8/31・20時まで延長</dd>
           <dt>料金</dt><dd>入館料</dd>
@@ -1129,7 +1144,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.kisosansenkoen.jp/~tower138/m138event_summer.html" target="_blank" rel="noopener">138タワーパーク サマーフェスタ</a></h3>
-        <p class="c-place"><span class="city">一宮市</span>国営木曽三川公園 138タワーパーク</p>
+        <p class="c-place"><a class="city" href="/city-ichinomiya.html">一宮市</a>国営木曽三川公園 138タワーパーク</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土)〜16(日) 21時まで</dd>
           <dt>料金</dt><dd>入園無料(一部有料)</dd>
@@ -1144,7 +1159,7 @@ footer.f b{color:var(--ink)}
       <h2>☔ 雨でも安心・屋内スポット<span class="cnt">6件</span></h2>
       <article class="card">
         <h3 class="c-name"><a href="https://ghibli-park.jp/info/info20260706-2.html" target="_blank" rel="noopener">ジブリパークの夏あそび</a></h3>
-        <p class="c-place"><span class="city">長久手市</span>モリコロパーク 三日月の広場</p>
+        <p class="c-place"><a class="city" href="/city-nagakute.html">長久手市</a>モリコロパーク 三日月の広場</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>会期中〜8/11・雪あそび12時／14時ほか</dd>
           <dt>料金</dt><dd>雪あそび無料／すくい500円</dd>
@@ -1155,7 +1170,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.city.okazaki.lg.jp/kobihaku/index.html" target="_blank" rel="noopener">おかざき世界子ども美術博物館「ピラミッド・サイエンス！」</a></h3>
-        <p class="c-place"><span class="city">岡崎市</span>おかざき世界子ども美術博物館</p>
+        <p class="c-place"><a class="city" href="/city-okazaki.html">岡崎市</a>おかざき世界子ども美術博物館</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/8(土)・9(日) 9:00〜17:00</dd>
           <dt>料金</dt><dd>企画展観覧料</dd>
@@ -1166,7 +1181,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://museum.jr-central.co.jp/event/" target="_blank" rel="noopener">リニア・鉄道館 鉄道模型 運転体験</a></h3>
-        <p class="c-place"><span class="city">名古屋市港区</span>リニア・鉄道館</p>
+        <p class="c-place"><a class="city" href="/city-nagoya.html">名古屋市港区</a>リニア・鉄道館</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>8/9(日) 10:20〜／13:00〜／15:40〜</dd>
           <dt>料金</dt><dd>無料(入館料のみ)</dd>
@@ -1177,7 +1192,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.ncsm.city.nagoya.jp/visit/attraction/special_exhibition/sukesuke2.html" target="_blank" rel="noopener">名古屋市科学館「スケスケ展2」</a></h3>
-        <p class="c-place"><span class="city">名古屋市中区</span>名古屋市科学館</p>
+        <p class="c-place"><a class="city" href="/city-nagoya.html">名古屋市中区</a>名古屋市科学館</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>会期中〜9/23 9:30〜17:00</dd>
           <dt>料金</dt><dd>一般1,800円／高小中500円</dd>
@@ -1188,7 +1203,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://exhibition.ticket.artaquarium.jp/" target="_blank" rel="noopener">アートアクアリウム名古屋</a></h3>
-        <p class="c-place"><span class="city">名古屋市中区</span>松坂屋名古屋店</p>
+        <p class="c-place"><a class="city" href="/city-nagoya.html">名古屋市中区</a>松坂屋名古屋店</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>会期中〜9/23・屋内</dd>
           <dt>料金</dt><dd>一般2,100円ほか</dd>
@@ -1199,7 +1214,7 @@ footer.f b{color:var(--ink)}
       </article>
       <article class="card">
         <h3 class="c-name"><a href="https://www.legoland.jp/operation/seasonal-events/summer/2026/" target="_blank" rel="noopener">レゴランド・ジャパン 夏イベント</a></h3>
-        <p class="c-place"><span class="city">名古屋市港区</span>レゴランド・ジャパン</p>
+        <p class="c-place"><a class="city" href="/city-nagoya.html">名古屋市港区</a>レゴランド・ジャパン</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>会期中〜8/31 10:00〜18:00</dd>
           <dt>料金</dt><dd>入場チケット制</dd>
@@ -1214,7 +1229,7 @@ footer.f b{color:var(--ink)}
       <h2>🍇 旬の体験<span class="cnt">1件</span></h2>
       <article class="card">
         <h3 class="c-name"><a href="https://mikunien-okazaki.com/" target="_blank" rel="noopener">岡崎駒立ぶどう狩り</a></h3>
-        <p class="c-place"><span class="city">岡崎市</span>岡崎市駒立町</p>
+        <p class="c-place"><a class="city" href="/city-okazaki.html">岡崎市</a>岡崎市駒立町</p>
         <dl class="c-meta">
           <dt>日時</dt><dd>開園中(旬) 9:30〜16:00</dd>
           <dt>料金</dt><dd>デラウェア 大人2,000円〜</dd>
@@ -1225,6 +1240,13 @@ footer.f b{color:var(--ink)}
       </article>
     </section>
 
+  <section class="archives" id="archives">
+    <h2>🗂 過去の週末アーカイブ</h2>
+    <p class="anote">過去に掲載した週末イベントのページです。終了した内容のため、現在のおでかけには <a href="/weekend/">最新の週末イベント</a> をご覧ください。</p>
+    <ul class="alist">
+      <li><a href="/weekend/2026-08-08/">8月8日・9日の週末イベント28選</a> <span class="adate">（2026-08-08の週）</span></li>
+    </ul>
+  </section>
 </main>
 
 <footer class="f">
