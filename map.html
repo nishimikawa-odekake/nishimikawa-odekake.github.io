@@ -640,6 +640,16 @@ if(recenterBtn){
     }
     updateFoodSubChipsM();
   }
+  // お昼の枠指定で来た場合はランチ(ごはん店+チェーン)だけを最初から表示
+  if(SLOTPICK!=null&&SLOTPICK===SLOTLI){
+    state.play.add('food');
+    const fc=document.querySelector('.chip.play[data-t="food"]');
+    if(fc){fc.classList.add('on');}
+    state.chain=true;
+    const cc=document.querySelector('.chip[data-f="chain"]');
+    if(cc){cc.classList.add('on');}
+    updateFoodSubChipsM();
+  }
   if(from==='現在地'){
     // index.htmlで現在地を選んだまま全画面にした場合: 座標を引き継ぎ現在地設定を維持する
     const flat=parseFloat(qs.get('flat')), flng=parseFloat(qs.get('flng'));
