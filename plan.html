@@ -147,6 +147,7 @@ footer a{color:var(--sub)}
 .swaprow{margin-top:6px}
 .swapbtn{background:#fff;border:1.5px solid var(--accent);color:var(--accent-d);font-weight:800;font-size:.75rem;border-radius:999px;padding:5px 12px;cursor:pointer}
 .swapbtn:active{transform:scale(.97)}
+.swapbtn.sb-inline{font-size:.66rem;padding:2px 9px;margin-left:6px;vertical-align:middle;white-space:nowrap}
 .swapwrap{margin-top:8px;background:#fff8f2;border:1px solid #f0ddc8;border-radius:12px;padding:8px}
 .swapwrap .sc-head{font-size:.72rem;font-weight:800;color:var(--sub);margin:0 0 6px 2px}
 .swapcard{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #eadbc8;border-radius:10px;padding:8px 10px;margin:6px 0;cursor:pointer}
@@ -1170,6 +1171,8 @@ function rowHtml(r){
       '<div class="body"><div class="sname">'+esc(r.label)+'</div><div class="meta moveline">'+r.sub+'</div></div></div>';
   }
   const s=r.spot;
+  const slot=swapSlotFor(r);
+  const swapInline=(slot&&!state.isSharedView)?' <button type="button" class="swapbtn sb-inline" onclick="openSwap(\''+slot+'\',this)">🔁 変更する</button>':'';
   const isFood=(s.play_types||[]).includes('food');
   const links='<div class="links">'+
     (s.official_url?'<a href="'+esc(s.official_url)+'" target="_blank" rel="noopener" onclick="track(\'official\')">'+(/tabelog\.com/.test(s.official_url)?'詳細情報(食べログ)↗':'公式サイト↗')+'</a>':'')+
@@ -1177,7 +1180,7 @@ function rowHtml(r){
     '</div>';
   let body='';
   body+=(r.opt?'<span class="opt">⏱ 余力があれば</span><br>':'');
-  body+='<div class="sname">'+esc(s.name)+'<br><small style="font-weight:600;color:var(--sub);font-size:.75rem">'+esc(r.tag)+'・'+esc(s.city)+'</small>'+(r.paynote?'<br><small style="font-weight:600;color:var(--sub);font-size:.72rem">※飲食代は別途、1人あたりの目安です</small>':'')+'</div>';
+  body+='<div class="sname">'+esc(s.name)+swapInline+'<br><small style="font-weight:600;color:var(--sub);font-size:.75rem">'+esc(r.tag)+'・'+esc(s.city)+'</small>'+(r.paynote?'<br><small style="font-weight:600;color:var(--sub);font-size:.72rem">※飲食代は別途、1人あたりの目安です</small>':'')+'</div>';
   body+=whyBadges(s,r);
   if(isFood){
     body+=foodTagLines(s);
@@ -1195,9 +1198,7 @@ function rowHtml(r){
   if(r.bonusNote) body+='<div class="eveningwarn">'+esc(r.bonusNote)+'</div>';
   if(r.returnNote) body+='<div class="meta" style="font-size:.72rem;opacity:.75">🚗 '+esc(r.returnNote)+'</div>';
   body+=links;
-  const slot=swapSlotFor(r);
   if(slot&&!state.isSharedView){
-    body+='<div class="swaprow"><button type="button" class="swapbtn" onclick="openSwap(\''+slot+'\',this)">🔁 変更する</button></div>';
     body+='<div class="swapwrap" data-swapslot="'+slot+'" style="display:none"></div>';
   }
   return '<div class="tl'+(r.opt?' bonus':'')+'"><div class="rail"><span class="time">'+fmtTime(r.time)+'</span>'+
