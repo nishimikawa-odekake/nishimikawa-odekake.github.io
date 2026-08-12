@@ -157,6 +157,12 @@ footer a{color:var(--sub)}
 .swapwrap .sc-none{font-size:.75rem;color:var(--sub);padding:4px}
 .swapcard .sc-far{display:block;font-size:.68rem;color:#b0722a;margin-top:2px;font-weight:700}
 .swapwiden{display:block;width:100%;text-align:center;background:#fff;border:1.5px dashed var(--accent);color:var(--accent-d);font-weight:800;font-size:.75rem;border-radius:10px;padding:8px;margin-top:6px;cursor:pointer}
+.sc-current{background:#fdf3e7;border:1.5px solid var(--accent);border-radius:10px;padding:8px 10px;margin-bottom:8px}
+.sc-current .sc-cur-label{display:inline-block;background:var(--accent);color:#fff;font-size:.62rem;font-weight:800;border-radius:999px;padding:2px 8px;margin-right:8px;vertical-align:middle}
+.sc-current .sc-cur-name{font-weight:800;font-size:.85rem;vertical-align:middle}
+.sc-current .sc-cur-note{display:block;font-size:.66rem;color:var(--sub);margin-top:3px}
+.swapcard .sc-choose{float:right;background:#fff2e4;color:var(--accent-d);font-size:.66rem;font-weight:800;border-radius:999px;padding:2px 9px;margin-left:8px}
+.swapclose{display:block;width:100%;text-align:center;background:transparent;border:1.5px solid #d9c9b4;color:var(--sub);font-weight:800;font-size:.75rem;border-radius:10px;padding:8px;margin-top:8px;cursor:pointer}
 </style>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -1286,8 +1292,22 @@ function swapCardHtml(slot,s,i){
   else if(s.rain_friendly===true||s.indoor_or_outdoor==='indoor') tags.push('☔ 屋内');
   const farNote=s.__swapFar?'<span class="sc-far">📍 ご指定の移動圏より少し遠めです</span>':'';
   return '<button type="button" class="swapcard" onclick="applySwap(\''+slot+'\','+i+')">'+
-    '<span class="sc-name">'+esc(s.name)+'</span>'+
+    '<span class="sc-name">'+esc(s.name)+'<span class="sc-choose">これに変更 →</span></span>'+
     '<span class="sc-meta">'+esc(s.city||'')+(tags.length?'・'+tags.join('・'):'')+'</span>'+farNote+'</button>';
+}
+// パネル共通部品: 現在選択中の表示 と 閉じるボタン
+function swapCurrentHtml(slot){
+  const p=currentPlanObj(); if(!p) return '';
+  const cur=slot==='main'?p.main:(slot==='lunch'?p.lunch:p.sub);
+  if(!cur) return '';
+  return '<div class="sc-current"><span class="sc-cur-label">現在選択中</span><span class="sc-cur-name">'+esc(cur.name)+'</span><span class="sc-cur-note">※候補を選ぶまでプランは変わりません</span></div>';
+}
+function swapCloseHtml(slot){
+  return '<button type="button" class="swapclose" onclick="closeSwap(this)">変更しない・閉じる</button>';
+}
+function closeSwap(btn){
+  const wrap=btn.closest('.swapwrap');
+  if(wrap) wrap.style.display='none';
 }
 function openSwap(slot,btn){
   if(typeof gtag==='function') gtag('event','plan_swap_open',{slot:slot});
@@ -1297,15 +1317,16 @@ function openSwap(slot,btn){
   const cands=swapCandidates(slot,0);
   state.swapCands=state.swapCands||{};
   state.swapCands[slot]=cands;
-  let inner='';
+  let inner=swapCurrentHtml(slot);
   if(!cands.length){
-    inner='<div class="sc-none">この条件で入れ替えられる候補が見つかりませんでした</div>';
+    inner+='<div class="sc-none">この条件で入れ替えられる候補が見つかりませんでした</div>';
   } else {
-    inner='<div class="sc-head">かわりの候補：</div>'+cands.map((s,i)=>swapCardHtml(slot,s,i)).join('');
+    inner+='<div class="sc-head">かわりの候補：</div>'+cands.map((s,i)=>swapCardHtml(slot,s,i)).join('');
   }
   if(cands.length<3){
     inner+='<button type="button" class="swapwiden" onclick="widenSwap(\''+slot+'\',this)">🔍 条件を少し広げて候補を見る</button>';
   }
+  inner+=swapCloseHtml(slot);
   wrap.innerHTML=inner;
   wrap.style.display='block';
 }
@@ -1320,9 +1341,9 @@ function widenSwap(slot,btn){
   const wrap=btn.closest('.swapwrap');
   if(!wrap) return;
   if(!cands.length){
-    wrap.innerHTML='<div class="sc-none">条件を広げても候補が見つかりませんでした。「別のプランにする」もお試しください</div>';
+    wrap.innerHTML=swapCurrentHtml(slot)+'<div class="sc-none">条件を広げても候補が見つかりませんでした。「別のプランにする」もお試しください</div>'+swapCloseHtml(slot);
   } else {
-    wrap.innerHTML='<div class="sc-head">かわりの候補（範囲を広げて探しました）：</div>'+cands.map((s,i)=>swapCardHtml(slot,s,i)).join('');
+    wrap.innerHTML=swapCurrentHtml(slot)+'<div class="sc-head">かわりの候補（範囲を広げて探しました）：</div>'+cands.map((s,i)=>swapCardHtml(slot,s,i)).join('')+swapCloseHtml(slot);
   }
 }
 function applySwap(slot,i){
