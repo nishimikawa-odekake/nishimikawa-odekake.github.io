@@ -1766,11 +1766,30 @@ function restoreFromShare(qs){
 const CUSTOM_KEY='odemaru_custom_sel_v1';
 const SLOT_LABELS=['午前','お昼','午後'];
 function cpLabels(len){
-  if(len<=3) return ['午前','お昼','午後'];
-  if(len===4) return ['午前','お昼','午後①','午後②'];
-  return ['午前①','午前②','お昼','午後①','午後②'];
+  let li=cpLunchIdx(len);
+  try{ if(state&&Array.isArray(state.customSlots)&&state.customSlots.length===len) li=cpLI(); }catch(e){}
+  const m=li,p=len-1-li;
+  const am=(m===1)?['午前']:['午前①','午前②'];
+  const pm=(p===1)?['午後']:['午後①','午後②'];
+  return am.slice(0,m).concat(['お昼']).concat(pm.slice(0,p));
 }
 function cpLunchIdx(len){ return len===5?2:1; }
+// お昼枠の位置は可変(state.cpLunchPos)。午前1〜2枠・午後1〜2枠の範囲に収める
+function cpLI(){
+  const len=state.customSlots.length;
+  const li=(state.cpLunchPos!=null)?state.cpLunchPos:cpLunchIdx(len);
+  return Math.max(Math.max(1,len-3),Math.min(Math.min(2,len-2),li));
+}
+function cpNormalizeLunch(){
+  const len=state.customSlots.length;
+  let li=(state.cpLunchPos!=null)?state.cpLunchPos:cpLunchIdx(len);
+  const t=Math.max(Math.max(1,len-3),Math.min(Math.min(2,len-2),li));
+  if(t!==li&&li>=0&&li<len){
+    const l=state.customSlots.splice(li,1)[0];
+    state.customSlots.splice(t,0,l);
+  }
+  state.cpLunchPos=t;
+}
 // お昼枠に入れてよいか: ごはん店(food/チェーン)または入力した場所(予約したお店など)のみ
 function cpIsFoodSpot(s){ return !!s&&(((s.play_types||[]).includes('food'))||s.is_chain===true||s.__temp===true); }
 function tempSpot(name,lat,lng,addr){
@@ -1812,6 +1831,7 @@ function cpResolveItem(it){
 function cpSaveSlots(){
   try{
     localStorage.setItem(CUSTOM_KEY,JSON.stringify({v:2,ts:Date.now(),
+      li:cpLI(),
       slots:state.customSlots.map(s=>!s?null:(s.__temp?{n:s.name,lat:s.latitude,lng:s.longitude,addr:s.city,temp:1}:{n:s.name}))}));
   }catch(e){}
 }
@@ -1824,9 +1844,11 @@ function initCustom(){
     state.customSlots=d.slots.map(cpResolveItem);
     while(state.customSlots.length<3) state.customSlots.push(null);
     state.customSlots=state.customSlots.slice(0,5);
+    state.cpLunchPos=(typeof d.li==='number')?d.li:cpLunchIdx(state.customSlots.length);
+    cpNormalizeLunch();
     // 保存データにお昼枠×スポット(またはスポット枠×ごはん店)が混ざっていたら並べ直す
     (function(){
-      const li=cpLunchIdx(state.customSlots.length);
+      const li=cpLI();
       const bad=state.customSlots[li]&&!cpIsFoodSpot(state.customSlots[li]);
       const misFood=state.customSlots.findIndex((s,k)=>k!==li&&s&&!s.__temp&&cpIsFoodSpot(s));
       if(bad){
@@ -1842,6 +1864,7 @@ function initCustom(){
     let items=[];
     if(d&&d.items) items=d.items.map(cpResolveItem).filter(Boolean).slice(0,3);
     state.customSlots=customAutoAssign(items);
+    state.cpLunchPos=1;
   }
   if(!state.origin) state.origin={name:'安城市',lat:ANJO[0],lng:ANJO[1],isAnjo:true};
   if(!state.when||state.when==='sat'||state.when==='sun') state.when=state.when||'today';
@@ -1850,18 +1873,25 @@ function initCustom(){
   renderCustomPanel();
 }
 function cpWhen(w){ state.when=w; renderCustomPanel(); }
-function cpExpand(){
-  if(state.customSlots.length>=5) return;
-  if(state.customSlots.length===3){
-    state.customSlots.splice(3,0,null);      // [午前,お昼,午後①,午後②]
-  } else {
-    state.customSlots.splice(1,0,null);      // [午前①,午前②,お昼,午後①,午後②]
-  }
-  if(typeof gtag==='function') gtag('event','plan_custom_expand',{len:state.customSlots.length});
+function cpExpandAm(){
+  const li=cpLI();
+  if(state.customSlots.length>=5||li>=2) return;      // 午前は最大2枠
+  state.customSlots.splice(li,0,null);                 // お昼の直前=午前②として追加
+  state.cpLunchPos=li+1;
+  if(typeof gtag==='function') gtag('event','plan_custom_expand',{len:state.customSlots.length,side:'am'});
   cpSaveSlots(); renderCustomPanel();
 }
+function cpExpandPm(){
+  const li=cpLI();
+  if(state.customSlots.length>=5||(state.customSlots.length-1-li)>=2) return;  // 午後は最大2枠
+  state.customSlots.push(null);
+  state.cpLunchPos=li;
+  if(typeof gtag==='function') gtag('event','plan_custom_expand',{len:state.customSlots.length,side:'pm'});
+  cpSaveSlots(); renderCustomPanel();
+}
+function cpExpand(){ cpExpandPm(); }
 function cpMove(i,dir){
-  const li=cpLunchIdx(state.customSlots.length);
+  const li=cpLI();
   if(i===li) return;                 // お昼枠は位置固定
   let j=i+dir;
   if(j===li) j+=dir;                 // お昼枠を飛ばしてスポット枠同士で入れかえ
@@ -1873,18 +1903,13 @@ function cpRemove(i){ state.customSlots[i]=null; state.cpAddOpen=null; cpSaveSlo
 // 追加した枠そのものを減らす(お昼以外・4枠以上のとき)。中身は残った枠に詰め直す
 function cpRemoveRow(i){
   const len=state.customSlots.length;
-  const li=cpLunchIdx(len);
+  const li=cpLI();
   if(len<=3||i===li) return;
-  const lunchVal=state.customSlots[li];
-  const spots=state.customSlots.filter((_,k)=>k!==li&&k!==i);
-  const nl=len-1, nli=cpLunchIdx(nl);
-  const ns=new Array(nl).fill(null);
-  ns[nli]=lunchVal;
-  let p=0;
-  for(let k=0;k<nl;k++){ if(k===nli) continue; ns[k]=spots[p++]||null; }
-  state.customSlots=ns;
+  state.customSlots.splice(i,1);
+  state.cpLunchPos=(i<li)?li-1:li;
+  cpNormalizeLunch();
   state.cpAddOpen=null; state.cpTarget=null;
-  if(typeof gtag==='function') gtag('event','plan_custom_shrink',{len:nl});
+  if(typeof gtag==='function') gtag('event','plan_custom_shrink',{len:state.customSlots.length});
   cpSaveSlots(); renderCustomPanel();
 }
 function cpGeo(){
@@ -1903,7 +1928,7 @@ function cpSuggest(slot){
   // その枠に合う候補3件をその場で出す(枠の時間帯・移動条件・営業時間で絞る)
   const date=targetDate(state.when||'today');
   const start=startMinutes();
-  const __li=cpLunchIdx(state.customSlots.length);
+  const __li=cpLI();
   const __role=slot===__li?'lunch':(slot<__li?'am':'pm');
   const arrGuess=__role==='am'?start+30:(__role==='lunch'?start+150:start+270);
   const o=state.origin;
@@ -1944,7 +1969,7 @@ function cpPickSug(slot,idx){
 function cpUseMyPlace(slot,idx){
   const mp=myPlaces()[idx]; if(!mp) return;
   const sp=SPOTS.find(s=>s.name===mp.n)||tempSpot(mp.n,mp.lat,mp.lng,mp.addr);
-  const li=cpLunchIdx(state.customSlots.length);
+  const li=cpLI();
   let tgt=slot;
   if(tgt==null){
     const order=state.customSlots.map((_,k)=>k).sort((a,b)=>(a===li)-(b===li));
@@ -1959,7 +1984,7 @@ function cpUseMyPlace(slot,idx){
 }
 function cpGotoMap(slot){
   cpSaveSlots();
-  location.href='./map.html'+(slot!=null?('?slotpick='+slot+'&sl='+state.customSlots.length):'');
+  location.href='./map.html'+(slot!=null?('?slotpick='+slot+'&sl='+state.customSlots.length+'&li='+cpLI()):'');
 }
 function cpFocusInput(slot){
   state.cpTarget=slot; state.cpAddOpen=null;
@@ -1987,7 +2012,7 @@ function renderCustomPanel(){
     +'<button type="button" style="'+(state.when==='tomorrow'?wOn:wOff)+';margin:4px 0 0 0" onclick="cpWhen(\'tomorrow\')">あす</button></div>';
   html+='<div style="margin:14px 0 4px;font-weight:800">えらんだ場所（'+cnt+'件）</div>';
   const mps=myPlaces();
-  const __rli=cpLunchIdx(state.customSlots.length);
+  const __rli=cpLI();
   const __spotIdx=state.customSlots.map((_,k)=>k).filter(k=>k!==__rli);
   cpLabels(state.customSlots.length).forEach((lab,i2)=>{
     const s=state.customSlots[i2];
@@ -2040,7 +2065,12 @@ function renderCustomPanel(){
     }
   });
   if(state.customSlots.length<5){
-    html+='<button type="button" onclick="cpExpand()" style="width:100%;margin:6px 0 0;padding:10px;border:1.5px dashed #d8c9b0;background:#fff;border-radius:12px;color:#8a7a5a;font-weight:700;font-size:.85rem">＋ スポットの枠を追加（最大5カ所）</button>';
+    const __li2=cpLI(), __amFull=__li2>=2, __pmFull=(state.customSlots.length-1-__li2)>=2;
+    const __exBtn='flex:1;margin:6px 0 0;padding:10px;border:1.5px dashed #d8c9b0;background:#fff;border-radius:12px;color:#8a7a5a;font-weight:700;font-size:.83rem';
+    html+='<div style="display:flex;gap:6px">';
+    if(!__amFull) html+='<button type="button" onclick="cpExpandAm()" style="'+__exBtn+'">＋ 午前の枠を追加</button>';
+    if(!__pmFull) html+='<button type="button" onclick="cpExpandPm()" style="'+__exBtn+'">＋ 午後の枠を追加</button>';
+    html+='</div>';
   }
   const tgtLab=state.cpTarget!=null?cpLabels(state.customSlots.length)[state.cpTarget]:null;
   html+='<div style="margin:14px 0;padding:12px;border:1.5px dashed #e8853d;border-radius:12px;background:#fff8f0">'
@@ -2092,7 +2122,7 @@ async function cpAddPlace(){
   if(!name){ msg.textContent='名前を入れてください'; return; }
   if(!addr){ msg.textContent='住所を入れてください（市町村名＋町名だけでもOK）'; return; }
   let tgt=(state.cpTarget!=null&&!state.customSlots[state.cpTarget])?state.cpTarget:(function(){
-    const li=cpLunchIdx(state.customSlots.length);
+    const li=cpLI();
     const order=state.customSlots.map((_,k2)=>k2).sort((a,b)=>(a===li)-(b===li));
     return order.find(k2=>!state.customSlots[k2]);
   })();
@@ -2125,7 +2155,7 @@ function editCustom(){
 async function customGenerate5(){
   const msg=document.getElementById('cpAddMsg');
   const slots=state.customSlots;
-  const li=cpLunchIdx(slots.length);
+  const li=cpLI();
   const morning=slots.slice(0,li).filter(Boolean);
   let lunch=slots[li]||null;
   const afternoon=slots.slice(li+1).filter(Boolean);

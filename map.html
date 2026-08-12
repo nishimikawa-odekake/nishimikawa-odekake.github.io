@@ -422,13 +422,14 @@ let planSel=[];
 // 枠指定モード: plan.htmlの空き枠[＋追加]→「マップで探す」から来た場合。1件選んだら即プランナーへ戻る
 const SLOTPICK=(function(){ try{ const v=new URLSearchParams(location.search).get('slotpick'); return v==null?null:Math.max(0,Math.min(4,parseInt(v,10)||0)); }catch(e){ return null; } })();
 const SLOTLEN=(function(){ try{ const v=new URLSearchParams(location.search).get('sl'); return v==null?3:Math.max(3,Math.min(5,parseInt(v,10)||3)); }catch(e){ return 3; } })();
+const SLOTLI=(function(){ try{ const v=new URLSearchParams(location.search).get('li'); const d=SLOTLEN===5?2:1; const li=v==null?d:parseInt(v,10); return Math.max(Math.max(1,SLOTLEN-3),Math.min(Math.min(2,SLOTLEN-2),isNaN(li)?d:li)); }catch(e){ return SLOTLEN===5?2:1; } })();
 function slotpickAdd(i){
   try{
     let d=null; try{ d=JSON.parse(localStorage.getItem('odemaru_custom_sel_v1')||'null'); }catch(e){}
     let slots=(d&&d.v===2&&Array.isArray(d.slots))?d.slots:new Array(SLOTLEN).fill(null);
     while(slots.length<SLOTLEN) slots.push(null);
     slots[SLOTPICK]={n:SPOTS[i].name};
-    localStorage.setItem('odemaru_custom_sel_v1',JSON.stringify({v:2,ts:Date.now(),slots:slots.slice(0,Math.max(SLOTLEN,slots.length))}));
+    localStorage.setItem('odemaru_custom_sel_v1',JSON.stringify({v:2,ts:Date.now(),li:SLOTLI,slots:slots.slice(0,Math.max(SLOTLEN,slots.length))}));
   }catch(e){}
   location.href='./plan.html?custom=1';
 }
@@ -436,7 +437,7 @@ function selHas(i){ return planSel.indexOf(i)>=0; }
 function toggleSel(i){
   if(SLOTPICK!=null){
     const s=SPOTS[i];
-    const li=SLOTLEN===5?2:1;
+    const li=SLOTLI;
     const isFood=((s.play_types||[]).includes('food'))||s.is_chain===true;
     if(SLOTPICK===li&&!isFood){
       const b=document.getElementById('addPlanBtn');
@@ -492,14 +493,15 @@ function makeCustomPlanFromSel(){
       if(k===li||slots[k]) continue;
       slots[k]=rest[ptr++];
     }
-    localStorage.setItem('odemaru_custom_sel_v1', JSON.stringify({v:2,ts:Date.now(),slots:slots.map(s=>s?{n:s.name}:null)}));
+    localStorage.setItem('odemaru_custom_sel_v1', JSON.stringify({v:2,ts:Date.now(),li:li,slots:slots.map(s=>s?{n:s.name}:null)}));
   }catch(e){}
   location.href='./plan.html?custom=1';
 }
 function openSheet(i){
   const s=SPOTS[i];
   if(!s) return;
-  const __labs=SLOTLEN===3?['午前','お昼','午後']:(SLOTLEN===4?['午前','お昼','午後①','午後②']:['午前①','午前②','お昼','午後①','午後②']);
+  const __m=SLOTLI,__p=SLOTLEN-1-SLOTLI;
+  const __labs=(__m===1?['午前']:['午前①','午前②']).slice(0,__m).concat(['お昼']).concat((__p===1?['午後']:['午後①','午後②']).slice(0,__p));
   const addLabel=(SLOTPICK!=null)?('＋ この場所を「'+(__labs[SLOTPICK]||'')+'」の枠に入れる'):(selHas(i)?'✓ プラン候補に追加ずみ（タップで外す）':'＋プランに追加');
   sheetBody.innerHTML=sheetHTML(s)+'<button type="button" class="addplan'+(selHas(i)?' on':'')+'" id="addPlanBtn" onclick="toggleSel('+i+')">'+addLabel+'</button>';
   sheet.classList.add('show');
