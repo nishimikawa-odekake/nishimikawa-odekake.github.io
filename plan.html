@@ -1423,6 +1423,7 @@ function rowHtml(r){
 }
 function swapSlotFor(r){
   if(!r||r.type!=='spot'||!r.spot) return null;
+  if(state.plans.length&&state.plans[state.variant%state.plans.length]&&state.plans[state.variant%state.plans.length].custom5) return null;
   if(r.tag==='メイン') return 'main';
   if(r.food) return 'lunch';
   if(r.tag==='午後スポット'||r.tag==='余力があれば') return 'sub';
@@ -1814,6 +1815,12 @@ function restoreFromShare(qs){
 /* ===== 自分で選ぶ（カスタム）プラン ===== */
 const CUSTOM_KEY='odemaru_custom_sel_v1';
 const SLOT_LABELS=['午前','お昼','午後'];
+function cpLabels(len){
+  if(len<=3) return ['午前','お昼','午後'];
+  if(len===4) return ['午前','お昼','午後①','午後②'];
+  return ['午前①','午前②','お昼','午後①','午後②'];
+}
+function cpLunchIdx(len){ return len===5?2:1; }
 function tempSpot(name,lat,lng,addr){
   return {name:name,latitude:lat,longitude:lng,city:addr||'',play_types:['indoor'],is_free:true,__temp:true};
 }
@@ -1862,7 +1869,7 @@ function initCustom(){
   if(d&&d.v===2&&Array.isArray(d.slots)){
     state.customSlots=d.slots.map(cpResolveItem);
     while(state.customSlots.length<3) state.customSlots.push(null);
-    state.customSlots=state.customSlots.slice(0,3);
+    state.customSlots=state.customSlots.slice(0,5);
   } else {
     let items=[];
     if(d&&d.items) items=d.items.map(cpResolveItem).filter(Boolean).slice(0,3);
@@ -1875,8 +1882,18 @@ function initCustom(){
   renderCustomPanel();
 }
 function cpWhen(w){ state.when=w; renderCustomPanel(); }
+function cpExpand(){
+  if(state.customSlots.length>=5) return;
+  if(state.customSlots.length===3){
+    state.customSlots.splice(3,0,null);      // [午前,お昼,午後①,午後②]
+  } else {
+    state.customSlots.splice(1,0,null);      // [午前①,午前②,お昼,午後①,午後②]
+  }
+  if(typeof gtag==='function') gtag('event','plan_custom_expand',{len:state.customSlots.length});
+  cpSaveSlots(); renderCustomPanel();
+}
 function cpMove(i,dir){
-  const j=i+dir; if(j<0||j>2) return;
+  const j=i+dir; if(j<0||j>state.customSlots.length-1) return;
   const t=state.customSlots[i]; state.customSlots[i]=state.customSlots[j]; state.customSlots[j]=t;
   cpSaveSlots(); renderCustomPanel();
 }
@@ -1897,7 +1914,9 @@ function cpSuggest(slot){
   // その枠に合う候補3件をその場で出す(枠の時間帯・移動条件・営業時間で絞る)
   const date=targetDate(state.when||'today');
   const start=startMinutes();
-  const arrGuess=slot===0?start+30:(slot===1?start+150:start+270);
+  const __li=cpLunchIdx(state.customSlots.length);
+  const __role=slot===__li?'lunch':(slot<__li?'am':'pm');
+  const arrGuess=__role==='am'?start+30:(__role==='lunch'?start+150:start+270);
   const o=state.origin;
   const filled=state.customSlots.filter(Boolean);
   const ref=state.customSlots[0]||filled[0]||null;
@@ -1907,11 +1926,11 @@ function cpSuggest(slot){
     if(s.latitude==null) return false;
     if(typeof isJidokan==='function'&&isJidokan(s)) return false;
     const isFood=(s.play_types||[]).includes('food');
-    if(slot===1){ if(!isFood) return false; } else { if(isFood&&(s.play_types||[]).length===1) return false; }
+    if(__role==='lunch'){ if(!isFood) return false; } else { if(isFood) return false; }
     if(filled.some(x=>x===s||x.name===s.name)) return false;
     if(!budgetPass(s)) return false;
     const dmO=driveMinutesFrom(o,s); if(dmO==null||dmO>capMin) return false;
-    if(haversineKm(refLat,refLng,s.latitude,s.longitude)>(slot===1?10:14)) return false;
+    if(haversineKm(refLat,refLng,s.latitude,s.longitude)>(__role==='lunch'?10:14)) return false;
     if(isClosedOn(s,date)) return false;
     if(closingInfo(s,arrGuess).exclude) return false;
     return true;
@@ -1936,13 +1955,18 @@ function cpPickSug(slot,idx){
 function cpUseMyPlace(slot,idx){
   const mp=myPlaces()[idx]; if(!mp) return;
   const sp=SPOTS.find(s=>s.name===mp.n)||tempSpot(mp.n,mp.lat,mp.lng,mp.addr);
-  let tgt=slot!=null?slot:[0,2,1].find(k=>!state.customSlots[k]);
+  let tgt=slot;
+  if(tgt==null){
+    const li=cpLunchIdx(state.customSlots.length);
+    const order=state.customSlots.map((_,k)=>k).sort((a,b)=>(a===li)-(b===li));
+    tgt=order.find(k=>!state.customSlots[k]);
+  }
   if(tgt===undefined){ return; }
   state.customSlots[tgt]=sp; state.cpAddOpen=null; cpSaveSlots(); renderCustomPanel();
 }
 function cpGotoMap(slot){
   cpSaveSlots();
-  location.href='./map.html'+(slot!=null?('?slotpick='+slot):'');
+  location.href='./map.html'+(slot!=null?('?slotpick='+slot+'&sl='+state.customSlots.length):'');
 }
 function cpFocusInput(slot){
   state.cpTarget=slot; state.cpAddOpen=null;
@@ -1970,7 +1994,7 @@ function renderCustomPanel(){
     +'<button type="button" style="'+(state.when==='tomorrow'?wOn:wOff)+';margin:4px 0 0 0" onclick="cpWhen(\'tomorrow\')">あす</button></div>';
   html+='<div style="margin:14px 0 4px;font-weight:800">えらんだ場所（'+cnt+'件）</div>';
   const mps=myPlaces();
-  SLOT_LABELS.forEach((lab,i2)=>{
+  cpLabels(state.customSlots.length).forEach((lab,i2)=>{
     const s=state.customSlots[i2];
     html+='<div style="display:flex;align-items:center;gap:7px;padding:10px;border:1px solid #e8ddcc;border-radius:12px;margin:6px 0 0;background:#fff">'
       +'<span style="font-size:.72rem;font-weight:800;color:#e8853d;min-width:2.6em">'+lab+'</span>';
@@ -1978,7 +2002,7 @@ function renderCustomPanel(){
       html+='<span style="flex:1;font-weight:700;font-size:.92rem;min-width:0;overflow-wrap:anywhere">'+esc(s.name)
         +(s.__temp?' <span style="font-size:.66rem;font-weight:600;color:#8a7a5a">（入力した場所）</span>':'')+'</span>'
         +'<button type="button" onclick="cpMove('+i2+',-1)"'+(i2===0?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="上へ">↑</button>'
-        +'<button type="button" onclick="cpMove('+i2+',1)"'+(i2===2?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="下へ">↓</button>'
+        +'<button type="button" onclick="cpMove('+i2+',1)"'+(i2===state.customSlots.length-1?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="下へ">↓</button>'
         +'<button type="button" onclick="cpRemove('+i2+')" style="'+btnS+';color:#c0392b" aria-label="この行を削除">✕</button>';
     } else {
       html+='<span style="flex:1;color:#9a8c70;font-size:.85rem">おでまるが提案します</span>'
@@ -2012,7 +2036,10 @@ function renderCustomPanel(){
       html+='</div>';
     }
   });
-  const tgtLab=state.cpTarget!=null?SLOT_LABELS[state.cpTarget]:null;
+  if(state.customSlots.length<5){
+    html+='<button type="button" onclick="cpExpand()" style="width:100%;margin:6px 0 0;padding:10px;border:1.5px dashed #d8c9b0;background:#fff;border-radius:12px;color:#8a7a5a;font-weight:700;font-size:.85rem">＋ スポットの枠を追加（最大5カ所）</button>';
+  }
+  const tgtLab=state.cpTarget!=null?cpLabels(state.customSlots.length)[state.cpTarget]:null;
   html+='<div style="margin:14px 0;padding:12px;border:1.5px dashed #e8853d;border-radius:12px;background:#fff8f0">'
     +'<div style="font-weight:800;margin-bottom:4px">＋ 予定している場所を追加'+(tgtLab?'<span style="font-size:.72rem;font-weight:800;color:#fff;background:#e8853d;border-radius:999px;padding:2px 10px;margin-left:8px">追加先: '+tgtLab+'</span>':'')+'</div>'
     +'<div style="font-size:.74rem;color:#8a7a5a;line-height:1.6;margin-bottom:8px">祖父母の家・予約したお店・ホテル・習いごと・お友だちの家など、マップにない場所もプランに入れられます。一度追加した場所は「マイプレイス」に保存され、次回から1タップで呼び出せます。（サイトには掲載されません）</div>'
@@ -2061,8 +2088,12 @@ async function cpAddPlace(){
   const name=(nameEl&&nameEl.value||'').trim(), addr=(addrEl&&addrEl.value||'').trim();
   if(!name){ msg.textContent='名前を入れてください'; return; }
   if(!addr){ msg.textContent='住所を入れてください（市町村名＋町名だけでもOK）'; return; }
-  let tgt=(state.cpTarget!=null&&!state.customSlots[state.cpTarget])?state.cpTarget:[0,2,1].find(k2=>!state.customSlots[k2]);
-  if(tgt===undefined){ msg.textContent='えらべるのは3件までです。どれかの行を✕で外してから追加してください'; return; }
+  let tgt=(state.cpTarget!=null&&!state.customSlots[state.cpTarget])?state.cpTarget:(function(){
+    const li=cpLunchIdx(state.customSlots.length);
+    const order=state.customSlots.map((_,k2)=>k2).sort((a,b)=>(a===li)-(b===li));
+    return order.find(k2=>!state.customSlots[k2]);
+  })();
+  if(tgt===undefined){ msg.textContent='枠がいっぱいです。どれかの行を✕で外すか、「＋ スポットの枠を追加」で枠を増やしてください'; return; }
   msg.textContent='検索中…';
   try{
     const r=await fetch('https://msearch.gsi.go.jp/address-search/AddressSearch?q='+encodeURIComponent(addr));
@@ -2087,10 +2118,97 @@ function editCustom(){
   if(typeof gtag==='function') gtag('event','plan_custom_edit');
   renderCustomPanel();
 }
+// 4〜5枠のカスタムプラン: 選んだ順に「午前→お昼→午後」で時間割を自動配分する専用エンジン
+async function customGenerate5(){
+  const msg=document.getElementById('cpAddMsg');
+  const slots=state.customSlots;
+  const li=cpLunchIdx(slots.length);
+  const morning=slots.slice(0,li).filter(Boolean);
+  let lunch=slots[li]||null;
+  const afternoon=slots.slice(li+1).filter(Boolean);
+  if(!(morning.length+afternoon.length)){ if(msg) msg.textContent='遊び場所を1つ以上えらんでください'; return; }
+  if(typeof gtag==='function') gtag('event','plan_custom_generate5',{n:morning.length+afternoon.length+(lunch?1:0)});
+  document.getElementById('customPanel').style.display='none';
+  document.getElementById('loading').style.display='block';
+  document.getElementById('result').style.display='none';
+  if(!state.depart) state.depart={mode:'slot',slot:'am'};
+  if(!state.budget) state.budget='any';
+  try{ state.weather=await fetchWeather(); }catch(e){ state.weather=null; }
+  const date=targetDate(state.when||'today');
+  CURRENT_CAP=capFor(state.driveTime);
+  const o=state.origin;
+  const anchorSpot=morning[0]||afternoon[0];
+  if(!lunch){ try{ lunch=pickLunch(anchorSpot,date); }catch(e){ lunch=null; } }
+  const onlyToddler=state.ages.has('0-2')&&state.ages.size===1;
+  const capHome=onlyToddler?(18*60+15):(18*60);
+  // 滞在時間の配分: 午前枠は合計で〜12:00めど、午後枠は帰宅上限から逆算
+  const rows=[]; let legSum=0; let t=startMinutes();
+  let lastName=(o.name==='現在地'||o.isAnjo)?'出発地周辺':o.name+'周辺';
+  let lastLat=o.lat, lastLng=o.lng; let lastSpot=null;
+  const mStay=morning.length>=2?60:90;
+  morning.forEach((s,ix)=>{
+    const dm2=lastSpot?legMinutes(lastLat,lastLng,s.latitude,s.longitude):(driveMinutesFrom(o,s)||30);
+    rows.push({type:'move',time:t,label:'🚗 移動（約'+dm2+'分）',sub:transitLabel(lastName,s.name,dm2)});
+    legSum+=dm2; t+=dm2;
+    const ci=closingInfo(s,t);
+    rows.push({type:'spot',time:t,spot:s,tag:morning.length>1?('午前スポット'+(ix+1)):'メイン',closeNote:ci.exclude?'※この時間帯は営業時間外の可能性があります。公式サイトでご確認ください':ci.note});
+    t+=mStay;
+    lastName=s.name; lastLat=s.latitude; lastLng=s.longitude; lastSpot=s;
+  });
+  if(lunch){
+    const ldm=lastSpot?legMinutes(lastLat,lastLng,lunch.latitude,lunch.longitude):(driveMinutesFrom(o,lunch)||30);
+    rows.push({type:'move',time:t,label:'🚗 移動（約'+ldm+'分）',sub:transitLabel(lastName,lunch.name,ldm)});
+    legSum+=ldm; t+=ldm;
+    const lci=closingInfo(lunch,t);
+    rows.push({type:'spot',time:t,spot:lunch,tag:mealLabelFor(t),food:true,paynote:state.budget==='free',closeNote:lci.note});
+    t+=60;
+    lastName=lunch.name; lastLat=lunch.latitude; lastLng=lunch.longitude; lastSpot=lunch;
+  }
+  // 午後枠: 残り時間を人数割り(最短45分・最長90分)
+  let warn=false;
+  afternoon.forEach((s,ix)=>{
+    const dm2=legMinutes(lastLat,lastLng,s.latitude,s.longitude);
+    rows.push({type:'move',time:t,label:'🚗 移動（約'+dm2+'分）',sub:transitLabel(lastName,s.name,dm2)});
+    legSum+=dm2; t+=dm2;
+    const remainSpots=afternoon.length-ix;
+    const bdm=driveMinutesFrom(o,s)||legMinutes(s.latitude,s.longitude,o.lat,o.lng);
+    // このスポット以降に残せる時間から滞在を決める
+    const budgetMin=capHome-bdm-t-(remainSpots-1)*(45+15);
+    let stay=Math.max(45,Math.min(90,Math.floor(budgetMin/remainSpots/15)*15));
+    if(budgetMin<45*remainSpots){ stay=45; warn=true; }
+    const ci=closingInfo(s,t);
+    const bh=parseBusinessHours(s);
+    if(bh&&t+stay>bh.closeMin){ stay=Math.max(30,Math.floor((bh.closeMin-t)/15)*15); if(stay<45) warn=true; }
+    rows.push({type:'spot',time:t,spot:s,tag:afternoon.length>1?('午後スポット'+(ix+1)):'午後スポット',closeNote:ci.exclude?'※この時間帯は営業時間外の可能性があります。公式サイトでご確認ください':ci.note});
+    t+=stay;
+    lastName=s.name; lastLat=s.latitude; lastLng=s.longitude; lastSpot=s;
+  });
+  const homeDm=lastSpot?(driveMinutesFrom(o,lastSpot)||legMinutes(lastLat,lastLng,o.lat,o.lng)):0;
+  rows.push({type:'move',time:t,label:'🚗 帰路（約'+homeDm+'分）',sub:transitLabel(lastName,'ご自宅',homeDm)+'／帰着めやす '+fmtTime(t+homeDm)+'ごろ'});
+  legSum+=homeDm;
+  if(t+homeDm>capHome+30) warn=true;
+  // 費用集計(既存ルール踏襲)
+  const used=morning.concat(lunch?[lunch]:[],afternoon);
+  let known=0,hasUnknown=false,allFree=true;
+  used.filter(s=>!((s.play_types||[]).includes('food'))).forEach(s=>{ const pr=parsePrice(s); if(pr==null)hasUnknown=true; else{known+=pr; if(pr>0)allFree=false;} });
+  let cost;
+  if(allFree&&!hasUnknown) cost='入場料など 無料（大人1人あたり・ランチ代は別）';
+  else if(known===0&&hasUnknown) cost='入場料などは公式サイトで確認（ランチ代は別）';
+  else cost='入場料など 大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'')+'・ランチ代は別';
+  const plan={rows,main:morning[0]||afternoon[0],lunch:lunch||null,sub:afternoon[0]||null,totalDrive:legSum,cost,hasUnknown,homePriority:false,custom5:true};
+  state.shownMains=[plan.main]; state.shownLunches=lunch?[lunch]:[]; state.shownSubs=[];
+  state.swapFixed={}; state.swapSeen={}; state.cycledNote=false;
+  state.isSharedView=false; state.isCustomView=true; state.custom5Warn=warn;
+  state.excludedSpots=[]; state.lastPlanSpots=[];
+  state.plans=[plan]; state.variant=0; state.planNo=1;
+  document.getElementById('loading').style.display='none';
+  showResult();
+}
 async function customGenerate(){
   const sel=state.customSlots.filter(Boolean);
   const msg=document.getElementById('cpAddMsg');
   if(!sel.length){ if(msg) msg.textContent='場所を1つ以上えらんでください（マップからえらぶ、または上の入力から追加）'; return; }
+  if(state.customSlots.length>3){ return customGenerate5(); }
   if(typeof gtag==='function') gtag('event','plan_custom_generate',{n:sel.length});
   document.getElementById('customPanel').style.display='none';
   document.getElementById('loading').style.display='block';
@@ -2242,6 +2360,9 @@ function showResult(){
   html+='</div>';
   if(!state.weather){
     html+='<div class="notice">※ 現在お天気情報を取得できなかったため、天気条件なしでプランを作成しています。</div>';
+  }
+  if(state.isCustomView&&state.custom5Warn){
+    html+='<div class="notice" style="background:#fdf0e7;border:1px solid #e8b48a">⚠ この日程だと選んだ場所を全部回るのは駆け足になりそうです。1〜2カ所減らすか、滞在を短めにする前提でご利用ください。</div>';
   }
   if(state.ringRelaxed){
     const band=state.driveTime==='60'?'41〜60分':'21〜40分';
