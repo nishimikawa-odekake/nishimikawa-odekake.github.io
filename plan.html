@@ -466,23 +466,37 @@ function isClosedOn(s,date){
   const tw=WD[dow];
   const cd=s.closed_days||'';
   const bh=s.business_hours||'';
-
-  // (1) closed_days: weekday chars immediately followed by 曜 （既存: 「日曜」「月曜」等）
-  const re=/([日月火水木金土])曜/g; let m; const days=new Set();
-  while((m=re.exec(cd))) days.add(m[1]);
-  if(days.has(tw)) return true;
-
-  // (2) closed_days: 「土日祝」「土日」「日祝」等 曜なしの週末表記
-  //     （例: 防災教育センター=土日祝, トヨタ会館の日祝系）
+  // 祝日テーブル(2026-2027)
+  const HOL={2026:['1/1','1/12','2/11','2/23','3/20','4/29','5/3','5/4','5/5','5/6','7/20','8/11','9/21','9/22','9/23','10/12','11/3','11/23'],
+             2027:['1/1','1/11','2/11','2/23','3/21','3/22','4/29','5/3','5/4','5/5','7/19','8/11','9/20','9/23','10/11','11/3','11/23']};
+  const holKey=d=>(d.getMonth()+1)+'/'+d.getDate();
+  const isHolDate=d=>((HOL[d.getFullYear()]||[]).indexOf(holKey(d))>=0);
+  const isHol=isHolDate(date);
+  const md=(date.getMonth()+1)*100+date.getDate();
+  // お盆・年末年始・GW等の明示休業
+  if(/お盆|盆休/.test(cd)&&md>=812&&md<=816) return true;
+  if(/年末年始/.test(cd)&&(md>=1228||md<=104)) return true;
+  // (1) closed_days: 曜日指定
+  const re=/([日月火水木金土])曜/g; let m2; const days=new Set();
+  while((m2=re.exec(cd))) days.add(m2[1]);
+  const holOpen=/祝(休)?日?(の場合|の時|のとき)?(は|も)?(営業|開館|開園|翌)/.test(cd); // 「月曜(祝日の場合は翌日)」型
+  if(days.has(tw)){
+    // 定休曜日でも「祝日の場合は営業(翌日休)」型なら祝日は開ける
+    if(!(isHol&&holOpen)) return true;
+  }
+  // 祝日翌日休(振替型): 前日が祝日で、前日の曜日が定休曜日、かつ「翌日」表記
+  if(/翌(平)?日/.test(cd)){
+    const y=new Date(date); y.setDate(y.getDate()-1);
+    if(isHolDate(y)&&days.has(WD[y.getDay()])) return true;
+  }
+  // 祝日を休みと明記(「土日祝」「祝日休館」等)
+  if(isHol&&/祝/.test(cd)&&!holOpen) return true;
+  // (2) 曜なしの週末表記
   if(/土日祝|土日|週末/.test(cd)){ if(isWeekend) return true; }
-  else if(/日祝/.test(cd)){ if(dow===0) return true; }        // 日祝→日曜休
-  // 「日・祝」「日曜・祝日」等は(1)の日曜で拾えるが、念のため
+  else if(/日祝/.test(cd)){ if(dow===0) return true; }
   if(/(^|[^平])日休|日曜休|日祝休/.test(cd) && dow===0) return true;
-
-  // (3) 週末に平日限定営業の施設を除外
-  //     business_hours/closed_days が「月〜金」「平日のみ」等を示し、
-  //     かつ土日営業（土日/週末/年中無休）の記載が無い場合
-  if(isWeekend){
+  // (3) 平日限定営業の施設を週末・祝日に除外
+  if(isWeekend||isHol){
     const txt=bh+' '+cd;
     const weekdayOnly=/(月[〜～ー\-]金|平日のみ|平日限定|平日のみ営業|平日 ?\d|要予約.*平日|平日 ?要予約)/.test(txt)
       || /^平日/.test(bh.trim());
@@ -541,8 +555,14 @@ function closingInfo(s,arrivalMin){
   const t=((arrivalMin%1440)+1440)%1440;
   const remain=bh.closeMin-t;
   if(t<bh.openMin||remain<=0) return {exclude:true,bonus:false,note:null};
-  if(remain<30) return {exclude:true,bonus:false,note:null};
-  if(remain<60) return {exclude:false,bonus:false,note:'※閉館まで時間が短いため、短時間利用がおすすめです'};
+  // 最終入場・最終入館・最終受付を過ぎていたら除外
+  const le=String(s.business_hours||'').match(/最終(入場|入館|受付|入園)[^0-9０-９]{0,8}(\d{1,2})[:：時](\d{2})?/);
+  if(le){ const lm=(+le[2])*60+(+(le[3]||0)); if(t>lm) return {exclude:true,bonus:false,note:null}; }
+  // 「到着時に開いている」だけでなく、想定滞在時間を消化して閉館前に出られるかで判定
+  const isFood=(s.play_types||[]).includes('food');
+  const need=isFood?60:Math.max(60,Math.min((typeof stayMinutes==='function'?(stayMinutes(s)||60):60)-15,105));
+  if(remain<need) return {exclude:true,bonus:false,note:null};
+  if(remain<need+30) return {exclude:false,bonus:false,note:'※閉館まで時間が短いため、短時間利用がおすすめです'};
   return {exclude:false,bonus:false,note:null};
 }
 // short tag-line rendering for kid_features (2-3 lines instead of one long sentence)
@@ -803,6 +823,7 @@ function buildPool(date,w){
     if(dm==null||dm>CURRENT_CAP) return false;
     if(!budgetPass(s)) return false;
     if(rain && !(s.indoor_or_outdoor==='indoor'||s.rain_friendly)) return false;
+    if(rain && s.indoor_or_outdoor==='outdoor') return false; // 雨の日は屋外中心の施設を出さない
     if(isClosedOn(s,date)) return false;
     // business-hours vs arrival-time consistency
     const arrival=start+dm;
@@ -965,6 +986,7 @@ function subCandidates(main,lunch,mainDriveMin,date,w){
     if(isJidokan(s)) return false; // 児童館・子育て支援センター系は余力枠からも除外（帰り道に寄らない）
     if(!budgetPass(s)) return false; // 午後枠も予算条件に連動(無料限定をやめ、1日プランの午後スポットとして選ぶ)
     // 同一敷地・近接排除: メイン/ランチとの重複は不可（メイン↔ランチのみが距離例外）
+    if(rain && s.indoor_or_outdoor==='outdoor') return false; // 雨の日の午後・余力枠にも屋外施設を入れない
     if(isSamePlace(s,main,1.0)) return false;
     if(lunch && isSamePlace(s,lunch,1.0)) return false;
     // 同一プラン内で同じチェーンが2店入らないようにする
@@ -1128,16 +1150,7 @@ function generatePlans(date,w){
   CURRENT_CAP=cap;
   let pool=buildPool(date,w);
   state.expandedDrive=false;
-  // candidate shortage (fewer than 3 main candidates): widen the drive-time range a step at a
-  // time until enough choices appear (or we run out of room to widen), and note it honestly.
-  while(pool.length<3 && cap!==Infinity){
-    const widerCap=nextCap(cap);
-    CURRENT_CAP=widerCap;
-    const pool2=buildPool(date,w);
-    if(pool2.length>pool.length){ pool=pool2; state.expandedDrive=true; }
-    cap=widerCap;
-  }
-  CURRENT_CAP=cap;
+  // 移動時間は「上限」。候補が少なくても勝手に範囲を広げない(広げるのはユーザーが明示的に承認した場合のみ)。
   if(!pool.length) return [];
   const tiered=applyDriveMoodTier(pool);
   // variety: distinct mains for up to 3 variants
@@ -1190,6 +1203,11 @@ function nextVarietyPlan(date,w){
 }
 
 /* ===== render result ===== */
+function approveWiden(next){
+  if(typeof gtag==='function') gtag('event','plan_widen_approved',{to:next});
+  state.driveTime=next;
+  generate();
+}
 async function generate(){
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   document.getElementById('dots').style.display='none';
@@ -1367,6 +1385,10 @@ function swapListFor(slot,cap){
     } else {
       const dm=driveMinutesFrom(state.origin,p.main)||30;
       list=subCandidates(p.main,p.lunch,dm,date,w);
+      // 変更候補にも同じ営業時間検査を通す(いまのプランで午後枠に入る時刻を基準)
+      let subT=null;
+      (p.rows||[]).forEach(r=>{ if(r.type==='spot'&&(r.tag==='午後スポット'||r.tag==='余力があれば')) subT=r.time; });
+      if(subT!=null){ list=list.filter(s=>{ try{ return !closingInfo(s,subT+10).exclude; }catch(e){ return true; } }); }
     }
   }catch(e){ list=[]; }
   CURRENT_CAP=savedCap;
@@ -1931,7 +1953,10 @@ function showResult(){
   const res=document.getElementById('result');
   res.style.display='block';
   if(!state.plans.length){
-    res.innerHTML='<div class="empty"><p>条件に合うスポットが見つかりませんでした。<br>予算や出発地を変えると見つかりやすくなります。</p>'+
+    const nxtDrive={'20':'40','40':'60','60':'any'}[state.driveTime]||null;
+    const widenBtn=nxtDrive?('<button onclick="approveWiden(\''+nxtDrive+'\')" style="margin:6px 0;background:#e8853d;color:#fff;border:none;border-radius:12px;padding:13px 18px;font-weight:800">🚗 移動時間を'+(nxtDrive==='any'?'「遠くても大丈夫」':'〜'+nxtDrive+'分')+'まで広げて探す</button><br>'):'';
+    res.innerHTML='<div class="empty"><p>ご指定の移動時間の範囲では、条件に合うスポットが見つかりませんでした。<br>範囲は勝手に広げないので、広げる場合は下のボタンからどうぞ。</p>'+
+      widenBtn+
       '<button onclick="restart()">条件を変えてやり直す</button></div>';
     window.scrollTo({top:0,behavior:'smooth'});
     return;
