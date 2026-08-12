@@ -856,23 +856,27 @@ function subCandidates(main,lunch,mainDriveMin,date,w){
   const c=SPOTS.filter(s=>{
     if(s===main||s.latitude==null) return false;
     if(isJidokan(s)) return false; // 児童館・子育て支援センター系は余力枠からも除外（帰り道に寄らない）
-    if(s.is_free!==true) return false;
+    if(!budgetPass(s)) return false; // 午後枠も予算条件に連動(無料限定をやめ、1日プランの午後スポットとして選ぶ)
     // 同一敷地・近接排除: メイン/ランチとの重複は不可（メイン↔ランチのみが距離例外）
     if(isSamePlace(s,main,1.0)) return false;
     if(lunch && isSamePlace(s,lunch,1.0)) return false;
     const km=haversineKm(main.latitude,main.longitude,s.latitude,s.longitude);
-    // ~20 min ≈ within about 12km locally
-    if(km>12) return false;
+    // 午後スポットはメインから15km圏まで(約25分)
+    if(km>15) return false;
     if(legMinutes(prev.latitude,prev.longitude,s.latitude,s.longitude)>SUB_MAX_DRIVE_MIN) return false;
     if(isClosedOn(s,date)) return false;
     if(rain && !(s.indoor_or_outdoor==='indoor'||s.rain_friendly)) return false;
     const dmO=driveMinutesFrom(o,s);
     if(dmO==null||dmO>CURRENT_CAP) return false;
-    // 余力枠は「帰り道」原則: 出発地からの所要時間がメインより小さい（帰る方向）ものだけ
-    if(mainDriveMin!=null && dmO>=mainDriveMin) return false;
-    s.__subkm=km; s.__dmO=dmO; return true;
+    s.__subkm=km; s.__dmO=dmO;
+    // 帰り道方向(出発地からの所要がメインより小さい)は加点扱いにする(以前はハード条件で候補ゼロの主因だった)
+    s.__homeward=(mainDriveMin!=null&&dmO<mainDriveMin);
+    return true;
   });
-  c.sort((a,b)=>a.__subkm-b.__subkm);
+  c.sort((a,b)=>{
+    const sa=-a.__subkm+(a.__homeward?4:0), sb=-b.__subkm+(b.__homeward?4:0);
+    return sb-sa;
+  });
   return c;
 }
 function startMinutes(){
@@ -927,11 +931,20 @@ function buildPlan(main,date,w,shareOverride){
   // 15〜16時ごろ帰着の構成にする（滞在90分前後・昼寝配慮）。
   // 到着時に閉まっている等の場合は従来の「余力があれば」枝分かれ表示にフォールバック。
   let afternoonMode=false;
-  if(sub&&lunch&&startMin<=11*60){
+  // 午前〜13時ごろ出発のプランは「午前スポット→ランチ→午後スポット→帰路」の1日構成を基本にする。
+  // 帰路開始は原則15:30以降、条件が許せば16:30ごろまで午後スポットで遊び、帰宅は18時前後まで。
+  if(sub&&lunch&&startMin<=13*60){
     const sdm0=legMinutes(lastLat,lastLng,sub.latitude,sub.longitude);
     const arr0=t+sdm0;
     const ci0=closingInfo(sub,arr0);
-    if(!ci0.exclude){
+    const bdm0=driveMinutesFrom(o,sub)||legMinutes(sub.latitude,sub.longitude,o.lat,o.lng);
+    // 帰路開始時刻の設計: 目標は max(到着+90分, 16:30)。ただし閉館時刻と「18:00ごろ帰宅」上限でキャップ。
+    const bh0=parseBusinessHours(sub);
+    const limit0=Math.min(bh0?bh0.closeMin:Infinity, 18*60-bdm0);
+    let depart0=Math.min(Math.max(arr0+90, 16*60+30), limit0);
+    depart0=Math.floor(depart0/15)*15;
+    // 60分以上遊べない場合は午後確定枠にしない（ほとんど遊べない施設に連れて行かない）
+    if(!ci0.exclude && depart0>=arr0+60){
       afternoonMode=true;
       rows.push({type:'move',time:t,label:'🚗 移動（約'+sdm0+'分）',sub:transitLabel(lastName,sub.name,sdm0)});
       legSum+=sdm0;
@@ -942,15 +955,7 @@ function buildPlan(main,date,w,shareOverride){
         waterNote0='※水遊びする場合は着替え・タオル持参がおすすめです／※夕方のため、水遊びは短時間利用がおすすめです';
       }
       rows.push({type:'spot',time:t,spot:sub,tag:'午後スポット',closeNote:ci0.note,waterNote:waterNote0});
-      // 帰路は「出発地↔そのスポット」なので driveMinutesFrom を使う（往路と同じ算出＝対称）
-      const bdm0=driveMinutesFrom(o,sub)||legMinutes(sub.latitude,sub.longitude,o.lat,o.lng);
-      // 滞在90分前後（昼寝配慮）。帰着が15時前になりそうな場合のみ最大120分まで延ばし、15〜16時ごろ帰着に寄せる
-      let stayA=90;
-      if(t+stayA+bdm0<15*60){
-        stayA=Math.min(120,Math.ceil((15*60+15-bdm0-t)/15)*15);
-        if(stayA<90) stayA=90;
-      }
-      t+=stayA;
+      t=depart0;
       lastName=sub.name; lastLat=sub.latitude; lastLng=sub.longitude; lastSpot=sub;
       rows.push({type:'move',time:t,label:'🚗 帰路（約'+bdm0+'分）',sub:transitLabel(lastName,'ご自宅',bdm0)+'／帰着めやす '+fmtTime(t+bdm0)+'ごろ'});
       legSum+=bdm0;
@@ -1193,7 +1198,11 @@ function rowHtml(r){
     '</div>';
   let body='';
   body+=(r.opt?'<span class="opt">⏱ 余力があれば</span><br>':'');
-  body+='<div class="sname">'+esc(s.name)+swapInline+'<br><small style="font-weight:600;color:var(--sub);font-size:.75rem">'+esc(r.tag)+'・'+esc(s.city)+'</small>'+(r.paynote?'<br><small style="font-weight:600;color:var(--sub);font-size:.72rem">※飲食代は別途、1人あたりの目安です</small>':'')+'</div>';
+  body+='<div class="sname">'+esc(s.name)+swapInline+'</div>';
+  if(slot&&!state.isSharedView){
+    body+='<div class="swapwrap" data-swapslot="'+slot+'" style="display:none"></div>';
+  }
+  body+='<div class="sname" style="margin-top:2px"><small style="font-weight:600;color:var(--sub);font-size:.75rem">'+esc(r.tag)+'・'+esc(s.city)+'</small>'+(r.paynote?'<br><small style="font-weight:600;color:var(--sub);font-size:.72rem">※飲食代は別途、1人あたりの目安です</small>':'')+'</div>';
   body+=whyBadges(s,r);
   if(isFood){
     body+=foodTagLines(s);
@@ -1211,9 +1220,6 @@ function rowHtml(r){
   if(r.bonusNote) body+='<div class="eveningwarn">'+esc(r.bonusNote)+'</div>';
   if(r.returnNote) body+='<div class="meta" style="font-size:.72rem;opacity:.75">🚗 '+esc(r.returnNote)+'</div>';
   body+=links;
-  if(slot&&!state.isSharedView){
-    body+='<div class="swapwrap" data-swapslot="'+slot+'" style="display:none"></div>';
-  }
   return '<div class="tl'+(r.opt?' bonus':'')+'"><div class="rail"><span class="time">'+fmtTime(r.time)+'</span>'+
     '<span class="icon">'+spotEmoji(s)+'</span><span class="line"></span></div>'+
     '<div class="body">'+body+'</div></div>';
@@ -1434,11 +1440,8 @@ function applySwap(slot,i){
   state.plans[state.variant%state.plans.length]=np;
   if(slot==='main'&&!state.shownMains.includes(ns)) state.shownMains.push(ns);
   showResult();
-  // プラン再描画後、同じ枠のパネルを「同じ候補グループのまま」開き直す(再抽選しない)
-  try{
-    const wrap=document.querySelector('.swapwrap[data-swapslot="'+slot+'"]');
-    if(wrap) renderSwapPanel(slot,wrap);
-  }catch(e){}
+  // 選択後はパネルを閉じる(再描画で自然に閉じた状態になる)。
+  // 固定グループ(state.swapFixed)は保持しているので、再度[変更する]を押せば同じ候補セットが開く。
 }
 function track(w){ if(typeof gtag==='function') gtag('event','plan_outlink',{link:w}); }
 // build a Google Maps directions URL for the plan's route: 出発地(現在地 or 市町村代表座標) -> メイン -> ランチ -> (余力枠)
