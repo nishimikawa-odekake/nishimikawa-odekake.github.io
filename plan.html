@@ -11,11 +11,11 @@
   gtag('js', new Date());
   gtag('config', 'G-8CDXHXFG9F');
 </script>
-<title>愛知の子連れおでかけプランを自動作成｜あいち子育ておでかけマップ</title>
+<title>おでかけプランナー｜おでまる（あいち子育ておでかけマップ）- 30秒で今日のおでかけが決まる</title>
 <meta name="description" content="出発地・日程・お子さんの年齢・予算を選ぶだけで、愛知の子連れおでかけプランを自動作成。天気予報も自動反映して雨の日は室内プランに。移動時間・費用の目安つきタイムラインで、きょうのおでかけがすぐ決まります。">
 <link rel="canonical" href="https://nishimikawa-odekake.com/plan.html">
 <meta property="og:type" content="website">
-<meta property="og:title" content="🎯きょうのプラン｜愛知の子連れおでかけを自動作成">
+<meta property="og:title" content="🎯おでかけプランナー｜おでまる - 30秒で今日のおでかけが決まる">
 <meta property="og:description" content="質問に答えるだけ。天気も反映して、きょうの家族おでかけプランを自動作成します。">
 <meta property="og:url" content="https://nishimikawa-odekake.com/plan.html">
 <meta property="og:image" content="https://nishimikawa-odekake.com/og-logo.png">
@@ -143,6 +143,17 @@ footer a{color:var(--sub)}
   .tl .appeal{padding:6px 9px;font-size:.83rem}
   .actions button,.actions a{padding:15px 10px}
 }
+
+.swaprow{margin-top:6px}
+.swapbtn{background:#fff;border:1.5px solid var(--accent);color:var(--accent-d);font-weight:800;font-size:.75rem;border-radius:999px;padding:5px 12px;cursor:pointer}
+.swapbtn:active{transform:scale(.97)}
+.swapwrap{margin-top:8px;background:#fff8f2;border:1px solid #f0ddc8;border-radius:12px;padding:8px}
+.swapwrap .sc-head{font-size:.72rem;font-weight:800;color:var(--sub);margin:0 0 6px 2px}
+.swapcard{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #eadbc8;border-radius:10px;padding:8px 10px;margin:6px 0;cursor:pointer}
+.swapcard:active{transform:scale(.99)}
+.swapcard .sc-name{display:block;font-weight:800;font-size:.85rem;color:var(--ink,#333)}
+.swapcard .sc-meta{display:block;font-size:.72rem;color:var(--sub);margin-top:2px}
+.swapwrap .sc-none{font-size:.75rem;color:var(--sub);padding:4px}
 </style>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -476,7 +487,7 @@ function transitLabel(fromName,toName,minutes){
 }
 
 /* ===== state ===== */
-const state={origin:null,driveTime:null,when:null,depart:null,ages:new Set(),budget:null,weather:null,variant:0,planNo:1,plans:[],expandedDrive:false,shownMains:[],shownLunches:[],shownSubs:[],cycledNote:false};
+const state={origin:null,driveTime:null,when:null,depart:null,ages:new Set(),budget:null,weather:null,variant:0,planNo:1,plans:[],expandedDrive:false,shownMains:[],shownLunches:[],shownSubs:[],excludedSpots:[],lastPlanSpots:[],cycledNote:false};
 let step=0;
 let CURRENT_CAP=Infinity;
 function capFor(dt){
@@ -596,7 +607,7 @@ async function fetchWeather(){
   try{
     const o=state.origin;
     const url='https://api.open-meteo.com/v1/forecast?latitude='+o.lat+'&longitude='+o.lng+
-      '&daily=weather_code,temperature_2m_max,precipitation_probability_max&timezone=Asia%2FTokyo&forecast_days=7';
+      '&daily=weather_code,temperature_2m_max,precipitation_probability_max&hourly=precipitation_probability&timezone=Asia%2FTokyo&forecast_days=7';
     const ctrl=new AbortController(); const t=setTimeout(()=>ctrl.abort(),6000);
     const r=await fetch(url,{signal:ctrl.signal}); clearTimeout(t);
     if(!r.ok) return null;
@@ -605,15 +616,53 @@ async function fetchWeather(){
     const now=new Date(); now.setHours(0,0,0,0);
     let idx=Math.round((td-now)/86400000); if(idx<0)idx=0; if(idx>6)idx=6;
     const daily=j.daily||{};
-    return {
+    const w={
       precip:(daily.precipitation_probability_max||[])[idx],
       tmax:(daily.temperature_2m_max||[])[idx],
-      code:(daily.weather_code||[])[idx]
+      code:(daily.weather_code||[])[idx],
+      rainMode:null, transient:false
     };
+    // hourly降水確率: 「おでかけ対象時間帯(出発〜最長18時)で40%以上が2時間以上」なら雨モード。
+    // 40%以上が1時間だけ等のごく一時的な場合は雨モードにせず「にわか雨注意」フラグのみ。
+    try{
+      const hp=(j.hourly&&j.hourly.precipitation_probability)||[];
+      const ht=(j.hourly&&j.hourly.time)||[];
+      if(hp.length&&ht.length){
+        let sMin; try{sMin=startMinutes();}catch(e){sMin=9*60+30;}
+        const sH=Math.max(7,Math.min(16,Math.floor(sMin/60)));
+        const eH=Math.min(18,sH+7);
+        const y=td.getFullYear(),mo=('0'+(td.getMonth()+1)).slice(-2),da=('0'+td.getDate()).slice(-2);
+        const dstr=y+'-'+mo+'-'+da;
+        let rainH=0,maxP=null,cnt=0;
+        for(let k=0;k<ht.length;k++){
+          if(ht[k].slice(0,10)!==dstr) continue;
+          const hh=parseInt(ht[k].slice(11,13),10);
+          if(hh<sH||hh>=eH) continue;
+          const v=hp[k];
+          if(v==null) continue;
+          cnt++;
+          if(maxP==null||v>maxP) maxP=v;
+          if(v>=40) rainH++;
+        }
+        if(cnt>=3){
+          if(rainH>=2){ w.rainMode=true; }
+          else { w.rainMode=false; if(rainH===1) w.transient=true; }
+          if(maxP!=null) w.windowMax=maxP;
+        }
+      }
+    }catch(e){}
+    return w;
   }catch(e){ return null; }
 }
 
 /* ===== plan generation ===== */
+// 雨モード判定: hourlyが取れていればその結果(rainMode)、取れなければ従来のdaily最大値>=50で判定
+function isRainMode(w){
+  if(!w) return false;
+  if(w.rainMode===true) return true;
+  if(w.rainMode===false) return false;
+  return w.precip!=null&&w.precip>=50;
+}
 function scoreSpot(s,date,w,arrivalMin){
   let sc=0;
   // age
@@ -671,7 +720,7 @@ function shuffle(arr,seed){
 }
 function buildPool(date,w){
   const o=state.origin;
-  const rain=w&&w.precip!=null&&w.precip>=50;
+  const rain=isRainMode(w);
   const start=startMinutes();
   let cand=SPOTS.filter(s=>{
     if(s.latitude==null) return false;
@@ -740,9 +789,10 @@ function applyDriveMoodTier(pool){
 function pickVariety(sorted,historyKey,topCount){
   if(!sorted.length) return null;
   const topN=sorted.slice(0,Math.min(topCount||10,sorted.length));
-  const candidates=topN.length>=3?topN:sorted.slice(0,Math.min(10,sorted.length));
+  const candidates=topN.length>=3?topN:sorted.slice(0,Math.min(25,sorted.length));
   if(!state[historyKey]) state[historyKey]=[];
-  let fresh=candidates.filter(s=>!state[historyKey].includes(s));
+  if(!state.excludedSpots) state.excludedSpots=[];
+  let fresh=candidates.filter(s=>!state[historyKey].includes(s)&&!state.excludedSpots.includes(s));
   if(!fresh.length){
     const last=state[historyKey][state[historyKey].length-1];
     state[historyKey]=[];
@@ -753,7 +803,8 @@ function pickVariety(sorted,historyKey,topCount){
   state[historyKey].push(picked);
   return picked;
 }
-function pickLunch(main,date){
+function pickLunch(main,date){ return pickVariety(lunchCandidates(main,date),'shownLunches',25); }
+function lunchCandidates(main,date){
   const o=state.origin;
   const c=SPOTS.filter(s=>{
     if(s===main||s.latitude==null) return false;
@@ -781,11 +832,12 @@ function pickLunch(main,date){
     s.__lsc=sc;
   });
   c.sort((a,b)=> b.__lsc-a.__lsc || a.__km-b.__km);
-  return pickVariety(c,'shownLunches',10);
+  return c;
 }
-function pickSub(main,lunch,mainDriveMin,date,w){
+function pickSub(main,lunch,mainDriveMin,date,w){ return pickVariety(subCandidates(main,lunch,mainDriveMin,date,w),'shownSubs',20); }
+function subCandidates(main,lunch,mainDriveMin,date,w){
   const o=state.origin;
-  const rain=w&&w.precip!=null&&w.precip>=50;
+  const rain=isRainMode(w);
   // 余力枠は「直前のスポットから近くでもう一箇所」の趣旨。実際に直前になる地点(ランチがあればランチ)からの
   // 移動が SUB_MAX_DRIVE_MIN を超えるものは除外する。
   const prev=lunch||main;
@@ -809,8 +861,7 @@ function pickSub(main,lunch,mainDriveMin,date,w){
     s.__subkm=km; s.__dmO=dmO; return true;
   });
   c.sort((a,b)=>a.__subkm-b.__subkm);
-  // 余力枠も履歴+上位シャッフルで多様化（近い順の上位8前後から）
-  return pickVariety(c,'shownSubs',8);
+  return c;
 }
 function startMinutes(){
   const d=state.depart;
@@ -939,7 +990,7 @@ function buildPlan(main,date,w,shareOverride){
   else if(known===0&&hasUnknown) cost='入場料などは公式サイトで確認（ランチ代は別）';
   else cost='入場料など 大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'')+'・ランチ代は別';
   const homePriority = onlyToddler && !sub;
-  return {rows,main,totalDrive,cost,hasUnknown,homePriority};
+  return {rows,main,lunch,sub,totalDrive,cost,hasUnknown,homePriority};
 }
 function generatePlans(date,w){
   let cap=capFor(state.driveTime);
@@ -987,9 +1038,12 @@ function nextVarietyPlan(date,w){
   for(const s of tiered){ if(!uniq.includes(s)) uniq.push(s); }
   if(!uniq.length) return null;
   // top 10〜15 by score (already sorted desc within tiering) as the shuffle pool
-  const topN=uniq.slice(0, Math.min(15, uniq.length));
+  const topN=uniq.slice(0, Math.min(40, uniq.length));
   let candidates=topN.length>=3 ? topN : uniq;
-  let fresh=candidates.filter(s=>!state.shownMains.includes(s));
+  if(!state.excludedSpots) state.excludedSpots=[];
+  if(!state.lastPlanSpots) state.lastPlanSpots=[];
+  let fresh=candidates.filter(s=>!state.shownMains.includes(s)&&!state.excludedSpots.includes(s)&&!state.lastPlanSpots.includes(s));
+  if(!fresh.length) fresh=candidates.filter(s=>!state.shownMains.includes(s)&&!state.excludedSpots.includes(s));
   let cycled=false;
   if(!fresh.length){
     const last=state.shownMains[state.shownMains.length-1];
@@ -1011,6 +1065,7 @@ async function generate(){
   document.getElementById('loading').style.display='block';
   document.getElementById('result').style.display='none';
   if(typeof gtag==='function') gtag('event','plan_generate',{when:state.when,budget:state.budget});
+  savePrefs();
 
   state.weather=await fetchWeather();
   const date=targetDate(state.when);
@@ -1034,7 +1089,8 @@ function whenLabel(){
 function weatherBadge(){
   const w=state.weather;
   if(!w) return '';
-  if(w.precip!=null&&w.precip>=50) return '<div class="wxbadge">☔ 雨予報なので室内プランにしました</div>';
+  if(isRainMode(w)) return '<div class="wxbadge">☔ おでかけ時間帯に雨予報なので室内プランにしました</div>';
+  if(w.transient) return '<div class="wxbadge">🌦 一時的ににわか雨の可能性あり（折りたたみ傘があると安心）</div>';
   if(w.tmax!=null&&w.tmax>=34) return '<div class="wxbadge">🥵 猛暑予報（最高'+Math.round(w.tmax)+'℃）水遊び・室内を優先しました</div>';
   if(w.tmax!=null) return '<div class="wxbadge">☀ お天気よさそう（最高'+Math.round(w.tmax)+'℃）</div>';
   return '';
@@ -1046,7 +1102,7 @@ function parentSummary(){
   const t=((start%1440)+1440)%1440;
   const isToddlerOnly=state.ages.has('0-2')&&state.ages.size===1;
   let base;
-  if(w&&w.precip!=null&&w.precip>=50){
+  if(isRainMode(w)){
     base='';
   } else if(t>=16*60){
     base='今日は夕方出発なので、短時間で遊んで夕食を済ませる軽めのプランです。';
@@ -1139,9 +1195,95 @@ function rowHtml(r){
   if(r.bonusNote) body+='<div class="eveningwarn">'+esc(r.bonusNote)+'</div>';
   if(r.returnNote) body+='<div class="meta" style="font-size:.72rem;opacity:.75">🚗 '+esc(r.returnNote)+'</div>';
   body+=links;
+  const slot=swapSlotFor(r);
+  if(slot&&!state.isSharedView){
+    body+='<div class="swaprow"><button type="button" class="swapbtn" onclick="openSwap(\''+slot+'\',this)">🔁 変更する</button></div>';
+    body+='<div class="swapwrap" data-swapslot="'+slot+'" style="display:none"></div>';
+  }
   return '<div class="tl'+(r.opt?' bonus':'')+'"><div class="rail"><span class="time">'+fmtTime(r.time)+'</span>'+
     '<span class="icon">'+spotEmoji(s)+'</span><span class="line"></span></div>'+
     '<div class="body">'+body+'</div></div>';
+}
+function swapSlotFor(r){
+  if(!r||r.type!=='spot'||!r.spot) return null;
+  if(r.tag==='メイン') return 'main';
+  if(r.food) return 'lunch';
+  if(r.tag==='午後スポット'||r.tag==='余力があれば') return 'sub';
+  return null;
+}
+function currentPlanObj(){ return state.plans.length?state.plans[state.variant%state.plans.length]:null; }
+// その枠の代替候補3件（現在表示中・同プラン内・外した施設は出さない）
+function swapCandidates(slot){
+  const p=currentPlanObj(); if(!p) return [];
+  const date=targetDate(state.when), w=state.weather;
+  if(!state.excludedSpots) state.excludedSpots=[];
+  const inPlan=[p.main,p.lunch,p.sub].filter(Boolean);
+  let list=[];
+  if(slot==='main'){
+    const savedCap=CURRENT_CAP;
+    CURRENT_CAP=capFor(state.driveTime);
+    list=applyDriveMoodTier(buildPool(date,w));
+    CURRENT_CAP=savedCap;
+  } else if(slot==='lunch'){
+    list=lunchCandidates(p.main,date);
+  } else {
+    const dm=driveMinutesFrom(state.origin,p.main)||30;
+    list=subCandidates(p.main,p.lunch,dm,date,w);
+  }
+  const out=[];
+  for(const s of list){
+    if(inPlan.includes(s)) continue;
+    if(state.excludedSpots.includes(s)) continue;
+    if(inPlan.some(x=>x!==s&&typeof isSamePlace==='function'&&isSamePlace(s,x,0.05))) continue;
+    if(!out.includes(s)) out.push(s);
+    if(out.length>=3) break;
+  }
+  return out;
+}
+function swapCardHtml(slot,s,i){
+  const dm=state.origin?driveMinutesFrom(state.origin,s):null;
+  const feats=(s.kid_features||[]).join(' ');
+  const tags=[];
+  if(dm!=null) tags.push('🚗 車で約'+dm+'分');
+  if(s.is_free===true) tags.push('🆓 無料');
+  if(s.has_zashiki===true||/座敷/.test(feats)) tags.push('🍵 座敷あり');
+  else if(s.has_kids_chair===true||/キッズチェア|子供椅子/.test(feats)) tags.push('🪑 子ども椅子');
+  else if(s.rain_friendly===true||s.indoor_or_outdoor==='indoor') tags.push('☔ 屋内');
+  return '<button type="button" class="swapcard" onclick="applySwap(\''+slot+'\','+i+')">'+
+    '<span class="sc-name">'+esc(s.name)+'</span>'+
+    '<span class="sc-meta">'+esc(s.city||'')+(tags.length?'・'+tags.join('・'):'')+'</span></button>';
+}
+function openSwap(slot,btn){
+  if(typeof gtag==='function') gtag('event','plan_swap_open',{slot:slot});
+  const wrap=btn.closest('.body').querySelector('.swapwrap[data-swapslot="'+slot+'"]');
+  if(!wrap) return;
+  if(wrap.style.display!=='none'){ wrap.style.display='none'; return; }
+  const cands=swapCandidates(slot);
+  state.swapCands=state.swapCands||{};
+  state.swapCands[slot]=cands;
+  if(!cands.length){
+    wrap.innerHTML='<div class="sc-none">この条件で入れ替えられる候補が見つかりませんでした</div>';
+  } else {
+    wrap.innerHTML='<div class="sc-head">かわりの候補：</div>'+cands.map((s,i)=>swapCardHtml(slot,s,i)).join('');
+  }
+  wrap.style.display='block';
+}
+function applySwap(slot,i){
+  const p=currentPlanObj(); if(!p) return;
+  const cands=(state.swapCands&&state.swapCands[slot])||[];
+  const ns=cands[i]; if(!ns) return;
+  if(typeof gtag==='function') gtag('event','plan_swap_apply',{slot:slot});
+  if(!state.excludedSpots) state.excludedSpots=[];
+  const old=slot==='main'?p.main:(slot==='lunch'?p.lunch:p.sub);
+  if(old&&!state.excludedSpots.includes(old)) state.excludedSpots.push(old);
+  const date=targetDate(state.when), w=state.weather;
+  const main=slot==='main'?ns:p.main;
+  const lunch=slot==='lunch'?ns:p.lunch;
+  const sub=slot==='sub'?ns:p.sub;
+  const np=buildPlan(main,date,w,{lunch:lunch||null,sub:sub||null});
+  state.plans[state.variant%state.plans.length]=np;
+  if(slot==='main'&&!state.shownMains.includes(ns)) state.shownMains.push(ns);
+  showResult();
 }
 function track(w){ if(typeof gtag==='function') gtag('event','plan_outlink',{link:w}); }
 // build a Google Maps directions URL for the plan's route: 出発地(現在地 or 市町村代表座標) -> メイン -> ランチ -> (余力枠)
@@ -1367,9 +1509,58 @@ function showResult(){
   res.innerHTML=html;
   window.scrollTo({top:0,behavior:'smooth'});
 }
+/* ===== 前回条件の保存・復元 (localStorage / ログイン不要) ===== */
+const PREF_KEY='odemaru_prefs_v1';
+function savePrefs(){
+  try{
+    const o=state.origin||{};
+    localStorage.setItem(PREF_KEY,JSON.stringify({
+      origin:(o.name&&o.name!=='現在地')?{name:o.name,lat:o.lat,lng:o.lng,isAnjo:!!o.isAnjo}:null,
+      driveTime:state.driveTime||null,
+      ages:[...state.ages],
+      budget:state.budget||null
+    }));
+  }catch(e){}
+}
+function loadPrefs(){
+  try{
+    const raw=localStorage.getItem(PREF_KEY);
+    if(!raw) return;
+    const p=JSON.parse(raw);
+    // 出発地(市町村選択のみ復元。現在地は毎回取り直し)
+    if(p.origin&&p.origin.name){
+      const sel=document.getElementById('originSel');
+      if(sel){
+        for(const opt of sel.options){
+          if(opt.textContent===p.origin.name){ sel.value=opt.value; break; }
+        }
+      }
+      state.origin={name:p.origin.name,lat:p.origin.lat,lng:p.origin.lng,isAnjo:!!p.origin.isAnjo};
+      const note=document.getElementById('geoNote');
+      if(note) note.textContent='前回の出発地を選択しています（変更もできます）';
+    }
+    if(p.driveTime){
+      const btn=document.querySelector('#driveBtns .bigbtn[data-drive="'+p.driveTime+'"]');
+      if(btn){ btn.classList.add('on'); state.driveTime=p.driveTime; }
+    }
+    if(Array.isArray(p.ages)){
+      p.ages.forEach(a=>{
+        const btn=document.querySelector('#ageBtns .bigbtn[data-age="'+a+'"]');
+        if(btn){ btn.classList.add('on'); state.ages.add(a); }
+      });
+    }
+    if(p.budget){
+      const btn=document.querySelector('#budgetBtns .bigbtn[data-budget="'+p.budget+'"]');
+      if(btn){ btn.classList.add('on'); state.budget=p.budget; }
+    }
+    refreshNext();
+  }catch(e){}
+}
 function reroll(){
   if(typeof gtag==='function') gtag('event','plan_reroll');
   state.isSharedView=false;
+  const curP=state.plans.length?state.plans[state.variant%state.plans.length]:null;
+  state.lastPlanSpots=curP?[curP.main,curP.lunch,curP.sub].filter(Boolean):[];
   const date=targetDate(state.when);
   const newPlan=nextVarietyPlan(date,state.weather);
   if(newPlan){
@@ -1382,7 +1573,7 @@ function reroll(){
   showResult();
 }
 function restart(){
-  state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.planNo=1; state.plans=[]; state.expandedDrive=false; state.isSharedView=false; state.shownMains=[]; state.shownLunches=[]; state.shownSubs=[];
+  state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.planNo=1; state.plans=[]; state.expandedDrive=false; state.isSharedView=false; state.shownMains=[]; state.shownLunches=[]; state.shownSubs=[]; state.excludedSpots=[]; state.lastPlanSpots=[];
   document.querySelectorAll('.bigbtn.on').forEach(b=>b.classList.remove('on'));
   document.getElementById('departWrap').style.display='none';
   document.getElementById('result').style.display='none';
@@ -1393,6 +1584,7 @@ function restart(){
 }
 
 /* init */
+try{ if(!/[?&]share=1/.test(location.search)) loadPrefs(); }catch(e){}
 initFromShareOrWizard();
 </script>
 </body>
