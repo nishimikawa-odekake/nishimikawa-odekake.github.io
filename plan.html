@@ -1693,12 +1693,16 @@ function buildRouteUrl(p){
   if(!spots.length) return null;
   const dest=spots[spots.length-1];
   const waypoints=spots.slice(0,-1);
+  // 地点は「名称+市」で渡す→Googleマップ側で施設名として表示される(座標だと「指定した地点」になる)
+  // 入力した場所(__temp)はGoogleに載っていない可能性が高いので座標のまま
+  const q=s=>s.__temp?(s.latitude+','+s.longitude):((s.name||'')+' '+(s.city||'')).trim();
+  const oq=(o.name&&o.name!=='現在地')?o.name:(o.lat+','+o.lng);
   let url='https://www.google.com/maps/dir/?api=1'+
-    '&origin='+encodeURIComponent(o.lat+','+o.lng)+
-    '&destination='+encodeURIComponent(dest.latitude+','+dest.longitude)+
+    '&origin='+encodeURIComponent(oq)+
+    '&destination='+encodeURIComponent(q(dest))+
     '&travelmode=driving';
   if(waypoints.length){
-    url+='&waypoints='+encodeURIComponent(waypoints.map(s=>s.latitude+','+s.longitude).join('|'));
+    url+='&waypoints='+encodeURIComponent(waypoints.map(q).join('|'));
   }
   return url;
 }
