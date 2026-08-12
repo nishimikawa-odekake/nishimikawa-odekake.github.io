@@ -186,7 +186,12 @@ footer a{color:var(--sub)}
 
   <p style="font-size:.78rem;color:var(--sub);text-align:center;line-height:1.6;margin:0 0 14px">出発地・出発時間・お子さんの年齢・予算・天気・営業時間・移動距離などをもとに、子育て家庭が回りやすいおでかけ候補を組み合わせて表示します。提案内容は目安です。お子さんの体調や混雑状況に合わせて、無理のない範囲でご利用ください。</p>
 
-  <!-- STEP 1: 出発地 -->
+  <div style="margin:0 0 16px;padding:13px;border:1.5px dashed #e8853d;border-radius:14px;background:#fff8f0">
+  <div style="font-weight:800;margin-bottom:5px">🗺 自分で選んでプランを作る <span style="font-size:.7rem;font-weight:800;color:#fff;background:#e8853d;border-radius:999px;padding:2px 8px;vertical-align:middle">新機能</span></div>
+  <div style="font-size:.78rem;color:var(--sub);line-height:1.6;margin-bottom:9px">マップで気になる場所を選ぶと、順番・移動時間・時間割はおでまるが自動で組み立てます。祖父母の家や予約したお店など、マップにない場所も入れられます。</div>
+  <button type="button" class="geo" style="width:100%" onclick="location.href='./map.html'">🗺 マップから選ぶ</button>
+</div>
+<!-- STEP 1: 出発地 -->
   <section class="step" data-step="0">
     <div class="q">どこから出発？</div>
     <p class="qsub">おでかけのスタート地点を選んでね</p>
@@ -276,6 +281,7 @@ footer a{color:var(--sub)}
   </section>
 
   <!-- LOADING -->
+  <section id="customPanel" style="display:none;padding:4px 2px"></section>
   <div class="loading" id="loading" style="display:none">
     <div class="spinner"></div>
     <p style="color:var(--sub);font-size:.9rem">お天気とスポットを調べて<br>プランを組み立てています…</p>
@@ -499,7 +505,7 @@ function transitLabel(fromName,toName,minutes){
 }
 
 /* ===== state ===== */
-const state={origin:null,driveTime:null,when:null,depart:null,ages:new Set(),budget:null,weather:null,variant:0,planNo:1,plans:[],expandedDrive:false,shownMains:[],shownLunches:[],shownSubs:[],excludedSpots:[],lastPlanSpots:[],cycledNote:false};
+const state={origin:null,driveTime:null,when:null,depart:null,ages:new Set(),budget:null,weather:null,variant:0,planNo:1,plans:[],expandedDrive:false,shownMains:[],shownLunches:[],shownSubs:[],excludedSpots:[],lastPlanSpots:[],cycledNote:false,isCustomView:false,customSlots:[null,null,null]};
 let step=0;
 let CURRENT_CAP=Infinity;
 function capFor(dt){
@@ -1665,8 +1671,180 @@ function restoreFromShare(qs){
   const subSpot=subName?(SPOTS.find(s=>s.name===subName)||null):null;
   return {mainSpot,lunchSpot,subSpot};
 }
+
+/* ===== 自分で選ぶ（カスタム）プラン ===== */
+const CUSTOM_KEY='odemaru_custom_sel_v1';
+const SLOT_LABELS=['午前','お昼','午後'];
+function tempSpot(name,lat,lng,addr){
+  return {name:name,latitude:lat,longitude:lng,city:addr||'',play_types:['indoor'],is_free:true,__temp:true};
+}
+function customAutoAssign(items){
+  const slots=[null,null,null];
+  const rest=[];
+  items.forEach(s=>{
+    const isFood=(s.play_types||[]).includes('food')||s.is_chain===true;
+    if(isFood&&!slots[1]) slots[1]=s; else rest.push(s);
+  });
+  rest.forEach(s=>{
+    const i=[0,2,1].find(k=>!slots[k]);
+    if(i!==undefined) slots[i]=s;
+  });
+  return slots;
+}
+function initCustom(){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  const dotsEl=document.getElementById('dots'); if(dotsEl) dotsEl.style.display='none';
+  let items=[];
+  try{
+    const d=JSON.parse(localStorage.getItem(CUSTOM_KEY)||'null');
+    if(d&&d.items) items=d.items.map(it=>{
+      if(it.temp) return tempSpot(it.n,it.lat,it.lng,it.addr);
+      return SPOTS.find(s=>s.name===it.n)||null;
+    }).filter(Boolean).slice(0,3);
+  }catch(e){}
+  state.customSlots=customAutoAssign(items);
+  if(!state.origin) state.origin={name:'安城市',lat:ANJO[0],lng:ANJO[1],isAnjo:true};
+  if(!state.when||state.when==='sat'||state.when==='sun') state.when=state.when||'today';
+  renderCustomPanel();
+}
+function cpWhen(w){ state.when=w; renderCustomPanel(); }
+function cpMove(i,dir){
+  const j=i+dir; if(j<0||j>2) return;
+  const t=state.customSlots[i]; state.customSlots[i]=state.customSlots[j]; state.customSlots[j]=t;
+  renderCustomPanel();
+}
+function cpRemove(i){ state.customSlots[i]=null; renderCustomPanel(); }
+function renderCustomPanel(){
+  const el=document.getElementById('customPanel'); if(!el) return;
+  document.getElementById('result').style.display='none';
+  el.style.display='block';
+  const btnS='border:1px solid #d8c9b0;background:#fff;border-radius:9px;padding:7px 10px;font-size:.9rem';
+  const cnt=state.customSlots.filter(Boolean).length;
+  let html='<div class="q">🗺 自分で選んだ場所でプランを作る</div>';
+  html+='<p class="qsub">順番はあとから入れかえOK。空きの枠はおでまるが提案します。</p>';
+  html+='<div style="margin:10px 0"><b style="font-size:.85rem">🚗 どこから出発？</b><br><select class="origin" id="cpOrigin" style="margin-top:4px"></select></div>';
+  const wOn='background:#e8853d;color:#fff;border:1px solid #e8853d;border-radius:999px;padding:8px 18px;font-weight:800;font-size:.9rem';
+  const wOff='background:#fff;color:#6b5c40;border:1px solid #d8c9b0;border-radius:999px;padding:8px 18px;font-weight:700;font-size:.9rem';
+  html+='<div style="margin:10px 0"><b style="font-size:.85rem">📅 いつ行く？</b><br>'
+    +'<button type="button" style="'+(state.when!=='tomorrow'?wOn:wOff)+';margin:4px 6px 0 0" onclick="cpWhen(\'today\')">きょう</button>'
+    +'<button type="button" style="'+(state.when==='tomorrow'?wOn:wOff)+';margin:4px 0 0 0" onclick="cpWhen(\'tomorrow\')">あす</button></div>';
+  html+='<div style="margin:14px 0 4px;font-weight:800">えらんだ場所（'+cnt+'件）</div>';
+  SLOT_LABELS.forEach((lab,i)=>{
+    const s=state.customSlots[i];
+    html+='<div style="display:flex;align-items:center;gap:7px;padding:10px;border:1px solid #e8ddcc;border-radius:12px;margin:6px 0;background:#fff">'
+      +'<span style="font-size:.72rem;font-weight:800;color:#e8853d;min-width:2.6em">'+lab+'</span>';
+    if(s){
+      html+='<span style="flex:1;font-weight:700;font-size:.92rem;min-width:0;overflow-wrap:anywhere">'+esc(s.name)
+        +(s.__temp?' <span style="font-size:.66rem;font-weight:600;color:#8a7a5a">（入力した場所）</span>':'')+'</span>'
+        +'<button type="button" onclick="cpMove('+i+',-1)"'+(i===0?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="上へ">↑</button>'
+        +'<button type="button" onclick="cpMove('+i+',1)"'+(i===2?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="下へ">↓</button>'
+        +'<button type="button" onclick="cpRemove('+i+')" style="'+btnS+';color:#c0392b" aria-label="外す">✕</button>';
+    } else {
+      html+='<span style="flex:1;color:#9a8c70;font-size:.85rem">おでまるが提案します</span>';
+    }
+    html+='</div>';
+  });
+  html+='<div style="margin:14px 0;padding:12px;border:1.5px dashed #e8853d;border-radius:12px;background:#fff8f0">'
+    +'<div style="font-weight:800;margin-bottom:4px">＋ 予定している場所を追加</div>'
+    +'<div style="font-size:.74rem;color:#8a7a5a;line-height:1.6;margin-bottom:8px">祖父母の家・予約したお店・ホテル・習いごと・お友だちの家など、マップにない場所もプランに入れられます。（このプランの中だけで使われ、サイトには掲載されません）</div>'
+    +'<input id="cpName" placeholder="名前（例: 祖父母の家）" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #d8c9b0;border-radius:9px;font-size:.9rem;margin-bottom:6px">'
+    +'<input id="cpAddr" placeholder="住所（例: 岡崎市康生通西2丁目）" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #d8c9b0;border-radius:9px;font-size:.9rem;margin-bottom:6px">'
+    +'<button type="button" onclick="cpAddPlace()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid #e8853d;background:#fff;color:#b45f1d;font-weight:800;font-size:.9rem">🔎 住所をさがして追加</button>'
+    +'<div id="cpAddMsg" style="font-size:.76rem;color:#c0392b;margin-top:5px"></div></div>';
+  html+='<button class="next" style="width:100%;margin:4px 0 8px" onclick="customGenerate()">🎯 この内容でプランを作る</button>';
+  html+='<button type="button" onclick="location.href=\'./map.html\'" style="width:100%;padding:11px;border-radius:10px;border:1px solid #d8c9b0;background:#fff;font-size:.88rem;margin-bottom:6px">🗺 マップで場所をえらび直す</button>';
+  html+='<button type="button" onclick="cpBackToWizard()" style="width:100%;padding:11px;border-radius:10px;border:none;background:none;color:#8a7a5a;font-size:.82rem;text-decoration:underline">やっぱり30秒おまかせで作る</button>';
+  el.innerHTML=html;
+  const sel=document.getElementById('cpOrigin');
+  if(sel){
+    CITIES.forEach(c=>{
+      const o=document.createElement('option'); o.value=c[1]+','+c[2]; o.textContent=c[0];
+      if(state.origin&&state.origin.name===c[0]) o.selected=true;
+      sel.appendChild(o);
+    });
+    sel.addEventListener('change',()=>{
+      const [lat,lng]=sel.value.split(',').map(Number);
+      const nm=sel.options[sel.selectedIndex].textContent;
+      state.origin={name:nm,lat:lat,lng:lng,isAnjo:(nm==='安城市')};
+    });
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+async function cpAddPlace(){
+  const nameEl=document.getElementById('cpName'), addrEl=document.getElementById('cpAddr');
+  const msg=document.getElementById('cpAddMsg');
+  const name=(nameEl&&nameEl.value||'').trim(), addr=(addrEl&&addrEl.value||'').trim();
+  if(!name){ msg.textContent='名前を入れてください'; return; }
+  if(!addr){ msg.textContent='住所を入れてください（市町村名＋町名だけでもOK）'; return; }
+  if(state.customSlots.every(Boolean)){ msg.textContent='えらべるのは3件までです。どれかを✕で外してから追加してください'; return; }
+  msg.textContent='検索中…';
+  try{
+    const r=await fetch('https://msearch.gsi.go.jp/address-search/AddressSearch?q='+encodeURIComponent(addr));
+    const js=await r.json();
+    if(!Array.isArray(js)||!js.length||!js[0].geometry){ msg.textContent='住所が見つかりませんでした。「岡崎市康生通西2丁目」のように市町村名から入れてみてください'; return; }
+    const lng=js[0].geometry.coordinates[0], lat=js[0].geometry.coordinates[1];
+    const title=(js[0].properties&&js[0].properties.title)||addr;
+    const sp=tempSpot(name,lat,lng,title);
+    if(typeof gtag==='function') gtag('event','plan_custom_addplace');
+    const i=[0,2,1].find(k=>!state.customSlots[k]);
+    if(i!==undefined) state.customSlots[i]=sp;
+    renderCustomPanel();
+  }catch(e){ msg.textContent='検索に失敗しました。通信環境をご確認のうえ、もう一度お試しください'; }
+}
+function cpBackToWizard(){
+  const el=document.getElementById('customPanel'); if(el) el.style.display='none';
+  restart();
+}
+function editCustom(){
+  if(typeof gtag==='function') gtag('event','plan_custom_edit');
+  renderCustomPanel();
+}
+async function customGenerate(){
+  const sel=state.customSlots.filter(Boolean);
+  const msg=document.getElementById('cpAddMsg');
+  if(!sel.length){ if(msg) msg.textContent='場所を1つ以上えらんでください（マップからえらぶ、または上の入力から追加）'; return; }
+  if(typeof gtag==='function') gtag('event','plan_custom_generate',{n:sel.length});
+  document.getElementById('customPanel').style.display='none';
+  document.getElementById('loading').style.display='block';
+  document.getElementById('result').style.display='none';
+  if(!state.depart) state.depart={mode:'slot',slot:'am'};
+  if(!state.budget) state.budget='any';
+  try{ state.weather=await fetchWeather(); }catch(e){ state.weather=null; }
+  const date=targetDate(state.when||'today');
+  CURRENT_CAP=capFor(state.driveTime);
+  let main=state.customSlots[0], lunch=state.customSlots[1], sub=state.customSlots[2];
+  if(!main){
+    try{
+      let pool=applyDriveMoodTier(buildPool(date,state.weather)).filter(s=>!sel.includes(s));
+      const ref=lunch||sub;
+      if(ref&&ref.latitude!=null){
+        pool=pool.filter(s=>s.latitude!=null);
+        pool.sort((a,b)=>haversineKm(ref.latitude,ref.longitude,a.latitude,a.longitude)-haversineKm(ref.latitude,ref.longitude,b.latitude,b.longitude));
+      }
+      main=pool[0]||null;
+    }catch(e){ main=null; }
+  }
+  if(!main){
+    document.getElementById('loading').style.display='none';
+    renderCustomPanel();
+    const m2=document.getElementById('cpAddMsg'); if(m2) m2.textContent='この日に合う午前の候補が見つかりませんでした。場所を追加するか、日を変えてお試しください';
+    return;
+  }
+  if(!lunch){ try{ lunch=pickLunch(main,date); }catch(e){ lunch=null; } }
+  if(!sub){ try{ const dm=driveMinutesFrom(state.origin,main)||30; sub=pickSub(main,lunch,dm,date,state.weather); }catch(e){ sub=null; } }
+  state.shownMains=[main]; state.shownLunches=lunch?[lunch]:[]; state.shownSubs=sub?[sub]:[];
+  state.swapFixed={}; state.swapSeen={}; state.cycledNote=false;
+  state.isSharedView=false; state.isCustomView=true;
+  state.excludedSpots=[]; state.lastPlanSpots=[];
+  state.plans=[buildPlan(main,date,state.weather,{lunch:lunch||null,sub:sub||null})];
+  state.variant=0; state.planNo=1;
+  document.getElementById('loading').style.display='none';
+  showResult();
+}
+
 async function initFromShareOrWizard(){
   const qs=new URLSearchParams(location.search);
+  if(qs.get('custom')==='1'){ initCustom(); return; }
   if(qs.get('share')==='1'){
     const r=restoreFromShare(qs);
     if(r){
@@ -1744,7 +1922,11 @@ function showResult(){
   }
   html+='<div class="actions">';
   html+='<button class="act-share" onclick="sharePlan()">📤 家族に送る（共有）</button>';
-  html+='<button class="act-reroll" onclick="reroll()">🔄 別のプランにする</button>';
+  if(state.isCustomView){
+    html+='<button class="act-reroll" onclick="editCustom()">✏️ えらんだ場所を編集する</button>';
+  } else {
+    html+='<button class="act-reroll" onclick="reroll()">🔄 別のプランにする</button>';
+  }
   html+='<a class="act-map" href="./index.html" onclick="track(\'map\')">🗺 地図でこのへんを見る</a>';
   html+='<button class="act-restart" onclick="restart()">最初からやり直す</button>';
   html+='</div>';
@@ -1828,6 +2010,8 @@ function reroll(){
   showResult();
 }
 function restart(){
+  state.isCustomView=false; state.customSlots=[null,null,null];
+  const cpEl=document.getElementById('customPanel'); if(cpEl) cpEl.style.display='none';
   state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.planNo=1; state.plans=[]; state.expandedDrive=false; state.isSharedView=false; state.shownMains=[]; state.shownLunches=[]; state.shownSubs=[]; state.excludedSpots=[]; state.lastPlanSpots=[]; state.swapFixed={}; state.swapSeen={};
   document.querySelectorAll('.bigbtn.on').forEach(b=>b.classList.remove('on'));
   document.getElementById('departWrap').style.display='none';

@@ -112,6 +112,13 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
 .sheet .btn.map{background:#fff;color:var(--accent-d)}
 
 .leaflet-popup{display:none!important}
+
+.addplan{display:block;width:100%;margin:12px 0 4px;padding:13px;border-radius:12px;border:1.5px solid #e8853d;background:#fff8f0;color:#b45f1d;font-weight:800;font-size:.95rem;cursor:pointer}
+.addplan.on{background:#e8853d;color:#fff}
+#selBar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(64px + env(safe-area-inset-bottom));z-index:1150;display:none;align-items:center;gap:8px;background:#fff;border:1.5px solid #e8853d;border-radius:999px;padding:8px 8px 8px 14px;box-shadow:0 4px 14px rgba(0,0,0,.18);font-size:.85rem;white-space:nowrap;max-width:94vw}
+#selBar.show{display:flex}
+#selBar .mk{background:#e8853d;color:#fff;border:none;border-radius:999px;padding:9px 14px;font-weight:800;font-size:.85rem;cursor:pointer}
+#selBar .clr{background:none;border:none;color:#999;font-size:1rem;padding:4px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -146,6 +153,7 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
   </span>
 </div>
 
+<div id="selBar"><span id="selBarTxt"></span><button class="mk" onclick="makeCustomPlanFromSel()">プランを作る →</button><button class="clr" onclick="clearSel()" aria-label="選択をすべてやめる">✕</button></div>
 <div class="sheet-backdrop" id="sheetBackdrop"></div>
 <div class="sheet" id="sheet" aria-hidden="true">
   <button class="sheet-close" id="sheetClose" aria-label="閉じる">×</button>
@@ -405,10 +413,45 @@ function sheetHTML(s){
     (s.checked_at?'<p class="checked">情報確認日: '+esc(s.checked_at)+'</p>':'')+
     '<p class="disclaimer">掲載情報は作成時点のものです。最新情報は公式サイトをご確認ください。</p>';
 }
+
+/* ===== 自分で選ぶプラン: スポット選択 ===== */
+let planSel=[];
+function selHas(i){ return planSel.indexOf(i)>=0; }
+function toggleSel(i){
+  const btn=document.getElementById('addPlanBtn');
+  if(selHas(i)){
+    planSel=planSel.filter(x=>x!==i);
+  } else {
+    if(planSel.length>=3){
+      if(btn) btn.textContent='えらべるのは3件までです（どれかを外してください）';
+      updateSelBar(); return;
+    }
+    planSel.push(i);
+  }
+  if(btn){
+    const on=selHas(i);
+    btn.classList.toggle('on',on);
+    btn.textContent=on?'✓ プラン候補に追加ずみ（タップで外す）':'＋プランに追加';
+  }
+  updateSelBar();
+}
+function updateSelBar(){
+  const bar=document.getElementById('selBar'); if(!bar) return;
+  const t=document.getElementById('selBarTxt'); if(t) t.textContent='🗓 えらんだ場所 '+planSel.length+'件';
+  bar.classList.toggle('show',planSel.length>0);
+}
+function clearSel(){ planSel=[]; updateSelBar(); }
+function makeCustomPlanFromSel(){
+  if(!planSel.length) return;
+  try{
+    localStorage.setItem('odemaru_custom_sel_v1', JSON.stringify({v:1,items:planSel.map(i=>({n:SPOTS[i].name}))}));
+  }catch(e){}
+  location.href='./plan.html?custom=1';
+}
 function openSheet(i){
   const s=SPOTS[i];
   if(!s) return;
-  sheetBody.innerHTML=sheetHTML(s);
+  sheetBody.innerHTML=sheetHTML(s)+'<button type="button" class="addplan'+(selHas(i)?' on':'')+'" id="addPlanBtn" onclick="toggleSel('+i+')">'+(selHas(i)?'✓ プラン候補に追加ずみ（タップで外す）':'＋プランに追加')+'</button>';
   sheet.classList.add('show');
   sheet.setAttribute('aria-hidden','false');
   sheetBackdrop.classList.add('show');
