@@ -1808,84 +1808,230 @@ function customAutoAssign(items){
   });
   return slots;
 }
+const MYPLACE_KEY='odemaru_myplaces_v1';
+function myPlaces(){ try{ return JSON.parse(localStorage.getItem(MYPLACE_KEY)||'[]'); }catch(e){ return []; } }
+function saveMyPlace(sp){
+  try{
+    let a=myPlaces().filter(x=>x.n!==sp.name);
+    a.unshift({n:sp.name,lat:sp.latitude,lng:sp.longitude,addr:sp.city||''});
+    localStorage.setItem(MYPLACE_KEY,JSON.stringify(a.slice(0,10)));
+  }catch(e){}
+}
+function cpDelMyPlace(idx){
+  try{ const a=myPlaces(); a.splice(idx,1); localStorage.setItem(MYPLACE_KEY,JSON.stringify(a)); }catch(e){}
+  renderCustomPanel();
+}
+function cpResolveItem(it){
+  if(!it) return null;
+  if(it.temp) return tempSpot(it.n,it.lat,it.lng,it.addr);
+  return SPOTS.find(s=>s.name===it.n)||null;
+}
+function cpSaveSlots(){
+  try{
+    localStorage.setItem(CUSTOM_KEY,JSON.stringify({v:2,ts:Date.now(),
+      slots:state.customSlots.map(s=>!s?null:(s.__temp?{n:s.name,lat:s.latitude,lng:s.longitude,addr:s.city,temp:1}:{n:s.name}))}));
+  }catch(e){}
+}
+function cpSavedData(){ try{ return JSON.parse(localStorage.getItem(CUSTOM_KEY)||'null'); }catch(e){ return null; } }
 function initCustom(){
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   const dotsEl=document.getElementById('dots'); if(dotsEl) dotsEl.style.display='none';
-  let items=[];
-  try{
-    const d=JSON.parse(localStorage.getItem(CUSTOM_KEY)||'null');
-    if(d&&d.items) items=d.items.map(it=>{
-      if(it.temp) return tempSpot(it.n,it.lat,it.lng,it.addr);
-      return SPOTS.find(s=>s.name===it.n)||null;
-    }).filter(Boolean).slice(0,3);
-  }catch(e){}
-  state.customSlots=customAutoAssign(items);
+  const d=cpSavedData();
+  if(d&&d.v===2&&Array.isArray(d.slots)){
+    state.customSlots=d.slots.map(cpResolveItem);
+    while(state.customSlots.length<3) state.customSlots.push(null);
+    state.customSlots=state.customSlots.slice(0,3);
+  } else {
+    let items=[];
+    if(d&&d.items) items=d.items.map(cpResolveItem).filter(Boolean).slice(0,3);
+    state.customSlots=customAutoAssign(items);
+  }
   if(!state.origin) state.origin={name:'安城市',lat:ANJO[0],lng:ANJO[1],isAnjo:true};
   if(!state.when||state.when==='sat'||state.when==='sun') state.when=state.when||'today';
+  state.cpScrolledOnce=false; state.cpAddOpen=null; state.cpTarget=null; state.cpSug={};
+  cpSaveSlots();
   renderCustomPanel();
 }
 function cpWhen(w){ state.when=w; renderCustomPanel(); }
 function cpMove(i,dir){
   const j=i+dir; if(j<0||j>2) return;
   const t=state.customSlots[i]; state.customSlots[i]=state.customSlots[j]; state.customSlots[j]=t;
+  cpSaveSlots(); renderCustomPanel();
+}
+function cpRemove(i){ state.customSlots[i]=null; state.cpAddOpen=null; cpSaveSlots(); renderCustomPanel(); }
+function cpGeo(){
+  const note=document.getElementById('cpGeoNote');
+  if(!navigator.geolocation){ if(note) note.textContent='この端末では現在地を取得できませんでした'; return; }
+  if(note) note.textContent='現在地を取得中…';
+  navigator.geolocation.getCurrentPosition(function(pos){
+    state.origin={name:'現在地',lat:pos.coords.latitude,lng:pos.coords.longitude,isAnjo:false};
+    if(typeof gtag==='function') gtag('event','plan_custom_geo');
+    renderCustomPanel();
+  },function(){
+    if(note) note.textContent='現在地を取得できませんでした。位置情報の許可をご確認ください';
+  },{enableHighAccuracy:false,timeout:8000,maximumAge:120000});
+}
+function cpSuggest(slot){
+  // その枠に合う候補3件をその場で出す(枠の時間帯・移動条件・営業時間で絞る)
+  const date=targetDate(state.when||'today');
+  const start=startMinutes();
+  const arrGuess=slot===0?start+30:(slot===1?start+150:start+270);
+  const o=state.origin;
+  const filled=state.customSlots.filter(Boolean);
+  const ref=state.customSlots[0]||filled[0]||null;
+  const refLat=ref?ref.latitude:o.lat, refLng=ref?ref.longitude:o.lng;
+  const capMin=capFor(state.driveTime||'any');
+  let pool=SPOTS.filter(s=>{
+    if(s.latitude==null) return false;
+    if(typeof isJidokan==='function'&&isJidokan(s)) return false;
+    const isFood=(s.play_types||[]).includes('food');
+    if(slot===1){ if(!isFood) return false; } else { if(isFood&&(s.play_types||[]).length===1) return false; }
+    if(filled.some(x=>x===s||x.name===s.name)) return false;
+    if(!budgetPass(s)) return false;
+    const dmO=driveMinutesFrom(o,s); if(dmO==null||dmO>capMin) return false;
+    if(haversineKm(refLat,refLng,s.latitude,s.longitude)>(slot===1?10:14)) return false;
+    if(isClosedOn(s,date)) return false;
+    if(closingInfo(s,arrGuess).exclude) return false;
+    return true;
+  });
+  pool.forEach(s=>{ s.__cpD=haversineKm(refLat,refLng,s.latitude,s.longitude); });
+  pool.sort((a,b)=>a.__cpD-b.__cpD);
+  const top=pool.slice(0,10);
+  // 上位10件からシャッフルで3件(押すたびに入れ替え)
+  for(let x=top.length-1;x>0;x--){ const y=Math.floor(Math.random()*(x+1)); const t2=top[x]; top[x]=top[y]; top[y]=t2; }
+  return top.slice(0,3);
+}
+function cpOpenAdd(slot){
+  state.cpAddOpen=(state.cpAddOpen===slot)?null:slot;
+  if(state.cpAddOpen!=null) state.cpSug[slot]=cpSuggest(slot);
   renderCustomPanel();
 }
-function cpRemove(i){ state.customSlots[i]=null; renderCustomPanel(); }
+function cpMoreSug(slot){ state.cpSug[slot]=cpSuggest(slot); renderCustomPanel(); }
+function cpPickSug(slot,idx){
+  const s=(state.cpSug[slot]||[])[idx]; if(!s) return;
+  state.customSlots[slot]=s; state.cpAddOpen=null; cpSaveSlots(); renderCustomPanel();
+}
+function cpUseMyPlace(slot,idx){
+  const mp=myPlaces()[idx]; if(!mp) return;
+  const sp=SPOTS.find(s=>s.name===mp.n)||tempSpot(mp.n,mp.lat,mp.lng,mp.addr);
+  let tgt=slot!=null?slot:[0,2,1].find(k=>!state.customSlots[k]);
+  if(tgt===undefined){ return; }
+  state.customSlots[tgt]=sp; state.cpAddOpen=null; cpSaveSlots(); renderCustomPanel();
+}
+function cpGotoMap(slot){
+  cpSaveSlots();
+  location.href='./map.html'+(slot!=null?('?slotpick='+slot):'');
+}
+function cpFocusInput(slot){
+  state.cpTarget=slot; state.cpAddOpen=null;
+  renderCustomPanel();
+  const el=document.getElementById('cpName');
+  if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(()=>{try{el.focus();}catch(e){}},350); }
+}
 function renderCustomPanel(){
   const el=document.getElementById('customPanel'); if(!el) return;
+  const keepY=window.scrollY;
   document.getElementById('result').style.display='none';
   el.style.display='block';
   const btnS='border:1px solid #d8c9b0;background:#fff;border-radius:9px;padding:7px 10px;font-size:.9rem';
   const cnt=state.customSlots.filter(Boolean).length;
   let html='<div class="q">🗺 自分で選んだ場所でプランを作る</div>';
   html+='<p class="qsub">順番はあとから入れかえOK。空きの枠はおでまるが提案します。</p>';
-  html+='<div style="margin:10px 0"><b style="font-size:.85rem">🚗 どこから出発？</b><br><select class="origin" id="cpOrigin" style="margin-top:4px"></select></div>';
+  html+='<div style="margin:10px 0"><b style="font-size:.85rem">🚗 どこから出発？</b><br>'
+    +'<div style="display:flex;gap:6px;align-items:center;margin-top:4px"><select class="origin" id="cpOrigin" style="flex:1;min-width:0"></select>'
+    +'<button type="button" onclick="cpGeo()" style="white-space:nowrap;border:1.5px solid #e8853d;background:'+(state.origin&&state.origin.name==='現在地'?'#e8853d':'#fff8f0')+';color:'+(state.origin&&state.origin.name==='現在地'?'#fff':'#b45f1d')+';border-radius:999px;padding:8px 12px;font-weight:800;font-size:.82rem">📍 現在地</button></div>'
+    +'<div id="cpGeoNote" style="font-size:.72rem;color:#8a7a5a;margin-top:3px">'+(state.origin&&state.origin.name==='現在地'?'📍 現在地から出発します':'')+'</div></div>';
   const wOn='background:#e8853d;color:#fff;border:1px solid #e8853d;border-radius:999px;padding:8px 18px;font-weight:800;font-size:.9rem';
   const wOff='background:#fff;color:#6b5c40;border:1px solid #d8c9b0;border-radius:999px;padding:8px 18px;font-weight:700;font-size:.9rem';
   html+='<div style="margin:10px 0"><b style="font-size:.85rem">📅 いつ行く？</b><br>'
     +'<button type="button" style="'+(state.when!=='tomorrow'?wOn:wOff)+';margin:4px 6px 0 0" onclick="cpWhen(\'today\')">きょう</button>'
     +'<button type="button" style="'+(state.when==='tomorrow'?wOn:wOff)+';margin:4px 0 0 0" onclick="cpWhen(\'tomorrow\')">あす</button></div>';
   html+='<div style="margin:14px 0 4px;font-weight:800">えらんだ場所（'+cnt+'件）</div>';
-  SLOT_LABELS.forEach((lab,i)=>{
-    const s=state.customSlots[i];
-    html+='<div style="display:flex;align-items:center;gap:7px;padding:10px;border:1px solid #e8ddcc;border-radius:12px;margin:6px 0;background:#fff">'
+  const mps=myPlaces();
+  SLOT_LABELS.forEach((lab,i2)=>{
+    const s=state.customSlots[i2];
+    html+='<div style="display:flex;align-items:center;gap:7px;padding:10px;border:1px solid #e8ddcc;border-radius:12px;margin:6px 0 0;background:#fff">'
       +'<span style="font-size:.72rem;font-weight:800;color:#e8853d;min-width:2.6em">'+lab+'</span>';
     if(s){
       html+='<span style="flex:1;font-weight:700;font-size:.92rem;min-width:0;overflow-wrap:anywhere">'+esc(s.name)
         +(s.__temp?' <span style="font-size:.66rem;font-weight:600;color:#8a7a5a">（入力した場所）</span>':'')+'</span>'
-        +'<button type="button" onclick="cpMove('+i+',-1)"'+(i===0?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="上へ">↑</button>'
-        +'<button type="button" onclick="cpMove('+i+',1)"'+(i===2?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="下へ">↓</button>'
-        +'<button type="button" onclick="cpRemove('+i+')" style="'+btnS+';color:#c0392b" aria-label="外す">✕</button>';
+        +'<button type="button" onclick="cpMove('+i2+',-1)"'+(i2===0?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="上へ">↑</button>'
+        +'<button type="button" onclick="cpMove('+i2+',1)"'+(i2===2?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="下へ">↓</button>'
+        +'<button type="button" onclick="cpRemove('+i2+')" style="'+btnS+';color:#c0392b" aria-label="この行を削除">✕</button>';
     } else {
-      html+='<span style="flex:1;color:#9a8c70;font-size:.85rem">おでまるが提案します</span>';
+      html+='<span style="flex:1;color:#9a8c70;font-size:.85rem">おでまるが提案します</span>'
+        +'<button type="button" onclick="cpOpenAdd('+i2+')" style="border:1.5px solid #e8853d;background:'+(state.cpAddOpen===i2?'#e8853d':'#fff8f0')+';color:'+(state.cpAddOpen===i2?'#fff':'#b45f1d')+';border-radius:999px;padding:7px 14px;font-weight:800;font-size:.85rem">＋ 追加</button>';
     }
     html+='</div>';
+    // ＋追加を開いた枠: その場候補3件+選択肢
+    if(!s&&state.cpAddOpen===i2){
+      const sug=state.cpSug[i2]||[];
+      html+='<div style="border:1px dashed #e8ddcc;border-top:none;border-radius:0 0 12px 12px;padding:10px;background:#fffdf8;margin:0 6px">';
+      if(sug.length){
+        html+='<div style="font-size:.75rem;font-weight:800;color:#8a7a5a;margin-bottom:6px">この枠に合いそうな場所:</div>';
+        sug.forEach((sp,si)=>{
+          const dm2=state.origin?driveMinutesFrom(state.origin,sp):null;
+          html+='<div style="display:flex;align-items:center;gap:7px;padding:8px;border:1px solid #eee3d0;border-radius:10px;margin:5px 0;background:#fff">'
+            +'<span style="flex:1;min-width:0"><b style="font-size:.88rem">'+esc(sp.name)+'</b><br><span style="font-size:.72rem;color:#8a7a5a">'+esc(sp.city||'')+(dm2!=null?'・🚗約'+dm2+'分':'')+(sp.is_free===true?'・無料':'')+'</span></span>'
+            +'<button type="button" onclick="cpPickSug('+i2+','+si+')" style="border:none;background:#e8853d;color:#fff;border-radius:999px;padding:8px 12px;font-weight:800;font-size:.8rem;white-space:nowrap">＋この場所</button></div>';
+        });
+        html+='<button type="button" onclick="cpMoreSug('+i2+')" style="width:100%;'+btnS+';margin:4px 0 8px">🔁 ほかの候補を見る</button>';
+      } else {
+        html+='<div style="font-size:.78rem;color:#8a7a5a;margin-bottom:6px">この条件で近くの候補が見つかりませんでした。マップや入力から追加できます。</div>';
+      }
+      html+='<div style="display:flex;gap:6px;flex-wrap:wrap">'
+        +'<button type="button" onclick="cpGotoMap('+i2+')" style="flex:1;'+btnS+';white-space:nowrap">🗺 マップで探す</button>'
+        +'<button type="button" onclick="cpFocusInput('+i2+')" style="flex:1;'+btnS+';white-space:nowrap">✏️ 入力で追加</button></div>';
+      if(mps.length){
+        html+='<div style="font-size:.72rem;font-weight:800;color:#8a7a5a;margin:8px 0 4px">📌 マイプレイス(前に入力した場所):</div><div style="display:flex;gap:6px;flex-wrap:wrap">';
+        mps.forEach((mp,mi)=>{ html+='<button type="button" onclick="cpUseMyPlace('+i2+','+mi+')" style="'+btnS+';font-size:.8rem">'+esc(mp.n)+'</button>'; });
+        html+='</div>';
+      }
+      html+='</div>';
+    }
   });
+  const tgtLab=state.cpTarget!=null?SLOT_LABELS[state.cpTarget]:null;
   html+='<div style="margin:14px 0;padding:12px;border:1.5px dashed #e8853d;border-radius:12px;background:#fff8f0">'
-    +'<div style="font-weight:800;margin-bottom:4px">＋ 予定している場所を追加</div>'
-    +'<div style="font-size:.74rem;color:#8a7a5a;line-height:1.6;margin-bottom:8px">祖父母の家・予約したお店・ホテル・習いごと・お友だちの家など、マップにない場所もプランに入れられます。（このプランの中だけで使われ、サイトには掲載されません）</div>'
+    +'<div style="font-weight:800;margin-bottom:4px">＋ 予定している場所を追加'+(tgtLab?'<span style="font-size:.72rem;font-weight:800;color:#fff;background:#e8853d;border-radius:999px;padding:2px 10px;margin-left:8px">追加先: '+tgtLab+'</span>':'')+'</div>'
+    +'<div style="font-size:.74rem;color:#8a7a5a;line-height:1.6;margin-bottom:8px">祖父母の家・予約したお店・ホテル・習いごと・お友だちの家など、マップにない場所もプランに入れられます。一度追加した場所は「マイプレイス」に保存され、次回から1タップで呼び出せます。（サイトには掲載されません）</div>'
     +'<input id="cpName" placeholder="名前（例: 祖父母の家）" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #d8c9b0;border-radius:9px;font-size:.9rem;margin-bottom:6px">'
     +'<input id="cpAddr" placeholder="住所（例: 岡崎市康生通西2丁目）" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #d8c9b0;border-radius:9px;font-size:.9rem;margin-bottom:6px">'
     +'<button type="button" onclick="cpAddPlace()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid #e8853d;background:#fff;color:#b45f1d;font-weight:800;font-size:.9rem">🔎 住所をさがして追加</button>'
-    +'<div id="cpAddMsg" style="font-size:.76rem;color:#c0392b;margin-top:5px"></div></div>';
+    +'<div id="cpAddMsg" style="font-size:.76rem;color:#c0392b;margin-top:5px"></div>';
+  if(mps.length){
+    html+='<div style="font-size:.72rem;font-weight:800;color:#8a7a5a;margin:8px 0 4px">📌 マイプレイス:</div><div style="display:flex;gap:6px;flex-wrap:wrap">';
+    mps.forEach((mp,mi)=>{
+      html+='<span style="display:inline-flex;align-items:center;gap:4px;border:1px solid #d8c9b0;background:#fff;border-radius:999px;padding:5px 6px 5px 12px;font-size:.8rem">'
+        +'<button type="button" onclick="cpUseMyPlace(null,'+mi+')" style="border:none;background:none;font-size:.8rem;font-weight:700;padding:0">'+esc(mp.n)+'</button>'
+        +'<button type="button" onclick="cpDelMyPlace('+mi+')" aria-label="マイプレイスから削除" style="border:none;background:#f2e8d8;border-radius:999px;width:20px;height:20px;font-size:.7rem;color:#c0392b">✕</button></span>';
+    });
+    html+='</div>';
+  }
+  html+='</div>';
   html+='<button class="next" style="width:100%;margin:4px 0 8px" onclick="customGenerate()">🎯 この内容でプランを作る</button>';
-  html+='<button type="button" onclick="location.href=\'./map.html\'" style="width:100%;padding:11px;border-radius:10px;border:1px solid #d8c9b0;background:#fff;font-size:.88rem;margin-bottom:6px">🗺 マップで場所をえらび直す</button>';
+  html+='<button type="button" onclick="cpGotoMap(null)" style="width:100%;padding:11px;border-radius:10px;border:1px solid #d8c9b0;background:#fff;font-size:.88rem;margin-bottom:6px">🗺 マップで場所をえらび直す</button>';
   html+='<button type="button" onclick="cpBackToWizard()" style="width:100%;padding:11px;border-radius:10px;border:none;background:none;color:#8a7a5a;font-size:.82rem;text-decoration:underline">やっぱり30秒おまかせで作る</button>';
   el.innerHTML=html;
   const sel=document.getElementById('cpOrigin');
   if(sel){
+    if(state.origin&&state.origin.name==='現在地'){
+      const o0=document.createElement('option'); o0.value=''; o0.textContent='📍 現在地'; o0.selected=true; sel.appendChild(o0);
+    }
     CITIES.forEach(c=>{
       const o=document.createElement('option'); o.value=c[1]+','+c[2]; o.textContent=c[0];
       if(state.origin&&state.origin.name===c[0]) o.selected=true;
       sel.appendChild(o);
     });
     sel.addEventListener('change',()=>{
-      const [lat,lng]=sel.value.split(',').map(Number);
+      if(!sel.value){ return; }
+      const parts=sel.value.split(',').map(Number);
       const nm=sel.options[sel.selectedIndex].textContent;
-      state.origin={name:nm,lat:lat,lng:lng,isAnjo:(nm==='安城市')};
+      state.origin={name:nm,lat:parts[0],lng:parts[1],isAnjo:(nm==='安城市')};
     });
   }
-  window.scrollTo({top:0,behavior:'smooth'});
+  // スクロール: 初回表示のみトップ、以降は位置を保持
+  if(!state.cpScrolledOnce){ state.cpScrolledOnce=true; window.scrollTo({top:0,behavior:'smooth'}); }
+  else { window.scrollTo({top:keepY}); }
 }
 async function cpAddPlace(){
   const nameEl=document.getElementById('cpName'), addrEl=document.getElementById('cpAddr');
@@ -1893,7 +2039,8 @@ async function cpAddPlace(){
   const name=(nameEl&&nameEl.value||'').trim(), addr=(addrEl&&addrEl.value||'').trim();
   if(!name){ msg.textContent='名前を入れてください'; return; }
   if(!addr){ msg.textContent='住所を入れてください（市町村名＋町名だけでもOK）'; return; }
-  if(state.customSlots.every(Boolean)){ msg.textContent='えらべるのは3件までです。どれかを✕で外してから追加してください'; return; }
+  let tgt=(state.cpTarget!=null&&!state.customSlots[state.cpTarget])?state.cpTarget:[0,2,1].find(k2=>!state.customSlots[k2]);
+  if(tgt===undefined){ msg.textContent='えらべるのは3件までです。どれかの行を✕で外してから追加してください'; return; }
   msg.textContent='検索中…';
   try{
     const r=await fetch('https://msearch.gsi.go.jp/address-search/AddressSearch?q='+encodeURIComponent(addr));
@@ -1903,8 +2050,10 @@ async function cpAddPlace(){
     const title=(js[0].properties&&js[0].properties.title)||addr;
     const sp=tempSpot(name,lat,lng,title);
     if(typeof gtag==='function') gtag('event','plan_custom_addplace');
-    const i=[0,2,1].find(k=>!state.customSlots[k]);
-    if(i!==undefined) state.customSlots[i]=sp;
+    state.customSlots[tgt]=sp;
+    saveMyPlace(sp);
+    state.cpTarget=null;
+    cpSaveSlots();
     renderCustomPanel();
   }catch(e){ msg.textContent='検索に失敗しました。通信環境をご確認のうえ、もう一度お試しください'; }
 }
@@ -1989,6 +2138,22 @@ async function initFromShareOrWizard(){
     }
   }
   render(); refreshNext();
+  // 前回の続き(自分で選ぶプランの選択が残っていたら案内)
+  try{
+    const dd=cpSavedData();
+    const nsel=(dd&&dd.v===2&&dd.slots)?dd.slots.filter(Boolean).length:0;
+    if(nsel>0&&dd.ts&&(Date.now()-dd.ts)<48*3600*1000){
+      const host=document.querySelector('.step[data-step="0"]');
+      if(host){
+        const bn=document.createElement('button');
+        bn.type='button';
+        bn.style.cssText='width:100%;margin:0 0 14px;padding:12px;border-radius:12px;border:1.5px solid #4a8c5f;background:#f0f8f2;color:#3b7350;font-weight:800;font-size:.9rem';
+        bn.textContent='⏪ 前回の続きから作る（えらんだ場所 '+nsel+'件）';
+        bn.addEventListener('click',()=>{ initCustom(); });
+        host.insertBefore(bn,host.firstChild);
+      }
+    }
+  }catch(e){}
 }
 function showResult(){
   const res=document.getElementById('result');
@@ -2135,6 +2300,7 @@ function reroll(){
 }
 function restart(){
   state.isCustomView=false; state.customSlots=[null,null,null];
+  try{ localStorage.removeItem(CUSTOM_KEY); }catch(e){}
   const cpEl=document.getElementById('customPanel'); if(cpEl) cpEl.style.display='none';
   state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.planNo=1; state.plans=[]; state.expandedDrive=false; state.isSharedView=false; state.shownMains=[]; state.shownLunches=[]; state.shownSubs=[]; state.excludedSpots=[]; state.lastPlanSpots=[]; state.swapFixed={}; state.swapSeen={};
   document.querySelectorAll('.bigbtn.on').forEach(b=>b.classList.remove('on'));

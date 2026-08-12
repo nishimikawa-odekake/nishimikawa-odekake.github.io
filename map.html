@@ -470,8 +470,21 @@ function sheetHTML(s){
 
 /* ===== 自分で選ぶプラン: スポット選択 ===== */
 let planSel=[];
+// 枠指定モード: plan.htmlの空き枠[＋追加]→「マップで探す」から来た場合。1件選んだら即プランナーへ戻る
+const SLOTPICK=(function(){ try{ const v=new URLSearchParams(location.search).get('slotpick'); return v==null?null:Math.max(0,Math.min(2,parseInt(v,10)||0)); }catch(e){ return null; } })();
+function slotpickAdd(i){
+  try{
+    let d=null; try{ d=JSON.parse(localStorage.getItem('odemaru_custom_sel_v1')||'null'); }catch(e){}
+    let slots=(d&&d.v===2&&Array.isArray(d.slots))?d.slots:[null,null,null];
+    while(slots.length<3) slots.push(null);
+    slots[SLOTPICK]={n:SPOTS[i].name};
+    localStorage.setItem('odemaru_custom_sel_v1',JSON.stringify({v:2,ts:Date.now(),slots:slots.slice(0,3)}));
+  }catch(e){}
+  location.href='./plan.html?custom=1';
+}
 function selHas(i){ return planSel.indexOf(i)>=0; }
 function toggleSel(i){
+  if(SLOTPICK!=null){ slotpickAdd(i); return; }
   const btn=document.getElementById('addPlanBtn');
   if(selHas(i)){
     planSel=planSel.filter(x=>x!==i);
@@ -498,14 +511,19 @@ function clearSel(){ planSel=[]; updateSelBar(); }
 function makeCustomPlanFromSel(){
   if(!planSel.length) return;
   try{
-    localStorage.setItem('odemaru_custom_sel_v1', JSON.stringify({v:1,items:planSel.map(i=>({n:SPOTS[i].name}))}));
+    const items=planSel.map(i=>SPOTS[i]);
+    const slots=[null,null,null]; const rest=[];
+    items.forEach(s=>{ const f=(s.play_types||[]).includes('food')||s.is_chain===true; if(f&&!slots[1]) slots[1]=s; else rest.push(s); });
+    rest.forEach(s=>{ const k=[0,2,1].find(x=>!slots[x]); if(k!==undefined) slots[k]=s; });
+    localStorage.setItem('odemaru_custom_sel_v1', JSON.stringify({v:2,ts:Date.now(),slots:slots.map(s=>s?{n:s.name}:null)}));
   }catch(e){}
   location.href='./plan.html?custom=1';
 }
 function openSheet(i){
   const s=SPOTS[i];
   if(!s) return;
-  sheetBody.innerHTML=sheetHTML(s)+'<button type="button" class="addplan'+(selHas(i)?' on':'')+'" id="addPlanBtn" onclick="toggleSel('+i+')">'+(selHas(i)?'✓ プラン候補に追加ずみ（タップで外す）':'＋プランに追加')+'</button>';
+  const addLabel=(SLOTPICK!=null)?('＋ この場所を「'+['午前','お昼','午後'][SLOTPICK]+'」の枠に入れる'):(selHas(i)?'✓ プラン候補に追加ずみ（タップで外す）':'＋プランに追加');
+  sheetBody.innerHTML=sheetHTML(s)+'<button type="button" class="addplan'+(selHas(i)?' on':'')+'" id="addPlanBtn" onclick="toggleSel('+i+')">'+addLabel+'</button>';
   sheet.classList.add('show');
   sheet.setAttribute('aria-hidden','false');
   sheetBackdrop.classList.add('show');
