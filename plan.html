@@ -810,6 +810,15 @@ function shuffle(arr,seed){
   for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
   return a;
 }
+const RECENT_MAINS_KEY='odemaru_recent_mains_v1';
+function recentMains(){ try{ return JSON.parse(localStorage.getItem(RECENT_MAINS_KEY)||'[]'); }catch(e){ return []; } }
+function rememberMains(names){
+  try{
+    let a=recentMains();
+    names.forEach(nm=>{ a=a.filter(x=>x!==nm); a.unshift(nm); });
+    localStorage.setItem(RECENT_MAINS_KEY,JSON.stringify(a.slice(0,15)));
+  }catch(e){}
+}
 function buildPool(date,w){
   const o=state.origin;
   const rain=isRainMode(w);
@@ -839,6 +848,9 @@ function buildPool(date,w){
   });
   // score + attach distance
   cand.forEach(s=>{ const dm=driveMinutesFrom(o,s); s.__sc=scoreSpot(s,date,w,start+dm); s.__dm=dm; });
+  // 偏り平準化: 最近このブラウザで提案したメインは軽く減点し、同じ施設ばかりにならないようにする
+  const __rec=recentMains();
+  if(__rec.length){ cand.forEach(s=>{ const ri=__rec.indexOf(s.name); if(ri>=0) s.__sc-=(ri<5?1.5:0.8); }); }
   // Drive-time preference is treated as "outing mood", not just an upper-limit filter:
   // - 20分: near-first stays as-is (already a nearby/quick outing).
   // - 40分: distance-neutral — shuffle away the near-first tiebreak so 20〜40分圏のA級 mixes in naturally.
@@ -1034,11 +1046,21 @@ function buildPlan(main,date,w,shareOverride){
   rows.push({type:'move',time:t,label:'🚗 移動（約'+dm+'分）',sub:transitLabel(originName,main.name,dm)});
   legSum+=dm;
   t+=dm;
-  const stay=stayMinutes(main);
+  let stay=stayMinutes(main);
+  const onlyToddler=state.ages.has('0-2')&&state.ages.size===1;
+  // 乳児(0-2歳のみ)連れは帰宅18:15を上限にする: 超えそうならメイン滞在を自動短縮(最短45分)
+  if(onlyToddler){
+    const homeDmM=driveMinutesFrom(o,main)||30;
+    const lunchExtra=lunch?(legMinutes(main.latitude,main.longitude,lunch.latitude,lunch.longitude)+60+(driveMinutesFrom(o,lunch)||homeDmM)):homeDmM;
+    const projected=t+stay+lunchExtra;
+    const toddlerCap=18*60+15;
+    if(projected>toddlerCap){
+      stay=Math.max(45,Math.floor((stay-(projected-toddlerCap))/15)*15);
+    }
+  }
   rows.push({type:'spot',time:t,spot:main,tag:'メイン',closeNote:main.__closeNote});
   t+=stay;
   let lastName=main.name, lastLat=main.latitude, lastLng=main.longitude, lastSpot=main;
-  const onlyToddler=state.ages.has('0-2')&&state.ages.size===1;
   if(lunch){
     const ldm=legMinutes(lastLat,lastLng,lunch.latitude,lunch.longitude);
     rows.push({type:'move',time:t,label:'🚗 移動（約'+ldm+'分）',sub:transitLabel(lastName,lunch.name,ldm)});
@@ -1157,7 +1179,15 @@ function generatePlans(date,w){
   const mains=[];
   for(const s of tiered){ if(!mains.includes(s)) mains.push(s); if(mains.length>=3) break; }
   state.shownMains=mains.slice();
-  return mains.map(m=>buildPlan(m,date,w));
+  return mains.map(m=>{
+    let pl=buildPlan(m,date,w);
+    // 総移動時間の上限: 3時間超のプランは午後スポットを外して移動負担を抑える
+    if(pl.totalDrive>190&&pl.sub){
+      const pl2=buildPlan(m,date,w,{lunch:pl.lunch||null,sub:null});
+      if(pl2.totalDrive<pl.totalDrive) pl=pl2;
+    }
+    return pl;
+  });
 }
 // Regeneration for "別のプランにする": widen the main-spot pool to the top 10〜15 (quality floor
 // kept by ranking, not a fixed score cutoff) and shuffle-pick one that hasn't been shown yet this
@@ -1199,7 +1229,9 @@ function nextVarietyPlan(date,w){
   const picked=shuffle(fresh)[0];
   state.shownMains.push(picked);
   state.cycledNote=cycled;
-  return buildPlan(picked,date,w);
+  let plv=buildPlan(picked,date,w);
+  if(plv.totalDrive>190&&plv.sub){ const plv2=buildPlan(picked,date,w,{lunch:plv.lunch||null,sub:null}); if(plv2.totalDrive<plv.totalDrive) plv=plv2; }
+  return plv;
 }
 
 /* ===== render result ===== */
@@ -1226,6 +1258,7 @@ async function generate(){
   state.cycledNote=false;
   state.isSharedView=false;
   state.plans=generatePlans(date,state.weather);
+  rememberMains(state.plans.map(pl=>pl.main&&pl.main.name).filter(Boolean));
   state.variant=0;
   state.planNo=1; // 表示用の通し番号（案1,2,3…）: plans配列のindexとは独立に1ずつ増やす
 
@@ -1333,6 +1366,14 @@ function rowHtml(r){
   let body='';
   body+=(r.opt?'<span class="opt">⏱ 余力があれば</span><br>':'');
   body+='<div class="sname">'+esc(s.name)+swapInline+'</div>';
+  // 予約制・営業情報未確認の明示(親が出発前に確認すべきものを隠さない)
+  const infoTxt=String(s.business_hours||'')+' '+String(s.price_text||'')+' '+String(s.kid_appeal||'');
+  if(/要予約|予約制|完全予約|事前予約/.test(infoTxt)){
+    body+='<div class="meta" style="color:#b45309;font-weight:700">📞 予約が必要な場合があります。事前に公式サイトでご確認ください</div>';
+  }
+  if(!s.business_hours&&!s.closed_days&&!isFood){
+    body+='<div class="meta" style="color:#8a7a5a">ℹ️ 営業時間の登録がないスポットです。おでかけ前に公式サイトで営業状況をご確認ください</div>';
+  }
   if(slot&&!state.isSharedView){
     body+='<div class="swapwrap" data-swapslot="'+slot+'" style="display:none"></div>';
   }
@@ -1971,6 +2012,9 @@ function showResult(){
   }
   html+='<div style="text-align:center">'+weatherBadge()+'</div>';
   html+='<div class="parentline">🗣 '+esc(parentSummary())+'</div>';
+  if(startMinutes()>=12*60+30){
+    html+='<div class="notice" style="margin:8px 0;background:#fff4e5;border:1px solid #f0c48a;border-radius:10px;padding:10px 12px;font-size:.82rem">🍴 午後からの出発のため、お昼ごはんは済ませてからの出発を想定しています。プラン内の食事枠は「カフェ・おやつ休憩」や「早めの夕食」としてご利用ください。</div>';
+  }
   html+='<div class="plancard">';
   html+='<div class="plantitle">🎯 '+esc(state.origin.name)+'発 きょうのプラン <small>'+esc(whenLabel())+' / 案'+(state.planNo||1)+'</small></div>';
   // split main-tier rows and bonus-tier rows, insert a heading before the bonus tier
@@ -2079,6 +2123,7 @@ function reroll(){
   state.lastPlanSpots=curP?[curP.main,curP.lunch,curP.sub].filter(Boolean):[];
   const date=targetDate(state.when);
   const newPlan=nextVarietyPlan(date,state.weather);
+  if(newPlan&&newPlan.main) rememberMains([newPlan.main.name]);
   if(newPlan){
     state.plans.push(newPlan);
     state.variant=state.plans.length-1;
