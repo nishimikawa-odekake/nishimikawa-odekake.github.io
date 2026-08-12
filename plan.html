@@ -163,6 +163,9 @@ footer a{color:var(--sub)}
 .sc-current .sc-cur-note{display:block;font-size:.66rem;color:var(--sub);margin-top:3px}
 .swapcard .sc-choose{float:right;background:#fff2e4;color:var(--accent-d);font-size:.66rem;font-weight:800;border-radius:999px;padding:2px 9px;margin-left:8px}
 .swapclose{display:block;width:100%;text-align:center;background:transparent;border:1.5px solid #d9c9b4;color:var(--sub);font-weight:800;font-size:.75rem;border-radius:10px;padding:8px;margin-top:8px;cursor:pointer}
+.swapcard.sc-cur-disabled{background:#f4ece1;border-style:dashed;cursor:default;opacity:.8}
+.swapcard .sc-choose-cur{background:var(--accent);color:#fff}
+.swapcard .sc-backnote{font-size:.66rem;color:var(--sub);font-weight:600}
 </style>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -1081,6 +1084,8 @@ async function generate(){
   state.shownMains=[];
   state.shownLunches=[];
   state.shownSubs=[];
+  state.swapFixed={};
+  state.swapSeen={};
   state.cycledNote=false;
   state.isSharedView=false;
   state.plans=generatePlans(date,state.weather);
@@ -1309,42 +1314,105 @@ function closeSwap(btn){
   const wrap=btn.closest('.swapwrap');
   if(wrap) wrap.style.display='none';
 }
-function openSwap(slot,btn){
-  if(typeof gtag==='function') gtag('event','plan_swap_open',{slot:slot});
-  const wrap=btn.closest('.body').querySelector('.swapwrap[data-swapslot="'+slot+'"]');
-  if(!wrap) return;
-  if(wrap.style.display!=='none'){ wrap.style.display='none'; return; }
-  const cands=swapCandidates(slot,0);
+// ===== 変更候補パネル =====
+// 候補3件のセットは「その変更UIを操作している間は固定」。
+// 候補を1件選んでも再抽選しない。再抽選するのはユーザーが
+// 「ほかの候補を見る」を明示的に押したときだけ。
+// state.swapFixed[slot] = {cands:[...], original:spot} が固定グループの実体。
+function swapGroupFor(slot){
+  state.swapFixed=state.swapFixed||{};
+  return state.swapFixed[slot]||null;
+}
+function setSwapGroup(slot,cands,widened){
+  state.swapFixed=state.swapFixed||{};
+  const p=currentPlanObj();
+  const cur=p?(slot==='main'?p.main:(slot==='lunch'?p.lunch:p.sub)):null;
+  const g=swapGroupFor(slot);
+  state.swapFixed[slot]={cands:cands.slice(),original:(g&&g.original)||cur,widened:!!widened};
+  state.swapSeen=state.swapSeen||{};
+  state.swapSeen[slot]=state.swapSeen[slot]||[];
+  cands.forEach(s=>{ if(!state.swapSeen[slot].includes(s)) state.swapSeen[slot].push(s); });
+}
+function renderSwapPanel(slot,wrap){
+  const g=swapGroupFor(slot);
+  const p=currentPlanObj();
+  const cur=p?(slot==='main'?p.main:(slot==='lunch'?p.lunch:p.sub)):null;
+  // 表示リスト: 固定候補 + (現在が入れ替わった後なら)元の施設を「元に戻す」候補として追加
+  let list=g?g.cands.slice():[];
+  if(g&&g.original&&g.original!==cur&&!list.includes(g.original)) list.push(g.original);
   state.swapCands=state.swapCands||{};
-  state.swapCands[slot]=cands;
+  state.swapCands[slot]=list;
   let inner=swapCurrentHtml(slot);
-  if(!cands.length){
+  if(!list.length){
     inner+='<div class="sc-none">この条件で入れ替えられる候補が見つかりませんでした</div>';
   } else {
-    inner+='<div class="sc-head">かわりの候補：</div>'+cands.map((s,i)=>swapCardHtml(slot,s,i)).join('');
+    inner+='<div class="sc-head">かわりの候補'+(g&&g.widened?'（範囲を広げて探しました）':'')+'：</div>'
+      +list.map((s,i)=>{
+        if(s===cur){
+          return '<div class="swapcard sc-cur-disabled"><span class="sc-name">'+esc(s.name)+'<span class="sc-choose sc-choose-cur">現在選択中</span></span></div>';
+        }
+        const back=(g&&s===g.original)?' <span class="sc-backnote">（はじめの施設）</span>':'';
+        return swapCardHtml(slot,s,i).replace('</span><span class="sc-meta">',back+'</span><span class="sc-meta">');
+      }).join('');
   }
-  if(cands.length<3){
+  inner+='<button type="button" class="swapwiden" onclick="refreshSwap(\''+slot+'\',this)">🔁 ほかの候補を見る</button>';
+  if(g&&g.cands.length<3&&!g.widened){
     inner+='<button type="button" class="swapwiden" onclick="widenSwap(\''+slot+'\',this)">🔍 条件を少し広げて候補を見る</button>';
   }
   inner+=swapCloseHtml(slot);
   wrap.innerHTML=inner;
   wrap.style.display='block';
 }
-// 「条件を少し広げて候補を見る」: 移動圏を1段階ずつ(最大2段階)広げて3件を目指す。
-// 雨・年齢・営業時間・予算の条件は緩めない。指定圏を超える候補にはカード内で明示する。
+function openSwap(slot,btn){
+  if(typeof gtag==='function') gtag('event','plan_swap_open',{slot:slot});
+  const wrap=btn.closest('.body').querySelector('.swapwrap[data-swapslot="'+slot+'"]');
+  if(!wrap) return;
+  if(wrap.style.display!=='none'){ wrap.style.display='none'; return; }
+  if(!swapGroupFor(slot)){
+    setSwapGroup(slot,swapCandidates(slot,0),false);
+  }
+  renderSwapPanel(slot,wrap);
+}
+// 明示的な再抽選: これまで見せた候補(swapSeen)は除外して新しい3件を探す。
+// 足りなければ既出の再利用を許可(現在選択中と[変更する]で外した施設は除く)。
+function refreshSwap(slot,btn){
+  if(typeof gtag==='function') gtag('event','plan_swap_refresh',{slot:slot});
+  const seen=(state.swapSeen&&state.swapSeen[slot])||[];
+  const all=swapFilterAll(slot);
+  let fresh=all.filter(s=>!seen.includes(s)).slice(0,3);
+  if(fresh.length<3){
+    const reuse=all.filter(s=>!fresh.includes(s)).slice(0,3-fresh.length);
+    fresh=fresh.concat(reuse);
+  }
+  fresh.forEach(s=>{ s.__swapFar=false; });
+  setSwapGroup(slot,fresh,false);
+  const wrap=btn.closest('.swapwrap');
+  if(wrap) renderSwapPanel(slot,wrap);
+}
+// 件数制限なしの候補列挙(除外条件はswapFilterと同一)
+function swapFilterAll(slot){
+  const p=currentPlanObj(); if(!p) return [];
+  if(!state.excludedSpots) state.excludedSpots=[];
+  const baseCap=capFor(state.driveTime);
+  const cap=(state.expandedDrive&&CURRENT_CAP&&CURRENT_CAP>baseCap)?CURRENT_CAP:baseCap;
+  const list=swapListFor(slot,cap);
+  const inPlan=[p.main,p.lunch,p.sub].filter(Boolean);
+  const out=[];
+  for(const s of list){
+    if(inPlan.includes(s)) continue;
+    if(state.excludedSpots.includes(s)) continue;
+    if(inPlan.some(x=>x!==s&&typeof isSamePlace==='function'&&isSamePlace(s,x,0.05))) continue;
+    if(!out.includes(s)) out.push(s);
+  }
+  return out;
+}
 function widenSwap(slot,btn){
   if(typeof gtag==='function') gtag('event','plan_swap_widen',{slot:slot});
   let cands=swapCandidates(slot,1);
   if(cands.length<3) cands=swapCandidates(slot,2);
-  state.swapCands=state.swapCands||{};
-  state.swapCands[slot]=cands;
+  setSwapGroup(slot,cands,true);
   const wrap=btn.closest('.swapwrap');
-  if(!wrap) return;
-  if(!cands.length){
-    wrap.innerHTML=swapCurrentHtml(slot)+'<div class="sc-none">条件を広げても候補が見つかりませんでした。「別のプランにする」もお試しください</div>'+swapCloseHtml(slot);
-  } else {
-    wrap.innerHTML=swapCurrentHtml(slot)+'<div class="sc-head">かわりの候補（範囲を広げて探しました）：</div>'+cands.map((s,i)=>swapCardHtml(slot,s,i)).join('')+swapCloseHtml(slot);
-  }
+  if(wrap) renderSwapPanel(slot,wrap);
 }
 function applySwap(slot,i){
   const p=currentPlanObj(); if(!p) return;
@@ -1352,8 +1420,12 @@ function applySwap(slot,i){
   const ns=cands[i]; if(!ns) return;
   if(typeof gtag==='function') gtag('event','plan_swap_apply',{slot:slot});
   if(!state.excludedSpots) state.excludedSpots=[];
+  const g=swapGroupFor(slot);
   const old=slot==='main'?p.main:(slot==='lunch'?p.lunch:p.sub);
   if(old&&!state.excludedSpots.includes(old)) state.excludedSpots.push(old);
+  // 選ばれた施設が「外した」リストに入っていたら復帰(元に戻す操作を妨げない)
+  const exIdx=state.excludedSpots.indexOf(ns);
+  if(exIdx>=0) state.excludedSpots.splice(exIdx,1);
   const date=targetDate(state.when), w=state.weather;
   const main=slot==='main'?ns:p.main;
   const lunch=slot==='lunch'?ns:p.lunch;
@@ -1362,6 +1434,11 @@ function applySwap(slot,i){
   state.plans[state.variant%state.plans.length]=np;
   if(slot==='main'&&!state.shownMains.includes(ns)) state.shownMains.push(ns);
   showResult();
+  // プラン再描画後、同じ枠のパネルを「同じ候補グループのまま」開き直す(再抽選しない)
+  try{
+    const wrap=document.querySelector('.swapwrap[data-swapslot="'+slot+'"]');
+    if(wrap) renderSwapPanel(slot,wrap);
+  }catch(e){}
 }
 function track(w){ if(typeof gtag==='function') gtag('event','plan_outlink',{link:w}); }
 // build a Google Maps directions URL for the plan's route: 出発地(現在地 or 市町村代表座標) -> メイン -> ランチ -> (余力枠)
@@ -1637,6 +1714,7 @@ function loadPrefs(){
 function reroll(){
   if(typeof gtag==='function') gtag('event','plan_reroll');
   state.isSharedView=false;
+  state.swapFixed={}; state.swapSeen={};
   const curP=state.plans.length?state.plans[state.variant%state.plans.length]:null;
   state.lastPlanSpots=curP?[curP.main,curP.lunch,curP.sub].filter(Boolean):[];
   const date=targetDate(state.when);
@@ -1651,7 +1729,7 @@ function reroll(){
   showResult();
 }
 function restart(){
-  state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.planNo=1; state.plans=[]; state.expandedDrive=false; state.isSharedView=false; state.shownMains=[]; state.shownLunches=[]; state.shownSubs=[]; state.excludedSpots=[]; state.lastPlanSpots=[];
+  state.driveTime=null; state.when=null; state.depart=null; state.ages.clear(); state.budget=null; state.weather=null; state.variant=0; state.planNo=1; state.plans=[]; state.expandedDrive=false; state.isSharedView=false; state.shownMains=[]; state.shownLunches=[]; state.shownSubs=[]; state.excludedSpots=[]; state.lastPlanSpots=[]; state.swapFixed={}; state.swapSeen={};
   document.querySelectorAll('.bigbtn.on').forEach(b=>b.classList.remove('on'));
   document.getElementById('departWrap').style.display='none';
   document.getElementById('result').style.display='none';
