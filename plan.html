@@ -1821,6 +1821,8 @@ function cpLabels(len){
   return ['午前①','午前②','お昼','午後①','午後②'];
 }
 function cpLunchIdx(len){ return len===5?2:1; }
+// お昼枠に入れてよいか: ごはん店(food/チェーン)または入力した場所(予約したお店など)のみ
+function cpIsFoodSpot(s){ return !!s&&(((s.play_types||[]).includes('food'))||s.is_chain===true||s.__temp===true); }
 function tempSpot(name,lat,lng,addr){
   return {name:name,latitude:lat,longitude:lng,city:addr||'',play_types:['indoor'],is_free:true,__temp:true};
 }
@@ -1832,7 +1834,9 @@ function customAutoAssign(items){
     if(isFood&&!slots[1]) slots[1]=s; else rest.push(s);
   });
   rest.forEach(s=>{
-    const i=[0,2,1].find(k=>!slots[k]);
+    const isFood=(s.play_types||[]).includes('food')||s.is_chain===true;
+    const cand=isFood?[1,0,2]:[0,2];   // お昼枠(1)にはごはん店のみ
+    const i=cand.find(k=>!slots[k]);
     if(i!==undefined) slots[i]=s;
   });
   return slots;
@@ -1870,6 +1874,20 @@ function initCustom(){
     state.customSlots=d.slots.map(cpResolveItem);
     while(state.customSlots.length<3) state.customSlots.push(null);
     state.customSlots=state.customSlots.slice(0,5);
+    // 保存データにお昼枠×スポット(またはスポット枠×ごはん店)が混ざっていたら並べ直す
+    (function(){
+      const li=cpLunchIdx(state.customSlots.length);
+      const bad=state.customSlots[li]&&!cpIsFoodSpot(state.customSlots[li]);
+      const misFood=state.customSlots.findIndex((s,k)=>k!==li&&s&&!s.__temp&&cpIsFoodSpot(s));
+      if(bad){
+        const sp=state.customSlots[li]; state.customSlots[li]=null;
+        const free=state.customSlots.findIndex((s,k)=>k!==li&&!s);
+        if(free>=0) state.customSlots[free]=sp;
+      }
+      if(misFood>=0&&!state.customSlots[li]){
+        state.customSlots[li]=state.customSlots[misFood]; state.customSlots[misFood]=null;
+      }
+    })();
   } else {
     let items=[];
     if(d&&d.items) items=d.items.map(cpResolveItem).filter(Boolean).slice(0,3);
@@ -1893,11 +1911,32 @@ function cpExpand(){
   cpSaveSlots(); renderCustomPanel();
 }
 function cpMove(i,dir){
-  const j=i+dir; if(j<0||j>state.customSlots.length-1) return;
+  const li=cpLunchIdx(state.customSlots.length);
+  if(i===li) return;                 // お昼枠は位置固定
+  let j=i+dir;
+  if(j===li) j+=dir;                 // お昼枠を飛ばしてスポット枠同士で入れかえ
+  if(j<0||j>state.customSlots.length-1) return;
   const t=state.customSlots[i]; state.customSlots[i]=state.customSlots[j]; state.customSlots[j]=t;
   cpSaveSlots(); renderCustomPanel();
 }
 function cpRemove(i){ state.customSlots[i]=null; state.cpAddOpen=null; cpSaveSlots(); renderCustomPanel(); }
+// 追加した枠そのものを減らす(お昼以外・4枠以上のとき)。中身は残った枠に詰め直す
+function cpRemoveRow(i){
+  const len=state.customSlots.length;
+  const li=cpLunchIdx(len);
+  if(len<=3||i===li) return;
+  const lunchVal=state.customSlots[li];
+  const spots=state.customSlots.filter((_,k)=>k!==li&&k!==i);
+  const nl=len-1, nli=cpLunchIdx(nl);
+  const ns=new Array(nl).fill(null);
+  ns[nli]=lunchVal;
+  let p=0;
+  for(let k=0;k<nl;k++){ if(k===nli) continue; ns[k]=spots[p++]||null; }
+  state.customSlots=ns;
+  state.cpAddOpen=null; state.cpTarget=null;
+  if(typeof gtag==='function') gtag('event','plan_custom_shrink',{len:nl});
+  cpSaveSlots(); renderCustomPanel();
+}
 function cpGeo(){
   const note=document.getElementById('cpGeoNote');
   if(!navigator.geolocation){ if(note) note.textContent='この端末では現在地を取得できませんでした'; return; }
@@ -1955,13 +1994,17 @@ function cpPickSug(slot,idx){
 function cpUseMyPlace(slot,idx){
   const mp=myPlaces()[idx]; if(!mp) return;
   const sp=SPOTS.find(s=>s.name===mp.n)||tempSpot(mp.n,mp.lat,mp.lng,mp.addr);
+  const li=cpLunchIdx(state.customSlots.length);
   let tgt=slot;
   if(tgt==null){
-    const li=cpLunchIdx(state.customSlots.length);
     const order=state.customSlots.map((_,k)=>k).sort((a,b)=>(a===li)-(b===li));
-    tgt=order.find(k=>!state.customSlots[k]);
+    tgt=order.find(k=>!state.customSlots[k]&&(k!==li||cpIsFoodSpot(sp)));
   }
   if(tgt===undefined){ return; }
+  if(tgt===li&&!cpIsFoodSpot(sp)){
+    const m=document.getElementById('cpAddMsg'); if(m) m.textContent='お昼の枠にはごはん店だけ入れられます🍽';
+    return;
+  }
   state.customSlots[tgt]=sp; state.cpAddOpen=null; cpSaveSlots(); renderCustomPanel();
 }
 function cpGotoMap(slot){
@@ -1994,19 +2037,29 @@ function renderCustomPanel(){
     +'<button type="button" style="'+(state.when==='tomorrow'?wOn:wOff)+';margin:4px 0 0 0" onclick="cpWhen(\'tomorrow\')">あす</button></div>';
   html+='<div style="margin:14px 0 4px;font-weight:800">えらんだ場所（'+cnt+'件）</div>';
   const mps=myPlaces();
+  const __rli=cpLunchIdx(state.customSlots.length);
+  const __spotIdx=state.customSlots.map((_,k)=>k).filter(k=>k!==__rli);
   cpLabels(state.customSlots.length).forEach((lab,i2)=>{
     const s=state.customSlots[i2];
     html+='<div style="display:flex;align-items:center;gap:7px;padding:10px;border:1px solid #e8ddcc;border-radius:12px;margin:6px 0 0;background:#fff">'
       +'<span style="font-size:.72rem;font-weight:800;color:#e8853d;min-width:2.6em">'+lab+'</span>';
     if(s){
       html+='<span style="flex:1;font-weight:700;font-size:.92rem;min-width:0;overflow-wrap:anywhere">'+esc(s.name)
-        +(s.__temp?' <span style="font-size:.66rem;font-weight:600;color:#8a7a5a">（入力した場所）</span>':'')+'</span>'
-        +'<button type="button" onclick="cpMove('+i2+',-1)"'+(i2===0?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="上へ">↑</button>'
-        +'<button type="button" onclick="cpMove('+i2+',1)"'+(i2===state.customSlots.length-1?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="下へ">↓</button>'
-        +'<button type="button" onclick="cpRemove('+i2+')" style="'+btnS+';color:#c0392b" aria-label="この行を削除">✕</button>';
+        +(s.__temp?' <span style="font-size:.66rem;font-weight:600;color:#8a7a5a">（入力した場所）</span>':'')+'</span>';
+      if(i2===__rli){
+        html+='<span style="font-size:.66rem;font-weight:700;color:#b9a988;white-space:nowrap">お昼固定</span>';
+      } else {
+        const __up=i2!==__spotIdx[0], __dn=i2!==__spotIdx[__spotIdx.length-1];
+        html+='<button type="button" onclick="cpMove('+i2+',-1)"'+(!__up?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="上へ">↑</button>'
+          +'<button type="button" onclick="cpMove('+i2+',1)"'+(!__dn?' disabled style="'+btnS+';opacity:.3"':' style="'+btnS+'"')+' aria-label="下へ">↓</button>';
+      }
+      html+='<button type="button" onclick="cpRemove('+i2+')" style="'+btnS+';color:#c0392b" aria-label="この行を削除">✕</button>';
     } else {
       html+='<span style="flex:1;color:#9a8c70;font-size:.85rem">おでまるが提案します</span>'
         +'<button type="button" onclick="cpOpenAdd('+i2+')" style="border:1.5px solid #e8853d;background:'+(state.cpAddOpen===i2?'#e8853d':'#fff8f0')+';color:'+(state.cpAddOpen===i2?'#fff':'#b45f1d')+';border-radius:999px;padding:7px 14px;font-weight:800;font-size:.85rem">＋ 追加</button>';
+      if(state.customSlots.length>3&&i2!==__rli){
+        html+='<button type="button" onclick="cpRemoveRow('+i2+')" style="'+btnS+';color:#c0392b" aria-label="この枠を減らす">✕</button>';
+      }
     }
     html+='</div>';
     // ＋追加を開いた枠: その場候補3件+選択肢

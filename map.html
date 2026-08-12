@@ -85,7 +85,9 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
 .chip.play[data-t="food"].on{background:var(--food)}
 .chip[data-f="rain"].on{background:#3FA9D6}
 .chip[data-f="free"].on{background:var(--accent-d)}
-.chip[data-f="zashiki"].on,.chip[data-f="kids_chair"].on,.chip[data-f="kids"].on{background:var(--accent)}
+.chip[data-f="zashiki"].on,.chip[data-f="kids_chair"].on,.chip[data-f="kids"].on,.chip[data-f="chain"].on{background:var(--accent)}
+#foodSubChipsM{display:none;flex:0 0 auto}
+#foodSubChipsM.show{display:contents}
 .chip[data-f="jidokan"].on{background:var(--accent-d)}
 
 /* bottom sheet */
@@ -131,7 +133,7 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
   <select id="originSel" aria-label="出発地の街"></select>
   <button id="originGeo" type="button">📍現在地</button>
 </div>
-<div class="countbadge" id="countBadge">該当685件</div>
+<div class="countbadge" id="countBadge">該当…件</div>
 
 <div id="map" role="application" aria-label="スポットの地図"></div>
 <button id="recenterBtn" type="button" aria-label="現在地へ戻る" title="現在地へ戻る">⌖</button>
@@ -146,7 +148,7 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
   <button class="chip" data-f="rain">☔ 雨でもOK</button>
   <button class="chip" data-f="free">🆓 無料</button>
   <button class="chip" data-f="jidokan">🐥 児童館</button>
-  <span id="foodSubChipsM" style="display:none">
+  <span id="foodSubChipsM">
     <button class="chip" data-f="zashiki">🍵 座敷あり</button>
     <button class="chip" data-f="kids_chair">🪑 子ども椅子</button>
     <button class="chip" data-f="kids">🧸 キッズスペース</button> <button class="chip" data-f="chain">🍴 子連れチェーン店</button>
@@ -412,7 +414,8 @@ function updateFoodSubChipsM(){
   const el=document.getElementById('foodSubChipsM');
   if(!el) return;
   const show=state.play.has('food');
-  el.style.display=show?'':'none';
+  el.classList.toggle('show',show);
+  el.style.display='';
   if(!show){
     ['zashiki','kids_chair','kids','chain'].forEach(f=>{ state[f]=false; });
     el.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
@@ -485,7 +488,22 @@ function slotpickAdd(i){
 }
 function selHas(i){ return planSel.indexOf(i)>=0; }
 function toggleSel(i){
-  if(SLOTPICK!=null){ slotpickAdd(i); return; }
+  if(SLOTPICK!=null){
+    const s=SPOTS[i];
+    const li=SLOTLEN===5?2:1;
+    const isFood=((s.play_types||[]).includes('food'))||s.is_chain===true;
+    if(SLOTPICK===li&&!isFood){
+      const b=document.getElementById('addPlanBtn');
+      if(b) b.textContent='お昼の枠にはごはん店だけ入れられます🍽';
+      return;
+    }
+    if(SLOTPICK!==li&&isFood){
+      const b=document.getElementById('addPlanBtn');
+      if(b) b.textContent='ごはん店はお昼の枠にえらんでください🍽';
+      return;
+    }
+    slotpickAdd(i); return;
+  }
   const btn=document.getElementById('addPlanBtn');
   if(selHas(i)){
     planSel=planSel.filter(x=>x!==i);
