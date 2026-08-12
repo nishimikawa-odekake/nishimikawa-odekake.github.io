@@ -1792,6 +1792,15 @@ function cpNormalizeLunch(){
 }
 // お昼枠に入れてよいか: ごはん店(food/チェーン)または入力した場所(予約したお店など)のみ
 function cpIsFoodSpot(s){ return !!s&&(((s.play_types||[]).includes('food'))||s.is_chain===true||s.__temp===true); }
+function bentoSpot(){ return {name:'お弁当（持参）',city:'',play_types:['food'],is_free:true,__temp:true,__bento:true}; }
+function cpBento(){
+  const li=cpLI();
+  state.customSlots[li]=bentoSpot();
+  state.cpAddOpen=null;
+  if(typeof gtag==='function') gtag('event','plan_custom_bento');
+  cpSaveSlots(); renderCustomPanel();
+}
+function cpSetTarget(i){ state.cpTarget=i; renderCustomPanel(); }
 function tempSpot(name,lat,lng,addr){
   return {name:name,latitude:lat,longitude:lng,city:addr||'',play_types:['indoor'],is_free:true,__temp:true};
 }
@@ -1825,6 +1834,7 @@ function cpDelMyPlace(idx){
 }
 function cpResolveItem(it){
   if(!it) return null;
+  if(it.bento) return bentoSpot();
   if(it.temp) return tempSpot(it.n,it.lat,it.lng,it.addr);
   return SPOTS.find(s=>s.name===it.n)||null;
 }
@@ -1832,7 +1842,7 @@ function cpSaveSlots(){
   try{
     localStorage.setItem(CUSTOM_KEY,JSON.stringify({v:2,ts:Date.now(),
       li:cpLI(),
-      slots:state.customSlots.map(s=>!s?null:(s.__temp?{n:s.name,lat:s.latitude,lng:s.longitude,addr:s.city,temp:1}:{n:s.name}))}));
+      slots:state.customSlots.map(s=>!s?null:(s.__bento?{n:s.name,bento:1}:(s.__temp?{n:s.name,lat:s.latitude,lng:s.longitude,addr:s.city,temp:1}:{n:s.name})))}));
   }catch(e){}
 }
 function cpSavedData(){ try{ return JSON.parse(localStorage.getItem(CUSTOM_KEY)||'null'); }catch(e){ return null; } }
@@ -1971,6 +1981,7 @@ function cpUseMyPlace(slot,idx){
   const sp=SPOTS.find(s=>s.name===mp.n)||tempSpot(mp.n,mp.lat,mp.lng,mp.addr);
   const li=cpLI();
   let tgt=slot;
+  if(tgt==null&&state.cpTarget!=null&&!state.customSlots[state.cpTarget]) tgt=state.cpTarget;
   if(tgt==null){
     const order=state.customSlots.map((_,k)=>k).sort((a,b)=>(a===li)-(b===li));
     tgt=order.find(k=>!state.customSlots[k]&&(k!==li||cpIsFoodSpot(sp)));
@@ -2020,7 +2031,7 @@ function renderCustomPanel(){
       +'<span style="font-size:.72rem;font-weight:800;color:#e8853d;min-width:2.6em">'+lab+'</span>';
     if(s){
       html+='<span style="flex:1;font-weight:700;font-size:.92rem;min-width:0;overflow-wrap:anywhere">'+esc(s.name)
-        +(s.__temp?' <span style="font-size:.66rem;font-weight:600;color:#8a7a5a">（入力した場所）</span>':'')+'</span>';
+        +(s.__bento?' <span style="font-size:.66rem;font-weight:600;color:#8a7a5a">（現地で食べる）</span>':(s.__temp?' <span style="font-size:.66rem;font-weight:600;color:#8a7a5a">（入力した場所）</span>':''))+'</span>';
       if(i2===__rli){
         html+='<span style="font-size:.66rem;font-weight:700;color:#b9a988;white-space:nowrap">お昼固定</span>';
       } else {
@@ -2030,8 +2041,11 @@ function renderCustomPanel(){
       }
       html+='<button type="button" onclick="cpRemove('+i2+')" style="'+btnS+';color:#c0392b" aria-label="この行を削除">✕</button>';
     } else {
-      html+='<span style="flex:1;color:#9a8c70;font-size:.85rem">おでまるが提案します</span>'
-        +'<button type="button" onclick="cpOpenAdd('+i2+')" style="border:1.5px solid #e8853d;background:'+(state.cpAddOpen===i2?'#e8853d':'#fff8f0')+';color:'+(state.cpAddOpen===i2?'#fff':'#b45f1d')+';border-radius:999px;padding:7px 14px;font-weight:800;font-size:.85rem">＋ 追加</button>';
+      html+='<span style="flex:1;color:#9a8c70;font-size:.85rem">おでまるが提案します</span>';
+      if(i2===__rli){
+        html+='<button type="button" onclick="cpBento()" style="border:1.5px solid #d8c9b0;background:#fff;color:#6b5c40;border-radius:999px;padding:7px 10px;font-weight:800;font-size:.8rem;white-space:nowrap">🍱 お弁当</button>';
+      }
+      html+='<button type="button" onclick="cpOpenAdd('+i2+')" style="border:1.5px solid #e8853d;background:'+(state.cpAddOpen===i2?'#e8853d':'#fff8f0')+';color:'+(state.cpAddOpen===i2?'#fff':'#b45f1d')+';border-radius:999px;padding:7px 14px;font-weight:800;font-size:.85rem">＋ 追加</button>';
       if(state.customSlots.length>3&&i2!==__rli){
         html+='<button type="button" onclick="cpRemoveRow('+i2+')" style="'+btnS+';color:#c0392b" aria-label="この枠を減らす">✕</button>';
       }
@@ -2072,9 +2086,23 @@ function renderCustomPanel(){
     if(!__pmFull) html+='<button type="button" onclick="cpExpandPm()" style="'+__exBtn+'">＋ 午後の枠を追加</button>';
     html+='</div>';
   }
-  const tgtLab=state.cpTarget!=null?cpLabels(state.customSlots.length)[state.cpTarget]:null;
   html+='<div style="margin:14px 0;padding:12px;border:1.5px dashed #e8853d;border-radius:12px;background:#fff8f0">'
-    +'<div style="font-weight:800;margin-bottom:4px">＋ 予定している場所を追加'+(tgtLab?'<span style="font-size:.72rem;font-weight:800;color:#fff;background:#e8853d;border-radius:999px;padding:2px 10px;margin-left:8px">追加先: '+tgtLab+'</span>':'')+'</div>'
+    +'<div style="font-weight:800;margin-bottom:4px">＋ 予定している場所を追加</div>';
+  // 追加先チップ(空いている枠のみ)。お昼も選べる(予約したお店・お弁当を広げる場所など)
+  (function(){
+    const labs=cpLabels(state.customSlots.length);
+    const opts=state.customSlots.map((s,k)=>s?null:k).filter(k=>k!=null);
+    if(state.cpTarget!=null&&state.customSlots[state.cpTarget]) state.cpTarget=null;
+    const tOn='background:#e8853d;color:#fff;border:1px solid #e8853d';
+    const tOff='background:#fff;color:#6b5c40;border:1px solid #d8c9b0';
+    html+='<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin:2px 0 8px"><span style="font-size:.72rem;font-weight:800;color:#8a7a5a">追加先:</span>'
+      +'<button type="button" onclick="cpSetTarget(null)" style="'+(state.cpTarget==null?tOn:tOff)+';border-radius:999px;padding:5px 11px;font-weight:800;font-size:.76rem">おまかせ</button>';
+    opts.forEach(k=>{
+      html+='<button type="button" onclick="cpSetTarget('+k+')" style="'+(state.cpTarget===k?tOn:tOff)+';border-radius:999px;padding:5px 11px;font-weight:800;font-size:.76rem">'+labs[k]+'</button>';
+    });
+    html+='</div>';
+  })();
+  html+=''
     +'<div style="font-size:.74rem;color:#8a7a5a;line-height:1.6;margin-bottom:8px">祖父母の家・予約したお店・ホテル・習いごと・お友だちの家など、マップにない場所もプランに入れられます。一度追加した場所は「マイプレイス」に保存され、次回から1タップで呼び出せます。（サイトには掲載されません）</div>'
     +'<input id="cpName" placeholder="名前（例: 祖父母の家）" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #d8c9b0;border-radius:9px;font-size:.9rem;margin-bottom:6px">'
     +'<input id="cpAddr" placeholder="住所（例: 岡崎市康生通西2丁目）" style="width:100%;box-sizing:border-box;padding:10px;border:1px solid #d8c9b0;border-radius:9px;font-size:.9rem;margin-bottom:6px">'
@@ -2188,7 +2216,10 @@ async function customGenerate5(){
     t+=mStay;
     lastName=s.name; lastLat=s.latitude; lastLng=s.longitude; lastSpot=s;
   });
-  if(lunch){
+  if(lunch&&lunch.__bento){
+    rows.push({type:'move',time:t,label:'🍱 お弁当ランチ（移動なし）',sub:(lastSpot?lastName:'最初のスポット')+'でそのままお昼休憩。レジャーシートがあると安心'});
+    t+=50;
+  } else if(lunch){
     const ldm=lastSpot?legMinutes(lastLat,lastLng,lunch.latitude,lunch.longitude):(driveMinutesFrom(o,lunch)||30);
     rows.push({type:'move',time:t,label:'🚗 移動（約'+ldm+'分）',sub:transitLabel(lastName,lunch.name,ldm)});
     legSum+=ldm; t+=ldm;
@@ -2221,15 +2252,16 @@ async function customGenerate5(){
   legSum+=homeDm;
   if(t+homeDm>capHome+30) warn=true;
   // 費用集計(既存ルール踏襲)
-  const used=morning.concat(lunch?[lunch]:[],afternoon);
+  const used=morning.concat((lunch&&!lunch.__bento)?[lunch]:[],afternoon);
   let known=0,hasUnknown=false,allFree=true;
   used.filter(s=>!((s.play_types||[]).includes('food'))).forEach(s=>{ const pr=parsePrice(s); if(pr==null)hasUnknown=true; else{known+=pr; if(pr>0)allFree=false;} });
   let cost;
   if(allFree&&!hasUnknown) cost='入場料など 無料（大人1人あたり・ランチ代は別）';
   else if(known===0&&hasUnknown) cost='入場料などは公式サイトで確認（ランチ代は別）';
   else cost='入場料など 大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'')+'・ランチ代は別';
-  const plan={rows,main:morning[0]||afternoon[0],lunch:lunch||null,sub:afternoon[0]||null,totalDrive:legSum,cost,hasUnknown,homePriority:false,custom5:true};
-  state.shownMains=[plan.main]; state.shownLunches=lunch?[lunch]:[]; state.shownSubs=[];
+  const __lunchOut=(lunch&&!lunch.__bento)?lunch:null;
+  const plan={rows,main:morning[0]||afternoon[0],lunch:__lunchOut,sub:afternoon[0]||null,totalDrive:legSum,cost,hasUnknown,homePriority:false,custom5:true};
+  state.shownMains=[plan.main]; state.shownLunches=__lunchOut?[__lunchOut]:[]; state.shownSubs=[];
   state.swapFixed={}; state.swapSeen={}; state.cycledNote=false;
   state.isSharedView=false; state.isCustomView=true; state.custom5Warn=warn;
   state.excludedSpots=[]; state.lastPlanSpots=[];
@@ -2241,7 +2273,7 @@ async function customGenerate(){
   const sel=state.customSlots.filter(Boolean);
   const msg=document.getElementById('cpAddMsg');
   if(!sel.length){ if(msg) msg.textContent='場所を1つ以上えらんでください（マップからえらぶ、または上の入力から追加）'; return; }
-  if(state.customSlots.length>3){ return customGenerate5(); }
+  if(state.customSlots.length>3||(state.customSlots[cpLI()]&&state.customSlots[cpLI()].__bento)){ return customGenerate5(); }
   if(typeof gtag==='function') gtag('event','plan_custom_generate',{n:sel.length});
   document.getElementById('customPanel').style.display='none';
   document.getElementById('loading').style.display='block';
