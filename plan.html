@@ -824,6 +824,12 @@ function buildPool(date,w){
     if(pt.length===1&&pt[0]==='food') return false; // pure food -> lunch only
     const dm=driveMinutesFrom(o,s);
     if(dm==null||dm>CURRENT_CAP) return false;
+    // 距離帯リング: 「〜40分」は21〜40分、「〜60分」は41〜60分の帯からメインを選ぶ
+    // (近場は20分/40分選択で出るため。帯内に候補が無いときはRING_RELAXで近場も許可)
+    if(!window.RING_RELAX && CURRENT_CAP===capFor(state.driveTime)){
+      const dmin=state.driveTime==='40'?21:(state.driveTime==='60'?41:0);
+      if(dm<dmin) return false;
+    }
     if(!budgetPass(s)) return false;
     if(rain && !(s.indoor_or_outdoor==='indoor'||s.rain_friendly)) return false;
     if(rain && s.indoor_or_outdoor==='outdoor') return false; // 雨の日は屋外中心の施設を出さない
@@ -990,6 +996,7 @@ function subCandidates(main,lunch,mainDriveMin,date,w){
   const c=SPOTS.filter(s=>{
     if(s===main||s.latitude==null) return false;
     if(isJidokan(s)) return false; // 児童館・子育て支援センター系は余力枠からも除外（帰り道に寄らない）
+    if((s.play_types||[]).includes('food')) return false; // 午後スポット・余力枠は遊び場のみ(ランチ枠の直後に飲食店を続けない)
     if(!budgetPass(s)) return false; // 午後枠も予算条件に連動(無料限定をやめ、1日プランの午後スポットとして選ぶ)
     // 同一敷地・近接排除: メイン/ランチとの重複は不可（メイン↔ランチのみが距離例外）
     if(rain && s.indoor_or_outdoor==='outdoor') return false; // 雨の日の午後・余力枠にも屋外施設を入れない
@@ -1166,6 +1173,14 @@ function generatePlans(date,w){
   CURRENT_CAP=cap;
   let pool=buildPool(date,w);
   state.expandedDrive=false;
+  state.ringRelaxed=false;
+  // 距離帯(41〜60分等)に候補が無い場合のみ、近場も含めて再収集(上限は超えない)
+  if(!pool.length&&(state.driveTime==='40'||state.driveTime==='60')){
+    window.RING_RELAX=true;
+    pool=buildPool(date,w);
+    window.RING_RELAX=false;
+    if(pool.length) state.ringRelaxed=true;
+  }
   // 移動時間は「上限」。候補が少なくても勝手に範囲を広げない(広げるのはユーザーが明示的に承認した場合のみ)。
   if(!pool.length) return [];
   const tiered=applyDriveMoodTier(pool);
@@ -2214,6 +2229,10 @@ function showResult(){
   html+='</div>';
   if(!state.weather){
     html+='<div class="notice">※ 現在お天気情報を取得できなかったため、天気条件なしでプランを作成しています。</div>';
+  }
+  if(state.ringRelaxed){
+    const band=state.driveTime==='60'?'41〜60分':'21〜40分';
+    html+='<div class="notice">※ '+band+'の距離帯に合う候補が少なかったため、より近いスポットも含めてご提案しています。</div>';
   }
   if(state.expandedDrive){
     const dlab=['20','40','60'].includes(state.driveTime)?('〜'+state.driveTime+'分'):'ご希望';
