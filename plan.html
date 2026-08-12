@@ -1341,7 +1341,21 @@ function swapCandidates(slot,widenSteps){
   let steps=widenSteps||0;
   let usedCap=cap;
   while(steps>0&&usedCap!==Infinity){ usedCap=nextCap(usedCap); steps--; }
-  const list=swapListFor(slot,usedCap);
+  let list=swapListFor(slot,usedCap);
+  // 近接条件: いま選択中のスポットの付近を優先し、全然違う方向の候補を出さない。
+  // 基本は現スポットから15km(ランチは10km)以内。「広げる」1段ごとに+10km。
+  // 付近で3件に満たないときだけ距離順で遠い候補も後ろに足す(遠い分は「遠め」を明示)。
+  const refSpot=(state.swapFixed&&state.swapFixed[slot]&&state.swapFixed[slot].original)||(currentPlanObj()?currentPlanObj()[slot]:null);
+  let nearAllowKm=null;
+  if(refSpot&&refSpot.latitude!=null&&refSpot.longitude!=null){
+    nearAllowKm=(slot==='lunch'?10:15)+10*(widenSteps||0);
+    const withD=list.filter(s=>s&&s.latitude!=null&&s.longitude!=null)
+      .map(s=>({s,d:haversineKm(refSpot.latitude,refSpot.longitude,s.latitude,s.longitude)}));
+    withD.sort((a,b)=>a.d-b.d);
+    withD.forEach(x=>{ x.s.__swapDistKm=x.d; });
+    const near=withD.filter(x=>x.d<=nearAllowKm).map(x=>x.s);
+    list=near.length>=3?near:withD.map(x=>x.s);
+  }
   const out=swapFilter(list);
   // 指定圏を超える候補に「遠め」フラグ（黙って条件を破らないための明示）
   if(usedCap!==cap){
@@ -1351,6 +1365,10 @@ function swapCandidates(slot,widenSteps){
     });
   } else {
     out.forEach(s=>{ s.__swapFar=false; });
+  }
+  // 距離基準の「遠め」明示(付近で3件に満たず遠い候補を補った場合)
+  if(nearAllowKm!=null){
+    out.forEach(s=>{ if(s.__swapDistKm!=null&&s.__swapDistKm>nearAllowKm) s.__swapFar=true; });
   }
   return out;
 }
@@ -1452,7 +1470,8 @@ function refreshSwap(slot,btn){
     const reuse=all.filter(s=>!fresh.includes(s)).slice(0,3-fresh.length);
     fresh=fresh.concat(reuse);
   }
-  fresh.forEach(s=>{ s.__swapFar=false; });
+  const nearKm0=(slot==='lunch'?10:15);
+  fresh.forEach(s=>{ s.__swapFar=(s.__swapDistKm!=null&&s.__swapDistKm>nearKm0); });
   setSwapGroup(slot,fresh,false);
   const wrap=btn.closest('.swapwrap');
   if(wrap) renderSwapPanel(slot,wrap);
@@ -1463,7 +1482,18 @@ function swapFilterAll(slot){
   if(!state.excludedSpots) state.excludedSpots=[];
   const baseCap=capFor(state.driveTime);
   const cap=(state.expandedDrive&&CURRENT_CAP&&CURRENT_CAP>baseCap)?CURRENT_CAP:baseCap;
-  const list=swapListFor(slot,cap);
+  let list=swapListFor(slot,cap);
+  // 「ほかの候補を見る」でも近接条件を適用(現スポット付近を優先・距離順)
+  const refSpot=(state.swapFixed&&state.swapFixed[slot]&&state.swapFixed[slot].original)||p[slot]||null;
+  if(refSpot&&refSpot.latitude!=null&&refSpot.longitude!=null){
+    const nearKm=(slot==='lunch'?10:15);
+    const withD=list.filter(s=>s&&s.latitude!=null&&s.longitude!=null)
+      .map(s=>({s,d:haversineKm(refSpot.latitude,refSpot.longitude,s.latitude,s.longitude)}));
+    withD.sort((a,b)=>a.d-b.d);
+    withD.forEach(x=>{ x.s.__swapDistKm=x.d; });
+    const near=withD.filter(x=>x.d<=nearKm).map(x=>x.s);
+    list=near.length>=3?near:withD.map(x=>x.s);
+  }
   const inPlan=[p.main,p.lunch,p.sub].filter(Boolean);
   const out=[];
   for(const s of list){
