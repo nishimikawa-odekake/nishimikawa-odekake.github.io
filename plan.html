@@ -155,6 +155,8 @@ footer a{color:var(--sub)}
 .swapcard .sc-name{display:block;font-weight:800;font-size:.85rem;color:var(--ink,#333)}
 .swapcard .sc-meta{display:block;font-size:.72rem;color:var(--sub);margin-top:2px}
 .swapwrap .sc-none{font-size:.75rem;color:var(--sub);padding:4px}
+.swapcard .sc-far{display:block;font-size:.68rem;color:#b0722a;margin-top:2px;font-weight:700}
+.swapwiden{display:block;width:100%;text-align:center;background:#fff;border:1.5px dashed var(--accent);color:var(--accent-d);font-weight:800;font-size:.75rem;border-radius:10px;padding:8px;margin-top:6px;cursor:pointer}
 </style>
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -1213,31 +1215,63 @@ function swapSlotFor(r){
   return null;
 }
 function currentPlanObj(){ return state.plans.length?state.plans[state.variant%state.plans.length]:null; }
-// その枠の代替候補3件（現在表示中・同プラン内・外した施設は出さない）
-function swapCandidates(slot){
+// その枠の代替候補（原則3件）: 段階探索方式。
+// 1) ユーザー指定の移動圏内で条件完全一致の候補を探す（雨・年齢・営業時間・予算は緩めない）
+// 2) 3件未満なら移動圏を1段階ずつ広げて探すが、指定圏を超える候補には「指定圏より遠め」を明示する
+//    （自動では出さず、「条件を少し広げて候補を見る」ボタンを押したときだけ表示）
+// 現在表示中・同一プラン内・[変更する]で外した施設は常に除外。別プラン履歴の再利用は許可。
+function swapListFor(slot,cap){
   const p=currentPlanObj(); if(!p) return [];
   const date=targetDate(state.when), w=state.weather;
+  const savedCap=CURRENT_CAP;
+  CURRENT_CAP=cap;
+  let list=[];
+  try{
+    if(slot==='main'){
+      list=applyDriveMoodTier(buildPool(date,w));
+    } else if(slot==='lunch'){
+      list=lunchCandidates(p.main,date);
+    } else {
+      const dm=driveMinutesFrom(state.origin,p.main)||30;
+      list=subCandidates(p.main,p.lunch,dm,date,w);
+    }
+  }catch(e){ list=[]; }
+  CURRENT_CAP=savedCap;
+  return list;
+}
+function swapFilter(list,extra){
+  const p=currentPlanObj(); if(!p) return [];
   if(!state.excludedSpots) state.excludedSpots=[];
   const inPlan=[p.main,p.lunch,p.sub].filter(Boolean);
-  let list=[];
-  if(slot==='main'){
-    const savedCap=CURRENT_CAP;
-    CURRENT_CAP=capFor(state.driveTime);
-    list=applyDriveMoodTier(buildPool(date,w));
-    CURRENT_CAP=savedCap;
-  } else if(slot==='lunch'){
-    list=lunchCandidates(p.main,date);
-  } else {
-    const dm=driveMinutesFrom(state.origin,p.main)||30;
-    list=subCandidates(p.main,p.lunch,dm,date,w);
-  }
   const out=[];
   for(const s of list){
     if(inPlan.includes(s)) continue;
     if(state.excludedSpots.includes(s)) continue;
+    if(extra&&extra.includes(s)) continue;
     if(inPlan.some(x=>x!==s&&typeof isSamePlace==='function'&&isSamePlace(s,x,0.05))) continue;
     if(!out.includes(s)) out.push(s);
     if(out.length>=3) break;
+  }
+  return out;
+}
+function swapCandidates(slot,widenSteps){
+  const baseCap=capFor(state.driveTime);
+  // プラン生成時に自動拡張していた場合はその拡張後の圏を「基本圏」として扱う
+  let cap=baseCap;
+  if(state.expandedDrive&&CURRENT_CAP&&CURRENT_CAP>baseCap) cap=CURRENT_CAP;
+  let steps=widenSteps||0;
+  let usedCap=cap;
+  while(steps>0&&usedCap!==Infinity){ usedCap=nextCap(usedCap); steps--; }
+  const list=swapListFor(slot,usedCap);
+  const out=swapFilter(list);
+  // 指定圏を超える候補に「遠め」フラグ（黙って条件を破らないための明示）
+  if(usedCap!==cap){
+    out.forEach(s=>{
+      const dm=state.origin?driveMinutesFrom(state.origin,s):null;
+      s.__swapFar=(dm!=null&&cap!==Infinity&&dm>cap);
+    });
+  } else {
+    out.forEach(s=>{ s.__swapFar=false; });
   }
   return out;
 }
@@ -1250,24 +1284,46 @@ function swapCardHtml(slot,s,i){
   if(s.has_zashiki===true||/座敷/.test(feats)) tags.push('🍵 座敷あり');
   else if(s.has_kids_chair===true||/キッズチェア|子供椅子/.test(feats)) tags.push('🪑 子ども椅子');
   else if(s.rain_friendly===true||s.indoor_or_outdoor==='indoor') tags.push('☔ 屋内');
+  const farNote=s.__swapFar?'<span class="sc-far">📍 ご指定の移動圏より少し遠めです</span>':'';
   return '<button type="button" class="swapcard" onclick="applySwap(\''+slot+'\','+i+')">'+
     '<span class="sc-name">'+esc(s.name)+'</span>'+
-    '<span class="sc-meta">'+esc(s.city||'')+(tags.length?'・'+tags.join('・'):'')+'</span></button>';
+    '<span class="sc-meta">'+esc(s.city||'')+(tags.length?'・'+tags.join('・'):'')+'</span>'+farNote+'</button>';
 }
 function openSwap(slot,btn){
   if(typeof gtag==='function') gtag('event','plan_swap_open',{slot:slot});
   const wrap=btn.closest('.body').querySelector('.swapwrap[data-swapslot="'+slot+'"]');
   if(!wrap) return;
   if(wrap.style.display!=='none'){ wrap.style.display='none'; return; }
-  const cands=swapCandidates(slot);
+  const cands=swapCandidates(slot,0);
   state.swapCands=state.swapCands||{};
   state.swapCands[slot]=cands;
+  let inner='';
   if(!cands.length){
-    wrap.innerHTML='<div class="sc-none">この条件で入れ替えられる候補が見つかりませんでした</div>';
+    inner='<div class="sc-none">この条件で入れ替えられる候補が見つかりませんでした</div>';
   } else {
-    wrap.innerHTML='<div class="sc-head">かわりの候補：</div>'+cands.map((s,i)=>swapCardHtml(slot,s,i)).join('');
+    inner='<div class="sc-head">かわりの候補：</div>'+cands.map((s,i)=>swapCardHtml(slot,s,i)).join('');
   }
+  if(cands.length<3){
+    inner+='<button type="button" class="swapwiden" onclick="widenSwap(\''+slot+'\',this)">🔍 条件を少し広げて候補を見る</button>';
+  }
+  wrap.innerHTML=inner;
   wrap.style.display='block';
+}
+// 「条件を少し広げて候補を見る」: 移動圏を1段階ずつ(最大2段階)広げて3件を目指す。
+// 雨・年齢・営業時間・予算の条件は緩めない。指定圏を超える候補にはカード内で明示する。
+function widenSwap(slot,btn){
+  if(typeof gtag==='function') gtag('event','plan_swap_widen',{slot:slot});
+  let cands=swapCandidates(slot,1);
+  if(cands.length<3) cands=swapCandidates(slot,2);
+  state.swapCands=state.swapCands||{};
+  state.swapCands[slot]=cands;
+  const wrap=btn.closest('.swapwrap');
+  if(!wrap) return;
+  if(!cands.length){
+    wrap.innerHTML='<div class="sc-none">条件を広げても候補が見つかりませんでした。「別のプランにする」もお試しください</div>';
+  } else {
+    wrap.innerHTML='<div class="sc-head">かわりの候補（範囲を広げて探しました）：</div>'+cands.map((s,i)=>swapCardHtml(slot,s,i)).join('');
+  }
 }
 function applySwap(slot,i){
   const p=currentPlanObj(); if(!p) return;
