@@ -1079,7 +1079,7 @@ function buildPlan(main,date,w,shareOverride){
     lastName=lunch.name; lastLat=lunch.latitude; lastLng=lunch.longitude; lastSpot=lunch;
   }
   // age-based fatigue: 0-2 -> no additional post-meal spot, go home; 3-5 -> max 1 extra spot (bonus tier);
-  if(onlyToddler) sub=null;
+  // 0-2歳のみでも「スポット→ランチ→スポット」の基本形は維持する(帰宅上限で滞在側を調整)
   let bonusNote=null;
   // 午前出発(概ね11時以前)は、ランチで終わらず午後スポットを1つ確定枠で入れて
   // 15〜16時ごろ帰着の構成にする（滞在90分前後・昼寝配慮）。
@@ -1087,18 +1087,31 @@ function buildPlan(main,date,w,shareOverride){
   let afternoonMode=false;
   // 午前〜13時ごろ出発のプランは「午前スポット→ランチ→午後スポット→帰路」の1日構成を基本にする。
   // 帰路開始は原則15:30以降、条件が許せば16:30ごろまで午後スポットで遊び、帰宅は18時前後まで。
-  if(sub&&lunch&&startMin<=13*60){
-    const sdm0=legMinutes(lastLat,lastLng,sub.latitude,sub.longitude);
+  // 「スポット→ランチ→スポット」を基本形として保証:
+  // 選定済みsubが時間割に収まらない場合も、候補を順に試して必ず午後スポットを確保する(物理的に不可能な場合のみ余力枠へ)
+  let __subTry=[];
+  if(sub&&lunch) __subTry.push(sub);
+  if(lunch&&!shareOverride){
+    try{
+      const __more=subCandidates(main,lunch,dm,date,w).filter(x=>x&&x!==sub&&!(x.play_types||[]).includes('food'));
+      __subTry=__subTry.concat(__more.slice(0,12));
+    }catch(e){}
+  }
+  for(const __cand of __subTry){
+    if(afternoonMode) break;
+    const sdm0=legMinutes(lastLat,lastLng,__cand.latitude,__cand.longitude);
     const arr0=t+sdm0;
-    const ci0=closingInfo(sub,arr0);
-    const bdm0=driveMinutesFrom(o,sub)||legMinutes(sub.latitude,sub.longitude,o.lat,o.lng);
-    // 帰路開始時刻の設計: 目標は max(到着+90分, 16:30)。ただし閉館時刻と「18:00ごろ帰宅」上限でキャップ。
-    const bh0=parseBusinessHours(sub);
-    const limit0=Math.min(bh0?bh0.closeMin:Infinity, 18*60-bdm0);
+    const ci0=closingInfo(__cand,arr0);
+    const bdm0=driveMinutesFrom(o,__cand)||legMinutes(__cand.latitude,__cand.longitude,o.lat,o.lng);
+    // 帰路開始時刻の設計: 目標は max(到着+90分, 16:30)。閉館時刻と帰宅上限(通常18:00・乳児のみ18:15)でキャップ。
+    const bh0=parseBusinessHours(__cand);
+    const __capHome=onlyToddler?(18*60+15):(18*60);
+    const limit0=Math.min(bh0?bh0.closeMin:Infinity, __capHome-bdm0);
     let depart0=Math.min(Math.max(arr0+90, 16*60+30), limit0);
     depart0=Math.floor(depart0/15)*15;
-    // 60分以上遊べない場合は午後確定枠にしない（ほとんど遊べない施設に連れて行かない）
+    // 60分以上遊べない場合はこの候補を諦めて次へ
     if(!ci0.exclude && depart0>=arr0+60){
+      sub=__cand;
       afternoonMode=true;
       rows.push({type:'move',time:t,label:'🚗 移動（約'+sdm0+'分）',sub:transitLabel(lastName,sub.name,sdm0)});
       legSum+=sdm0;
