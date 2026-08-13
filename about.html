@@ -58,6 +58,7 @@ footer{border-top:1px solid #e7ddcd;padding:18px 0 40px;color:#7a746a;font-size:
 <article class="card">
 <p>あいち子育ておでかけマップは、<strong>二児のパパ</strong>が個人で運営している、子連れおでかけ情報サイトです。</p>
 <p>週末や雨の日に「子どもをどこへ連れて行こう？」と悩んだ経験から、愛知県内の子連れスポットを探しやすくまとめました。地図から近くのスポットを探したり、条件で絞り込んだり、質問に答えるだけで今日のおでかけプランを自動作成できる機能もあります。</p>
+<p>西三河から始めたこのマップは、現在では全国へ拡大。愛知版と全国版をあわせて、<span data-stat="prefs">47</span>都道府県・総掲載<span data-stat="total">13,859</span>スポットを掲載しています。</p>
 <h2>掲載情報の方針</h2>
 <p>掲載情報はすべて公式サイト等で確認し、確認日を記録しています。ただし営業時間・料金・休業日・設備情報などは予告なく変更される場合があります。お出かけの際は、必ず公式サイト等で最新情報をご確認ください。</p>
 
@@ -99,5 +100,6 @@ footer{border-top:1px solid #e7ddcd;padding:18px 0 40px;color:#7a746a;font-size:
 <footer><div class="wrap">あいち子育ておでかけマップ｜愛知の子連れおでかけ・遊び場・ランチ検索
 <div class="footlinks"><a href="./about.html">運営者情報</a> | <a href="./disclaimer.html">免責事項</a> | <a href="./privacy.html">プライバシーポリシー</a> | <a href="https://docs.google.com/forms/d/e/1FAIpQLSdcSuUG_4MbFgNq-Ejn_cfDvXKhQdQZh4DxITrDiKlo4ocFfw/viewform" target="_blank" rel="noopener">お問い合わせ</a> | <a href="./request.html">掲載情報の修正・削除依頼</a></div>
 </div></footer>
+<script>(function(){try{fetch('https://kosodate-odekake.jp/stats.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(s){if(!s)return;document.querySelectorAll('[data-stat]').forEach(function(el){var k=el.getAttribute('data-stat');if(s[k]!=null)el.textContent=Number(s[k]).toLocaleString('ja-JP');});}).catch(function(){});}catch(e){}})();</script>
 </body>
 </html>
