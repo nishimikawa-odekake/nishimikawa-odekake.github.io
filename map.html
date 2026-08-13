@@ -615,7 +615,7 @@ function setOrigin(name,lat,lng){
   apply();
   updateOriginMarker();
   // 選んだ街を中心に自動ズーム(その街の周りから選べるように)
-  try{ if(map&&isFinite(lat)&&isFinite(lng)) map.setView([lat,lng],12); }catch(e){}
+  try{ if(map&&isFinite(lat)&&isFinite(lng)) map.setView([lat,lng],12,{animate:false}); }catch(e){}
 }
 
 // --- 現在地UX: 青ドット表示・初回自動パン・トースト通知（alert不使用） ---
