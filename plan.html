@@ -958,6 +958,9 @@ function lunchCandidates(main,date){
     if(isJidokan(s)) return false; // 児童館・子育て支援センター系はプランナー対象外（🏠チップ専用）
     if(isSameComplex(s,main)) return false; // 同一敷地はメイン↔ランチでも除外（距離は例外だが施設名一致は除外）
     if(!isLunchable(s)) return false; // food主体の店のみ(公園×foodタグは対象外)
+    // 雨・室内モードではランチ枠にも屋外の店(農園カフェ等)を入れない。
+    // 愛知データにはほぼ存在しなかったが、全国データには屋外foodが含まれるため明示的に除外する。
+    if(isIndoorMode(state.weather)&&(s.indoor_or_outdoor==='outdoor'||!(s.indoor_or_outdoor==='indoor'||s.rain_friendly))) return false;
     // ランチは予算条件の対象外（昼食代はどのみち発生する別会計）だが、
     // 1人あたり LUNCH_MAX_YEN 円を超える価格が読み取れる店は常に除外する。
     // 価格不明(null)は通す（food候補の大半が価格未記載のため）。
