@@ -293,7 +293,7 @@ try{
     const icon=L.divIcon({className:'',html:'<div class="pin" style="background:'+col+'"><span>'+emo+'</span></div>',iconSize:[34,34],iconAnchor:[17,34],popupAnchor:[0,-30]});
     const m=L.marker([s.latitude,s.longitude],{icon,title:s.name});
     m._spotIndex=i;
-    m.on('click',()=>openSheet(i));
+    m.on('click',()=>onMarkerClick(i));
     markers[i]=m;
     m.addTo(map);
   });
@@ -301,6 +301,69 @@ try{
   console.warn('map init failed',e);
   map=null;
 }
+
+/* ===== 近接ピンの展開(spiderfy): 同一・近接座標のピンをタップで扇状に広げて選べるようにする ===== */
+let spider={ids:null,orig:null,legs:[]};
+function unspiderfy(){
+  if(!spider.ids) return;
+  spider.ids.forEach(function(idx,k){
+    const m=markers[idx];
+    if(m){ try{ m.setLatLng(spider.orig[k]); if(m.setZIndexOffset) m.setZIndexOffset(0); }catch(e){} }
+  });
+  spider.legs.forEach(function(l){ try{ map.removeLayer(l); }catch(e){} });
+  spider={ids:null,orig:null,legs:[]};
+}
+function overlapGroup(i){
+  // 現在のズームで20px以内にある表示中ピンをグループ化
+  const out=[];
+  try{
+    const base=map.latLngToContainerPoint(markers[i].getLatLng());
+    SPOTS.forEach(function(s,j){
+      const m=markers[j];
+      if(!m||!map.hasLayer(m)) return;
+      const p=map.latLngToContainerPoint(m.getLatLng());
+      const dx=p.x-base.x, dy=p.y-base.y;
+      if(dx*dx+dy*dy<=20*20) out.push(j);
+    });
+  }catch(e){ return [i]; }
+  return out.length?out:[i];
+}
+function spiderfy(ids){
+  unspiderfy();
+  try{
+    const center=markers[ids[0]].getLatLng();
+    const cpt=map.latLngToContainerPoint(center);
+    const n=ids.length, R=38+6*n;
+    spider={ids:ids.slice(),orig:[],legs:[]};
+    ids.forEach(function(idx,k){
+      const m=markers[idx];
+      spider.orig.push(m.getLatLng());
+      const ang=(2*Math.PI*k)/n-Math.PI/2;
+      const ll=map.containerPointToLatLng(L.point(cpt.x+R*Math.cos(ang),cpt.y+R*Math.sin(ang)));
+      const leg=L.polyline([center,ll],{color:'#b45f1d',weight:1.5,opacity:.65,dashArray:'3,3',interactive:false});
+      leg.addTo(map); spider.legs.push(leg);
+      m.setLatLng(ll);
+      if(m.setZIndexOffset) m.setZIndexOffset(1000);
+    });
+  }catch(e){ spider={ids:null,orig:null,legs:[]}; }
+}
+function onMarkerClick(i){
+  if(spider.ids){
+    if(spider.ids.indexOf(i)>=0){ unspiderfy(); openSheet(i); return; }  // 展開中のピンを選択
+    unspiderfy();
+  }
+  const g=overlapGroup(i);
+  if(g.length>1){ spiderfy(g); return; }   // 重なりあり→まず展開
+  openSheet(i);
+}
+// 余白タップ・地図移動・ズームで展開を閉じる
+try{
+  if(map){
+    map.on('click',unspiderfy);
+    map.on('zoomstart',unspiderfy);
+    map.on('movestart',unspiderfy);
+  }
+}catch(e){}
 
 let originMarker=null;
 function homeDivIcon(label){
@@ -551,6 +614,8 @@ function setOrigin(name,lat,lng){
   try{ localStorage.setItem('odemaru_custom_origin_v1',JSON.stringify({name:name,lat:lat,lng:lng,isAnjo:(name==='安城市')})); }catch(e){}
   apply();
   updateOriginMarker();
+  // 選んだ街を中心に自動ズーム(その街の周りから選べるように)
+  try{ if(map&&isFinite(lat)&&isFinite(lng)) map.setView([lat,lng],12); }catch(e){}
 }
 
 // --- 現在地UX: 青ドット表示・初回自動パン・トースト通知（alert不使用） ---
