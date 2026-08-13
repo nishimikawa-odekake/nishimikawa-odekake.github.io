@@ -2173,7 +2173,7 @@ function initCustom(){
   if(__so) state.origin=__so;
   else if(!state.origin) state.origin={name:'安城市',lat:ANJO[0],lng:ANJO[1],isAnjo:true};
   if(!state.when||state.when==='sat'||state.when==='sun') state.when=state.when||'today';
-  state.cpScrolledOnce=false; state.cpAddOpen=null; state.cpTarget=null; state.cpSug={};
+  state.cpScrolledOnce=false; state.cpAddOpen=null; state.cpTarget=null; state.cpSug={}; state.cpSugSeen={}; state.cpSugCycled={};
   cpSaveSlots();
   renderCustomPanel();
 }
@@ -2238,6 +2238,27 @@ function cpGeo(){
     if(note) note.textContent='現在地を取得できませんでした。位置情報の許可をご確認ください';
   },{enableHighAccuracy:false,timeout:8000,maximumAge:120000});
 }
+// カスタム枠の候補カードの所要時間の基準点。
+// タイムライン順で対象枠より前にある、座標を持つ直近のスポット(個人追加の__tempも可)。
+// 見つからなければnull=出発地基準にフォールバック(=最初の枠)。
+function cpPrevSpot(slot){
+  const cs=state.customSlots||[];
+  for(let k=Number(slot)-1;k>=0;k--){
+    const s=cs[k];
+    if(s&&!s.__bento&&s.latitude!=null&&s.longitude!=null) return s;
+  }
+  return null;
+}
+// 候補カードの所要時間ラベル(通常版swapCardHtmlと同じ文言/基準)
+function cpSugTimeLabel(slot,sp){
+  const prev=cpPrevSpot(slot);
+  if(prev&&sp&&sp.latitude!=null&&sp.longitude!=null){
+    const dm=driveMinutesFrom({lat:prev.latitude,lng:prev.longitude,isAnjo:false},sp);
+    if(dm!=null) return '🚗'+swapShortName(prev.name)+'から約'+dm+'分';
+  }
+  const dm0=state.origin?driveMinutesFrom(state.origin,sp):null;
+  return dm0!=null?('🚗約'+dm0+'分'):'';
+}
 function cpSuggest(slot){
   // その枠に合う候補3件をその場で出す(枠の時間帯・移動条件・営業時間で絞る)
   const date=targetDate(state.when||'today');
@@ -2265,13 +2286,35 @@ function cpSuggest(slot){
   pool.forEach(s=>{ s.__cpD=haversineKm(refLat,refLng,s.latitude,s.longitude); });
   pool.sort((a,b)=>a.__cpD-b.__cpD);
   const top=pool.slice(0,10);
+  // 既出候補(cpSugSeen)は除外。出し尽くしたら履歴をリセットして最初に戻る(ループ通知)
+  state.cpSugSeen=state.cpSugSeen||{};
+  state.cpSugCycled=state.cpSugCycled||{};
+  const seen=state.cpSugSeen[slot]||[];
+  let base=top.filter(s=>!seen.includes(s.name));
+  if(!base.length&&top.length){
+    state.cpSugSeen[slot]=[];
+    state.cpSugCycled[slot]=true;
+    base=top.slice();
+  } else {
+    state.cpSugCycled[slot]=false;
+  }
   // 上位10件からシャッフルで3件(押すたびに入れ替え)
-  for(let x=top.length-1;x>0;x--){ const y=Math.floor(Math.random()*(x+1)); const t2=top[x]; top[x]=top[y]; top[y]=t2; }
-  return top.slice(0,3);
+  for(let x=base.length-1;x>0;x--){ const y=Math.floor(Math.random()*(x+1)); const t2=base[x]; base[x]=base[y]; base[y]=t2; }
+  let out2=base.slice(0,3);
+  if(out2.length<3){
+    // 足りなければ既出の再利用を許可(見た目上いつも3件そろえる)
+    top.forEach(s=>{ if(out2.length<3&&!out2.includes(s)) out2.push(s); });
+  }
+  state.cpSugSeen[slot]=(state.cpSugSeen[slot]||[]).concat(out2.map(s=>s.name).filter(n=>!(state.cpSugSeen[slot]||[]).includes(n)));
+  return out2;
 }
 function cpOpenAdd(slot){
   state.cpAddOpen=(state.cpAddOpen===slot)?null:slot;
-  if(state.cpAddOpen!=null) state.cpSug[slot]=cpSuggest(slot);
+  if(state.cpAddOpen!=null){
+    state.cpSugSeen=state.cpSugSeen||{}; state.cpSugSeen[slot]=[];
+    state.cpSugCycled=state.cpSugCycled||{}; state.cpSugCycled[slot]=false;
+    state.cpSug[slot]=cpSuggest(slot);
+  }
   renderCustomPanel();
 }
 function cpMoreSug(slot){ state.cpSug[slot]=cpSuggest(slot); renderCustomPanel(); }
@@ -2399,11 +2442,15 @@ function renderCustomPanel(){
       const sug=state.cpSug[i2]||[];
       html+='<div style="border:1px dashed #e8ddcc;border-top:none;border-radius:0 0 12px 12px;padding:10px;background:#fffdf8;margin:0 6px">';
       if(sug.length){
+        if(state.cpSugCycled&&state.cpSugCycled[i2]){
+          html+='<div style="font-size:11px;color:#888;margin:0 0 6px">🔁 最初の候補に戻りました</div>';
+          state.cpSugCycled[i2]=false;
+        }
         html+='<div style="font-size:.75rem;font-weight:800;color:#8a7a5a;margin-bottom:6px">この枠に合いそうな場所:</div>';
         sug.forEach((sp,si)=>{
-          const dm2=state.origin?driveMinutesFrom(state.origin,sp):null;
+          const dmL=cpSugTimeLabel(i2,sp);
           html+='<div style="display:flex;align-items:center;gap:7px;padding:8px;border:1px solid #eee3d0;border-radius:10px;margin:5px 0;background:#fff">'
-            +'<span style="flex:1;min-width:0"><b style="font-size:.88rem">'+esc(sp.name)+'</b><br><span style="font-size:.72rem;color:#8a7a5a">'+esc(sp.city||'')+(dm2!=null?'・🚗約'+dm2+'分':'')+(sp.is_free===true?'・無料':'')+'</span></span>'
+            +'<span style="flex:1;min-width:0"><b style="font-size:.88rem">'+esc(sp.name)+'</b><br><span style="font-size:.72rem;color:#8a7a5a">'+esc(sp.city||'')+(dmL?'・'+esc(dmL):'')+(sp.is_free===true?'・無料':'')+'</span></span>'
             +'<button type="button" onclick="cpPickSug('+i2+','+si+')" style="border:none;background:#e8853d;color:#fff;border-radius:999px;padding:8px 12px;font-weight:800;font-size:.8rem;white-space:nowrap">＋この場所</button></div>';
         });
         html+='<button type="button" onclick="cpMoreSug('+i2+')" style="width:100%;'+btnS+';margin:4px 0 8px">🔁 ほかの候補を見る</button>';
