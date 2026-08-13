@@ -1712,7 +1712,7 @@ function swapCardHtml(slot,s,i){
   const prev=swapPrevSpot(slot);
   let dm=null,dmLabel='';
   if(prev&&prev.latitude!=null&&prev.longitude!=null&&s.latitude!=null&&s.longitude!=null){
-    dm=driveMinutesFrom({lat:prev.latitude,lng:prev.longitude,isAnjo:false},s);
+    dm=legMinutes(prev.latitude,prev.longitude,s.latitude,s.longitude);
     if(dm!=null) dmLabel='🚗 '+esc(swapShortName(prev.name))+'から約'+dm+'分';
   } else {
     dm=state.origin?driveMinutesFrom(state.origin,s):null;
@@ -2253,7 +2253,7 @@ function cpPrevSpot(slot){
 function cpSugTimeLabel(slot,sp){
   const prev=cpPrevSpot(slot);
   if(prev&&sp&&sp.latitude!=null&&sp.longitude!=null){
-    const dm=driveMinutesFrom({lat:prev.latitude,lng:prev.longitude,isAnjo:false},sp);
+    const dm=legMinutes(prev.latitude,prev.longitude,sp.latitude,sp.longitude);
     if(dm!=null) return '🚗'+swapShortName(prev.name)+'から約'+dm+'分';
   }
   const dm0=state.origin?driveMinutesFrom(state.origin,sp):null;
