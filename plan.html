@@ -1028,8 +1028,18 @@ function buildPlan(main,date,w,shareOverride){
       const tt=((t%1440)+1440)%1440;
       if(tt>=16*60) waterNote='※水遊びする場合は着替え・タオル持参がおすすめです／※夕方のため、水遊びは短時間利用がおすすめです';
     }
-    rows.push({type:'spot',time:t,spot:lunch,tag:mealTag,food:true,paynote:state.budget==='free',closeNote:arrivalCi.note,waterNote});
-    t+=60;
+    // 食事枠も閉店15分前を終了上限に(会計・トイレ・支度の余裕)
+    let mealStay=60, mealNote=null;
+    const mealBh=parseBusinessHours(lunch);
+    if(mealBh){
+      const mealLimit=mealBh.closeMin-15;
+      if(t+mealStay>mealLimit){
+        mealStay=Math.max(30,Math.floor((mealLimit-t)/15)*15);
+        mealNote='※閉店が近いため滞在めやす〜'+mealStay+'分（閉店15分前までの利用がおすすめです）';
+      }
+    }
+    rows.push({type:'spot',time:t,spot:lunch,tag:mealTag,food:true,paynote:state.budget==='free',closeNote:mealNote?((arrivalCi.note?arrivalCi.note+'／':'')+mealNote):arrivalCi.note,waterNote});
+    t+=mealStay;
     lastName=lunch.name; lastLat=lunch.latitude; lastLng=lunch.longitude; lastSpot=lunch;
   }
   // age-based fatigue: 0-2 -> no additional post-meal spot, go home; 3-5 -> max 1 extra spot (bonus tier);
@@ -1116,9 +1126,11 @@ function buildPlan(main,date,w,shareOverride){
       rows.push({type:'move',time:t,label:'🚗 移動（約'+sdm+'分）',sub:transitLabel(lastName,sub.name,sdm),opt:true});
       rows.push({type:'spot',time:arrival,spot:sub,tag:'余力があれば',opt:true,closeNote:ci.note,bonusNote,waterNote,returnNote:'滞在めやす 〜'+stayB+'分'});
       rows.push({type:'move',time:departB,label:'🚗 寄った場合の帰路（約'+bdm+'分）',sub:transitLabel(sub.name,'ご自宅',bdm)+'／帰着めやす '+fmtTime(retB)+'ごろ',opt:true});
-      // 採用した場合の追加運転時間(本編の直帰帰路との差分)
+      // 採用した場合の追加運転時間(本編の直帰帰路との差分)と追加入場料
       rows.__bonusExtra=Math.max(0,sdm+bdm-homeDm);
       rows.__bonusReturn=retB;
+      rows.__bonusIsBonus=true;
+      rows.__bonusPrice=parsePrice(sub);
     })();
   } else {
     // 余力枠が無い通常ケース: 帰路はここで1回だけ表示（最後に居る場所からの帰路）
@@ -1126,8 +1138,9 @@ function buildPlan(main,date,w,shareOverride){
     rows.push({type:'move',time:t,label:'🚗 帰路（約'+homeDm2+'分）',sub:transitLabel(lastName,'ご自宅',homeDm2)+'／帰着めやす '+fmtTime(t+homeDm2)+'ごろ'});
     legSum+=homeDm2; rows.__retHome=t+homeDm2;
   }
-  // totals
-  const spotsUsed=[main].concat(lunch?[lunch]:[],sub?[sub]:[]);
+  // totals: 余力枠(タイムライン外の任意スポット)は基本プランの入場料合計に含めない
+  const subInMain=afternoonMode&&sub?true:false;
+  const spotsUsed=[main].concat(lunch?[lunch]:[],(subInMain&&sub)?[sub]:[]);
   // 合計＝本編タイムライン上に表示した全区間の単純合計（余力枠の区間は含めない）
   let totalDrive=legSum;
   let known=0, hasUnknown=false, allFree=true;
@@ -1139,7 +1152,7 @@ function buildPlan(main,date,w,shareOverride){
   else if(known===0&&hasUnknown) cost='入場料などは公式サイトで確認（ランチ代は別）';
   else cost='入場料など 大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'')+'・ランチ代は別';
   const homePriority = onlyToddler && !sub;
-  return {rows,main,lunch,sub,totalDrive,cost,hasUnknown,homePriority,bonusExtra:rows.__bonusExtra||0,bonusReturn:rows.__bonusReturn||null,retHome:rows.__retHome||null};
+  return {rows,main,lunch,sub,totalDrive,cost,hasUnknown,homePriority,bonusExtra:rows.__bonusExtra||0,bonusReturn:rows.__bonusReturn||null,retHome:rows.__retHome||null,costKnown:known,bonusPrice:(rows.__bonusIsBonus?rows.__bonusPrice:null)};
 }
 function generatePlans(date,w){
   let cap=capFor(state.driveTime);
@@ -2409,8 +2422,14 @@ async function customGenerate5(){
     rows.push({type:'move',time:t,label:'🚗 移動（約'+ldm+'分）',sub:transitLabel(lastName,lunch.name,ldm)});
     legSum+=ldm; t+=ldm;
     const lci=closingInfo(lunch,t);
-    rows.push({type:'spot',time:t,spot:lunch,tag:mealLabelFor(t),food:true,paynote:state.budget==='free',closeNote:lci.note});
-    t+=60;
+    let mealStay5=60, mealNote5=null;
+    const mealBh5=parseBusinessHours(lunch);
+    if(mealBh5){
+      const ml5=mealBh5.closeMin-15;
+      if(t+mealStay5>ml5){ mealStay5=Math.max(30,Math.floor((ml5-t)/15)*15); mealNote5='※閉店が近いため滞在めやす〜'+mealStay5+'分（閉店15分前までの利用がおすすめです）'; }
+    }
+    rows.push({type:'spot',time:t,spot:lunch,tag:mealLabelFor(t),food:true,paynote:state.budget==='free',closeNote:mealNote5?((lci.note?lci.note+'／':'')+mealNote5):lci.note});
+    t+=mealStay5;
     lastName=lunch.name; lastLat=lunch.latitude; lastLng=lunch.longitude; lastSpot=lunch;
   }
   // 午後枠: 残り時間を人数割り(最短45分・最長90分)
@@ -2581,20 +2600,32 @@ function showResult(){
     html+='<div class="notice" style="margin:8px 0;background:#fff4e5;border:1px solid #f0c48a;border-radius:10px;padding:10px 12px;font-size:.82rem">🍴 午後からの出発のため、お昼ごはんは済ませてからの出発を想定しています。プラン内の食事枠は「カフェ・おやつ休憩」や「早めの夕食」としてご利用ください。</div>';
   }
   const __dh=Math.floor(p.totalDrive/60), __dm=p.totalDrive%60, __dstr='約'+(__dh?__dh+'時間':'')+(__dm?__dm+'分':(__dh?'':'0分'));
-  const __narrowBtn=(!state.isCustomView&&narrowerDrive(state.driveTime))?'<button type="button" onclick="narrowRegen()" style="display:block;width:100%;margin-top:8px;padding:11px;border-radius:10px;border:none;background:#e8853d;color:#fff;font-weight:800;font-size:.88rem">🔁 近い場所で作り直す</button>':'';
-  if(!p.__late&&state.ages&&state.ages.has('3-5')&&((p.retHome&&p.retHome>=18*60+30)||p.totalDrive>=150)){
+  // 警告の一本化: 強警告(帰着19:00以上 or 総移動180分以上) > 上限超過(__late) > 幼児警告(3-5歳・帰着18:00以上 or 総移動120分以上) > 参考(移動多め)
+  const __canNarrow=!state.isCustomView&&narrowerDrive(state.driveTime);
+  const __strong=(p.retHome&&p.retHome>=19*60)||p.totalDrive>=180;
+  const __kidW=!__strong&&!p.__late&&state.ages&&state.ages.has('3-5')&&((p.retHome&&p.retHome>=18*60)||p.totalDrive>=120);
+  let __warned=false;
+  if(__strong){
     const __why=[];
-    if(p.retHome&&p.retHome>=18*60+30) __why.push('帰着めやす '+fmtTime(p.retHome)+'ごろ');
-    if(p.totalDrive>=150) __why.push('運転合計 '+__dstr);
-    html+='<div class="notice" style="margin:8px 0;background:#fff3e6;border:1.5px solid #e0964a;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 小さいお子さん連れには帰宅が遅め・移動が多めのプランです（'+__why.join('・')+'）'+__narrowBtn+'</div>';
-  }
-  if(p.__late&&p.retHome){
-    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 帰宅が遅めのプランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。この条件では近い候補が見つかりませんでした'+__narrowBtn+'</div>';
-  }
-  if(p.totalDrive>=180){
-    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ この組み合わせは移動が多すぎます（運転合計 '+__dstr+'）。'+(state.isCustomView?'1カ所減らす・近い場所に変える・2日に分けるのがおすすめです（下の「えらんだ場所を編集する」から変更できます）':'お子さんの負担が大きいため、近場のプランへの変更もご検討ください'+__narrowBtn)+'</div>';
+    if(p.retHome&&p.retHome>=19*60) __why.push('帰着めやす '+fmtTime(p.retHome)+'ごろ');
+    if(p.totalDrive>=180) __why.push('運転合計 '+__dstr);
+    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ このプランは負担が大きめです（'+__why.join('・')+'）。'+(state.isCustomView?'1カ所減らす・近い場所に変える・2日に分けるのがおすすめです（下の「えらんだ場所を編集する」から変更できます）':'そのまま使う場合は休憩を多めにどうぞ')+'</div>';
+    __warned=true;
+  } else if(p.__late&&p.retHome){
+    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 帰宅が遅めのプランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。この条件では近い候補が見つかりませんでした</div>';
+    __warned=true;
+  } else if(__kidW){
+    const __why=[];
+    if(p.retHome&&p.retHome>=18*60) __why.push('帰着めやす '+fmtTime(p.retHome)+'ごろ');
+    if(p.totalDrive>=120) __why.push('運転合計 '+__dstr);
+    html+='<div class="notice" style="margin:8px 0;background:#fff3e6;border:1.5px solid #e0964a;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 小さいお子さん連れには帰宅が遅め・移動が多めのプランです（'+__why.join('・')+'）</div>';
+    __warned=true;
   } else if(p.totalDrive>=120){
     html+='<div class="notice" style="margin:8px 0;background:#fff8e1;border:1.5px solid #e0b84a;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🚗 移動が多めのプランです（運転合計 '+__dstr+'）。休憩をはさみながらどうぞ</div>';
+  }
+  // 警告の直下に独立ボタン(条件は維持し移動範囲だけ一段狭める)
+  if(__warned&&__canNarrow){
+    html+='<button type="button" onclick="narrowRegen()" style="display:block;width:100%;margin:0 0 8px;padding:13px;border-radius:12px;border:none;background:#e8853d;color:#fff;font-weight:800;font-size:.92rem">🔁 近い場所で作り直す</button>';
   }
   // 営業時間の確認状況(カスタムのみ・確認できるデータがある施設だけを「確認済み」と数える)
   if(state.isCustomView){
@@ -2620,7 +2651,14 @@ function showResult(){
   p.rows.forEach(r=>{ (r.opt?bonusRows:mainRows).push(r); });
   let tlHtml='<div class="timeline">'+mainRows.map(rowHtml).join('');
   if(bonusRows.length){
-    tlHtml+='</div><div class="bonus-wrap"><div class="bonus-head">⏱ 余力があればもう1カ所</div><div class="bonus-sub">上のプランは帰路で完結。寄る場合は'+(p.bonusReturn?('帰着が'+fmtTime(p.bonusReturn)+'ごろになります'):'下の工程になります')+(p.bonusExtra?('（運転+約'+p.bonusExtra+'分）'):'')+'。無理せず帰宅でもOKです</div><div class="timeline">'+bonusRows.map(rowHtml).join('')+'</div>';
+    let __bSub='上のプランは帰路で完結。寄る場合は'+(p.bonusReturn?('帰着が'+fmtTime(p.bonusReturn)+'ごろになります'):'下の工程になります')+(p.bonusExtra?('（運転+約'+p.bonusExtra+'分）'):'')+'。無理せず帰宅でもOKです';
+    if(p.bonusPrice!=null&&p.bonusPrice>0){
+      const __total=(p.costKnown||0)+p.bonusPrice;
+      __bSub+='<br>💴 寄る場合は入場料 +'+p.bonusPrice.toLocaleString()+'円（入場料合計 約'+__total.toLocaleString()+'円）';
+      const __cap=state.budget==='1000'?1000:(state.budget==='3000'?3000:(state.budget==='free'?0:null));
+      if(__cap!=null&&__total>__cap) __bSub+='<span style="color:#c0392b;font-weight:800">　⚠️ ご指定の予算'+(__cap?__cap.toLocaleString()+'円':'(無料)')+'を超えます</span>';
+    }
+    tlHtml+='</div><div class="bonus-wrap"><div class="bonus-head">⏱ 余力があればもう1カ所</div><div class="bonus-sub">'+__bSub+'</div><div class="timeline">'+bonusRows.map(rowHtml).join('')+'</div>';
   } else {
     tlHtml+='</div>';
   }
