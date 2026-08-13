@@ -719,6 +719,8 @@ function scoreSpot(s,date,w,arrivalMin){
   }
   // free preference on free budget
   if(state.budget==='free'&&s.is_free) sc+=1;
+  // 営業時間未登録は軽く減点(順位を下げるだけ。候補不足時は採用可)
+  if(!s.business_hours&&!s.closed_days&&!pt.includes('food')) sc-=0.5;
   // night park / evening handling
   if(arrivalMin!=null){
     const t=((arrivalMin%1440)+1440)%1440;
@@ -759,6 +761,10 @@ function rememberMains(names){
     localStorage.setItem(RECENT_MAINS_KEY,JSON.stringify(a.slice(0,15)));
   }catch(e){}
 }
+// 強い運動系施設: 0-2歳のみのグループでは自動選定から除外(カスタムの明示指定は対象外)
+const ACTIVE_SPORT_RE=/VS ?PARK|トランポリン|Mr\.? ?JUMP|ミスタージャンプ|ボルダリング|クライミング|スポッチャ|スケートリンク|スケート場|パルクール/i;
+function isActiveSportSpot(s){ return ACTIVE_SPORT_RE.test(String(s.name||'')+' '+String(s.kid_appeal||'')); }
+function toddlerOnlyNow(){ return state.ages&&state.ages.has('0-2')&&state.ages.size===1; }
 function buildPool(date,w){
   const o=state.origin;
   const rain=isRainMode(w);
@@ -768,6 +774,7 @@ function buildPool(date,w){
     if(isJidokan(s)) return false; // 児童館・子育て支援センター系はプランナー対象外（🏠チップ専用）
     const pt=s.play_types||[];
     if(pt.length===1&&pt[0]==='food') return false; // pure food -> lunch only
+    if(toddlerOnlyNow()&&isActiveSportSpot(s)) return false; // 0-2歳のみ: 強い運動系はメイン候補から除外
     const dm=driveMinutesFrom(o,s);
     if(dm==null||dm>CURRENT_CAP) return false;
     // 距離帯リング: 「〜40分」は21〜40分、「〜60分」は41〜60分の帯からメインを選ぶ
@@ -943,6 +950,7 @@ function subCandidates(main,lunch,mainDriveMin,date,w){
     if(s===main||s.latitude==null) return false;
     if(isJidokan(s)) return false; // 児童館・子育て支援センター系は余力枠からも除外（帰り道に寄らない）
     if((s.play_types||[]).includes('food')) return false; // 午後スポット・余力枠は遊び場のみ(ランチ枠の直後に飲食店を続けない)
+    if(toddlerOnlyNow()&&isActiveSportSpot(s)) return false; // 0-2歳のみ: 午後・余力枠からも除外
     if(!budgetPass(s)) return false; // 午後枠も予算条件に連動(無料限定をやめ、1日プランの午後スポットとして選ぶ)
     // 同一敷地・近接排除: メイン/ランチとの重複は不可（メイン↔ランチのみが距離例外）
     if(rain && s.indoor_or_outdoor==='outdoor') return false; // 雨の日の午後・余力枠にも屋外施設を入れない
@@ -1052,7 +1060,7 @@ function buildPlan(main,date,w,shareOverride){
     // 帰路開始時刻の設計: 目標は max(到着+90分, 16:30)。閉館時刻と帰宅上限(18:00)でキャップ。
     const bh0=parseBusinessHours(__cand);
     const __capHome=18*60;
-    const limit0=Math.min(bh0?bh0.closeMin:Infinity, __capHome-bdm0);
+    const limit0=Math.min(bh0?(bh0.closeMin-15):Infinity, __capHome-bdm0);  // 閉館15分前までに退場
     let depart0=Math.min(Math.max(arr0+90, 16*60+30), limit0);
     depart0=Math.floor(depart0/15)*15;
     // 60分以上遊べない場合はこの候補を諦めて次へ
@@ -1091,7 +1099,7 @@ function buildPlan(main,date,w,shareOverride){
       if(ci.exclude){ sub=null; return; }
       const bdm=driveMinutesFrom(o,sub)||legMinutes(sub.latitude,sub.longitude,o.lat,o.lng);
       const bh=parseBusinessHours(sub);
-      const limit=Math.min(bh?bh.closeMin:Infinity, 18*60-bdm);
+      const limit=Math.min(bh?(bh.closeMin-15):Infinity, 18*60-bdm);  // 閉館15分前までに退場
       let stayB=Math.floor(Math.min(60, limit-arrival)/15)*15;
       if(stayB<30){ sub=null; return; }   // 30分遊べないなら余力枠ごと出さない
       const departB=arrival+stayB, retB=departB+bdm;
@@ -1448,6 +1456,9 @@ function rowHtml(r){
   }
   if(!s.business_hours&&!s.closed_days&&!isFood){
     body+='<div class="meta" style="color:#8a7a5a">ℹ️ 営業時間の登録がないスポットです。おでかけ前に公式サイトで営業状況をご確認ください</div>';
+  }
+  if(typeof isActiveSportSpot==='function'&&isActiveSportSpot(s)){
+    body+='<div class="meta" style="color:#b45309;font-weight:700">⚠️ 年齢・身長制限がある場合があります。対象年齢を公式サイトでご確認ください</div>';
   }
   if(slot&&!state.isSharedView){
     body+='<div class="swapwrap" data-swapslot="'+slot+'" style="display:none"></div>';
@@ -2402,7 +2413,7 @@ async function customGenerate5(){
     if(budgetMin<45*remainSpots){ stay=45; warn=true; }
     const ci=closingInfo(s,t);
     const bh=parseBusinessHours(s);
-    if(bh&&t+stay>bh.closeMin){ stay=Math.max(30,Math.floor((bh.closeMin-t)/15)*15); if(stay<45) warn=true; }
+    if(bh&&t+stay>bh.closeMin-15){ stay=Math.max(30,Math.floor((bh.closeMin-15-t)/15)*15); if(stay<45) warn=true; }
     rows.push({type:'spot',time:t,spot:s,tag:afternoon.length>1?('午後スポット'+(ix+1)):'午後スポット',closeNote:ci.exclude?'※この時間帯は営業時間外の可能性があります。公式サイトでご確認ください':ci.note});
     t+=stay;
     lastName=s.name; lastLat=s.latitude; lastLng=s.longitude; lastSpot=s;
@@ -2554,6 +2565,12 @@ function showResult(){
   }
   const __dh=Math.floor(p.totalDrive/60), __dm=p.totalDrive%60, __dstr='約'+(__dh?__dh+'時間':'')+(__dm?__dm+'分':(__dh?'':'0分'));
   const __narrowBtn=(!state.isCustomView&&narrowerDrive(state.driveTime))?'<button type="button" onclick="narrowRegen()" style="display:block;width:100%;margin-top:8px;padding:11px;border-radius:10px;border:none;background:#e8853d;color:#fff;font-weight:800;font-size:.88rem">🔁 近い場所で作り直す</button>':'';
+  if(!p.__late&&state.ages&&state.ages.has('3-5')&&((p.retHome&&p.retHome>=18*60+30)||p.totalDrive>=150)){
+    const __why=[];
+    if(p.retHome&&p.retHome>=18*60+30) __why.push('帰着めやす '+fmtTime(p.retHome)+'ごろ');
+    if(p.totalDrive>=150) __why.push('運転合計 '+__dstr);
+    html+='<div class="notice" style="margin:8px 0;background:#fff3e6;border:1.5px solid #e0964a;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 小さいお子さん連れには帰宅が遅め・移動が多めのプランです（'+__why.join('・')+'）'+__narrowBtn+'</div>';
+  }
   if(p.__late&&p.retHome){
     html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 帰宅が遅めのプランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。この条件では近い候補が見つかりませんでした'+__narrowBtn+'</div>';
   }
