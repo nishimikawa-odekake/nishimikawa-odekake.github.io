@@ -1436,10 +1436,23 @@ function parentSummary(){
   const budMap={'free':'無料スポット中心','1000':'予算1人1,000円以内目安','3000':'予算1人3,000円以内目安'};
   const condParts=[];
   const baseMentionsDrive=/車\d+分圏内/.test(base);
-  if(o&&o.name&&['20','40','60'].includes(state.driveTime)&&!baseMentionsDrive) condParts.push(o.name+'から車'+state.driveTime+'分圏内');
+  if(o&&o.name&&['20','40','60'].includes(state.driveTime)&&!baseMentionsDrive){
+    if(state.isCustomView){
+      // カスタムは選択地点が範囲を超え得るので断定しない
+      condParts.push('自動提案は'+o.name+'から車'+state.driveTime+'分圏内'+(cpOverRange().length?'（えらんだ場所は除く）':''));
+    } else {
+      condParts.push(o.name+'から車'+state.driveTime+'分圏内');
+    }
+  }
   else if(o&&o.name&&base.indexOf(o.name)===-1) condParts.push(o.name+'発');
   if(agesTxt) condParts.push(agesTxt+'のお子さん向け');
-  if(budMap[state.budget]) condParts.push(budMap[state.budget]);
+  if(budMap[state.budget]){
+    if(state.isCustomView&&state.budget!=='any'){
+      condParts.push('空き枠は'+budMap[state.budget]+'を優先（えらんだ場所は予算を超える場合があります）');
+    } else {
+      condParts.push(budMap[state.budget]);
+    }
+  }
   if(condParts.length) base+=(base?' ':'')+condParts.join('・')+'で組み立てています。';
   if(state.nearFallback){
     base+=' 少し遠出向けの候補が見当たらなかったため、近場中心になりました。';
@@ -2439,8 +2452,17 @@ function editCustom(){
 // 4〜5枠のカスタムプラン: 選んだ順に「午前→お昼→午後」で時間割を自動配分する専用エンジン
 async function customGenerate5(){
   const msg=document.getElementById('cpAddMsg');
-  const slots=state.customSlots;
+  // 「おでまるが提案します」の空きスポット枠を実際に埋める(選択内容の保存は変えない)
+  const slots=state.customSlots.slice();
   const li=cpLI();
+  try{
+    slots.forEach(function(_,k){
+      if(k===li||slots[k]) return;
+      const sug=cpSuggest(k)||[];
+      const pick=sug.find(function(sp){ return !slots.some(function(x){ return x&&x.name===sp.name; }); });
+      if(pick) slots[k]=pick;
+    });
+  }catch(e){}
   const morning=slots.slice(0,li).filter(Boolean);
   let lunch=slots[li]||null;
   const afternoon=slots.slice(li+1).filter(Boolean);

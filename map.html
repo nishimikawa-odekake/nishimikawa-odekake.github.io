@@ -314,7 +314,7 @@ function unspiderfy(){
   spider={ids:null,orig:null,legs:[]};
 }
 function overlapGroup(i){
-  // 現在のズームで20px以内にある表示中ピンをグループ化
+  // 現在のズームで15px以内にある表示中ピンをグループ化
   const out=[];
   try{
     const base=map.latLngToContainerPoint(markers[i].getLatLng());
@@ -323,7 +323,7 @@ function overlapGroup(i){
       if(!m||!map.hasLayer(m)) return;
       const p=map.latLngToContainerPoint(m.getLatLng());
       const dx=p.x-base.x, dy=p.y-base.y;
-      if(dx*dx+dy*dy<=20*20) out.push(j);
+      if(dx*dx+dy*dy<=15*15) out.push(j);
     });
   }catch(e){ return [i]; }
   return out.length?out:[i];
@@ -353,7 +353,14 @@ function onMarkerClick(i){
     unspiderfy();
   }
   const g=overlapGroup(i);
-  if(g.length>1){ spiderfy(g); return; }   // 重なりあり→まず展開
+  if(g.length>1){
+    // ズームが浅いうちは展開せずズームイン(広域でピンが動いて見えるのを防ぐ)
+    if(map.getZoom()<15){
+      map.setView(markers[i].getLatLng(),Math.min(map.getZoom()+2,16),{animate:false});
+      return;
+    }
+    spiderfy(g); return;   // 最大ズーム付近でまだ重なっているときだけ扇状展開
+  }
   openSheet(i);
 }
 // 余白タップ・地図移動・ズームで展開を閉じる
@@ -409,6 +416,7 @@ function matches(s){
 }
 
 function apply(){
+  try{ if(typeof unspiderfy==='function') unspiderfy(); }catch(e){}
   let n=0;
   SPOTS.forEach((s,i)=>{
     const ok=matches(s);
