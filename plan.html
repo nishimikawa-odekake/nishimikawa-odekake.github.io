@@ -995,12 +995,12 @@ function buildPlan(main,date,w,shareOverride){
   t+=dm;
   let stay=stayMinutes(main);
   const onlyToddler=state.ages.has('0-2')&&state.ages.size===1;
-  // 乳児(0-2歳のみ)連れは帰宅18:15を上限にする: 超えそうならメイン滞在を自動短縮(最短45分)
+  // 乳児(0-2歳のみ)連れは帰宅18:00を上限にする: 超えそうならメイン滞在を自動短縮(最短45分)
   if(onlyToddler){
     const homeDmM=driveMinutesFrom(o,main)||30;
     const lunchExtra=lunch?(legMinutes(main.latitude,main.longitude,lunch.latitude,lunch.longitude)+60+(driveMinutesFrom(o,lunch)||homeDmM)):homeDmM;
     const projected=t+stay+lunchExtra;
-    const toddlerCap=18*60+15;
+    const toddlerCap=18*60;
     if(projected>toddlerCap){
       stay=Math.max(45,Math.floor((stay-(projected-toddlerCap))/15)*15);
     }
@@ -1049,9 +1049,9 @@ function buildPlan(main,date,w,shareOverride){
     const arr0=t+sdm0;
     const ci0=closingInfo(__cand,arr0);
     const bdm0=driveMinutesFrom(o,__cand)||legMinutes(__cand.latitude,__cand.longitude,o.lat,o.lng);
-    // 帰路開始時刻の設計: 目標は max(到着+90分, 16:30)。閉館時刻と帰宅上限(通常18:00・乳児のみ18:15)でキャップ。
+    // 帰路開始時刻の設計: 目標は max(到着+90分, 16:30)。閉館時刻と帰宅上限(18:00)でキャップ。
     const bh0=parseBusinessHours(__cand);
-    const __capHome=onlyToddler?(18*60+15):(18*60);
+    const __capHome=18*60;
     const limit0=Math.min(bh0?bh0.closeMin:Infinity, __capHome-bdm0);
     let depart0=Math.min(Math.max(arr0+90, 16*60+30), limit0);
     depart0=Math.floor(depart0/15)*15;
@@ -1082,30 +1082,36 @@ function buildPlan(main,date,w,shareOverride){
     const homeDm=driveMinutesFrom(o,lastSpot)||legMinutes(lastLat,lastLng,o.lat,o.lng);
     rows.push({type:'move',time:t,label:'🚗 帰路（約'+homeDm+'分）',sub:transitLabel(lastName,'ご自宅',homeDm)+'／帰着めやす '+fmtTime(t+homeDm)+'ごろ'});
     legSum+=homeDm;
-    // 到着時点で営業時間外(閉館)なら余力枠自体を表示しない
-    const sdmPre=legMinutes(lastLat,lastLng,sub.latitude,sub.longitude);
-    const ciPre=closingInfo(sub,t+sdmPre);
-    if(!ciPre.exclude){
-    rows.push({type:'branch',time:t,label:'🏠 帰り道に寄るなら'});
-    let bt=t;
-    const sdm=sdmPre;
-    const arrival=bt+sdm;
-    const tt=((arrival%1440)+1440)%1440;
-    const pt=sub.play_types||[];
-    const outdoorPark=(sub.indoor_or_outdoor==='outdoor')&&(pt.includes('active')||pt.includes('nature'));
-    if(outdoorPark&&tt>=18*60+30&&state.ages.has('3-5')&&!state.ages.has('elem')){
-      bonusNote='※暗くなる時間帯のため、無理せず帰宅もおすすめです';
-    }
-    let waterNote=null;
-    if(pt.includes('water')&&tt>=16*60){
-      waterNote='※水遊びする場合は着替え・タオル持参がおすすめです／※夕方のため、水遊びは短時間利用がおすすめです';
-    }
-    const ci=closingInfo(sub,arrival);
-    rows.push({type:'move',time:bt,label:'🚗 移動（約'+sdm+'分）',sub:transitLabel(lastName,sub.name,sdm),opt:true});
-    bt=arrival;
-    const bdm=driveMinutesFrom(o,sub)||legMinutes(sub.latitude,sub.longitude,o.lat,o.lng);
-    rows.push({type:'spot',time:bt,spot:sub,tag:'余力があれば',opt:true,closeNote:ci.note,bonusNote,waterNote,returnNote:'寄った場合の帰路 約'+bdm+'分'});
-    }
+    // 余力枠: 本編完結後の独立カード。営業時間・最終受付・帰宅上限(18:00)を満たす場合のみ、
+    // 「移動→滞在→帰路(再計算した帰着時刻)」のフル工程で提示する
+    (function(){
+      const sdm=legMinutes(lastLat,lastLng,sub.latitude,sub.longitude);
+      const arrival=t+sdm;
+      const ci=closingInfo(sub,arrival);
+      if(ci.exclude){ sub=null; return; }
+      const bdm=driveMinutesFrom(o,sub)||legMinutes(sub.latitude,sub.longitude,o.lat,o.lng);
+      const bh=parseBusinessHours(sub);
+      const limit=Math.min(bh?bh.closeMin:Infinity, 18*60-bdm);
+      let stayB=Math.floor(Math.min(60, limit-arrival)/15)*15;
+      if(stayB<30){ sub=null; return; }   // 30分遊べないなら余力枠ごと出さない
+      const departB=arrival+stayB, retB=departB+bdm;
+      const tt=((arrival%1440)+1440)%1440;
+      const pt=sub.play_types||[];
+      const outdoorPark=(sub.indoor_or_outdoor==='outdoor')&&(pt.includes('active')||pt.includes('nature'));
+      if(outdoorPark&&tt>=18*60+30&&state.ages.has('3-5')&&!state.ages.has('elem')){
+        bonusNote='※暗くなる時間帯のため、無理せず帰宅もおすすめです';
+      }
+      let waterNote=null;
+      if(pt.includes('water')&&tt>=16*60){
+        waterNote='※水遊びする場合は着替え・タオル持参がおすすめです／※夕方のため、水遊びは短時間利用がおすすめです';
+      }
+      rows.push({type:'move',time:t,label:'🚗 移動（約'+sdm+'分）',sub:transitLabel(lastName,sub.name,sdm),opt:true});
+      rows.push({type:'spot',time:arrival,spot:sub,tag:'余力があれば',opt:true,closeNote:ci.note,bonusNote,waterNote,returnNote:'滞在めやす 〜'+stayB+'分'});
+      rows.push({type:'move',time:departB,label:'🚗 寄った場合の帰路（約'+bdm+'分）',sub:transitLabel(sub.name,'ご自宅',bdm)+'／帰着めやす '+fmtTime(retB)+'ごろ',opt:true});
+      // 採用した場合の追加運転時間(本編の直帰帰路との差分)
+      rows.__bonusExtra=Math.max(0,sdm+bdm-homeDm);
+      rows.__bonusReturn=retB;
+    })();
   } else {
     // 余力枠が無い通常ケース: 帰路はここで1回だけ表示（最後に居る場所からの帰路）
     const homeDm2=driveMinutesFrom(o,lastSpot)||legMinutes(lastLat,lastLng,o.lat,o.lng);
@@ -1125,7 +1131,7 @@ function buildPlan(main,date,w,shareOverride){
   else if(known===0&&hasUnknown) cost='入場料などは公式サイトで確認（ランチ代は別）';
   else cost='入場料など 大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'')+'・ランチ代は別';
   const homePriority = onlyToddler && !sub;
-  return {rows,main,lunch,sub,totalDrive,cost,hasUnknown,homePriority};
+  return {rows,main,lunch,sub,totalDrive,cost,hasUnknown,homePriority,bonusExtra:rows.__bonusExtra||0,bonusReturn:rows.__bonusReturn||null};
 }
 function generatePlans(date,w){
   let cap=capFor(state.driveTime);
@@ -1635,7 +1641,7 @@ function track(w){ if(typeof gtag==='function') gtag('event','plan_outlink',{lin
 function buildRouteUrl(p){
   const o=state.origin;
   if(!o||o.lat==null||o.lng==null) return null;
-  const spots=p.rows.filter(r=>r.type==='spot').map(r=>r.spot).filter(Boolean);
+  const spots=p.rows.filter(r=>r.type==='spot'&&!r.opt).map(r=>r.spot).filter(Boolean);  // 余力枠は本編ルートに含めない(採用時はGoogleマップ側で編集)
   if(!spots.length) return null;
   const dest=spots[spots.length-1];
   const waypoints=spots.slice(0,-1);
@@ -2201,7 +2207,7 @@ async function customGenerate5(){
   const anchorSpot=morning[0]||afternoon[0];
   if(!lunch){ try{ lunch=pickLunch(anchorSpot,date); }catch(e){ lunch=null; } }
   const onlyToddler=state.ages.has('0-2')&&state.ages.size===1;
-  const capHome=onlyToddler?(18*60+15):(18*60);
+  const capHome=18*60;
   // 滞在時間の配分: 午前枠は合計で〜12:00めど、午後枠は帰宅上限から逆算
   const rows=[]; let legSum=0; let t=startMinutes();
   let lastName=(o.name==='現在地'||o.isAnjo)?'出発地周辺':o.name+'周辺';
@@ -2385,6 +2391,9 @@ function showResult(){
   if(startMinutes()>=12*60+30){
     html+='<div class="notice" style="margin:8px 0;background:#fff4e5;border:1px solid #f0c48a;border-radius:10px;padding:10px 12px;font-size:.82rem">🍴 午後からの出発のため、お昼ごはんは済ませてからの出発を想定しています。プラン内の食事枠は「カフェ・おやつ休憩」や「早めの夕食」としてご利用ください。</div>';
   }
+  if(p.totalDrive>150){
+    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ 長距離プラン: 運転の合計が約'+Math.floor(p.totalDrive/60)+'時間'+(p.totalDrive%60?(p.totalDrive%60+'分'):'')+'あります。お子さんの負担にご注意ください</div>';
+  }
   html+='<div class="plancard">';
   html+='<div class="plantitle">🎯 '+esc(state.origin.name)+'発 きょうのプラン <small>'+esc(whenLabel())+' / 案'+(state.planNo||1)+'</small></div>';
   // split main-tier rows and bonus-tier rows, insert a heading before the bonus tier
@@ -2392,7 +2401,7 @@ function showResult(){
   p.rows.forEach(r=>{ (r.opt?bonusRows:mainRows).push(r); });
   let tlHtml='<div class="timeline">'+mainRows.map(rowHtml).join('');
   if(bonusRows.length){
-    tlHtml+='</div><div class="bonus-wrap"><div class="bonus-head">⏱ 余力があれば</div><div class="bonus-sub">無理せず帰宅でもOKです</div><div class="timeline">'+bonusRows.map(rowHtml).join('')+'</div>';
+    tlHtml+='</div><div class="bonus-wrap"><div class="bonus-head">⏱ 余力があればもう1カ所</div><div class="bonus-sub">上のプランは帰路で完結。寄る場合は'+(p.bonusReturn?('帰着が'+fmtTime(p.bonusReturn)+'ごろになります'):'下の工程になります')+(p.bonusExtra?('（運転+約'+p.bonusExtra+'分）'):'')+'。無理せず帰宅でもOKです</div><div class="timeline">'+bonusRows.map(rowHtml).join('')+'</div>';
   } else {
     tlHtml+='</div>';
   }
