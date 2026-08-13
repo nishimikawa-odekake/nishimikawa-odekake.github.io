@@ -472,12 +472,27 @@ function priceLabel(s){
 function parseBusinessHours(s){
   const bh=s.business_hours||'';
   if(!bh) return null;
-  const m=bh.match(/(\d{1,2}):(\d{2})\s*[〜～\-ー~]\s*(\d{1,2}):(\d{2})/);
-  if(!m) return null;
-  const openMin=(+m[1])*60+(+m[2]);
-  let closeMin=(+m[3])*60+(+m[4]);
-  if(closeMin<=openMin) closeMin+=24*60; // overnight edge-case, keep simple
-  return {openMin,closeMin};
+  if(/24\s*時間/.test(bh)) return null; // 常時開放は閉館制約なし
+  let m=bh.match(/(\d{1,2}):(\d{2})\s*[〜～\-ー~]\s*(\d{1,2}):(\d{2})/);
+  if(m){
+    const openMin=(+m[1])*60+(+m[2]);
+    let closeMin=(+m[3])*60+(+m[4]);
+    if(closeMin<=openMin) closeMin+=24*60; // overnight edge-case, keep simple
+    return {openMin,closeMin};
+  }
+  // 和文形式:「午前9時から午後4時30分」「9時〜17時」「9時30分〜16時30分」等
+  m=bh.match(/(午前|午後)?(\d{1,2})時(?:(\d{1,2})分)?(?:\s*(?:[〜～\-ー~]|から)\s*)(午前|午後)?(\d{1,2})時(?:(\d{1,2})分)?/);
+  if(m){
+    let oh=(+m[2])+((m[1]==='午後'&&(+m[2])<12)?12:0), om=+(m[3]||0);
+    let ch=(+m[5])+((m[4]==='午後'&&(+m[5])<12)?12:0), cm=+(m[6]||0);
+    const openMin=oh*60+om;
+    let closeMin=ch*60+cm;
+    // 「9時〜5時」のような表記は閉店側を午後とみなす
+    if(closeMin<=openMin&&ch<12) closeMin+=12*60;
+    if(closeMin<=openMin) return null; // 解釈できない並びは安全側でスキップ
+    return {openMin,closeMin};
+  }
+  return null;
 }
 // meal label auto-switch by arrival time (minutes-of-day)
 function mealLabelFor(arrivalMin){
