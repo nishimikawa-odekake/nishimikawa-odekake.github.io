@@ -712,6 +712,27 @@ function isRainMode(w){
   if(w.rainMode===false) return false;
   return w.precip!=null&&w.precip>=50;
 }
+// SEOページ由来の「室内優先」希望。実際の天気予報(rainMode)とは分離して管理する
+function isIndoorMode(w){ return isRainMode(w)||state.indoorPref===true; }
+function seoSrc(){ try{ return sessionStorage.getItem('odemaru_src')||'(direct)'; }catch(e){ return '(direct)'; } }
+function seoP(extra){
+  const w=state.weather||{};
+  const o={ src:seoSrc(),
+    origin_city:(state.origin&&state.origin.name)||'',
+    ages:Array.from(state.ages||[]).join(','),
+    forecast_weather:isRainMode(w)?'rain':(w&&w.tmax!=null?'clear':'unknown'),
+    indoor_preference:state.indoorPref?1:0,
+    preference_source:state.indoorPref?'seo':'',
+    budget:state.budget||'', drive:state.driveTime||'',
+    mode:state.isCustomView?'custom':(state.isSharedView?'shared':'wizard') };
+  if(extra) for(const k in extra) o[k]=extra[k];
+  return o;
+}
+function clearIndoorPref(){
+  state.indoorPref=false;
+  if(typeof gtag==='function') gtag('event','indoor_pref_off',seoP());
+  generate();
+}
 function scoreSpot(s,date,w,arrivalMin){
   let sc=0;
   // age
@@ -814,7 +835,7 @@ function cpSelectedCost(){
 }
 function buildPool(date,w){
   const o=state.origin;
-  const rain=isRainMode(w);
+  const rain=isIndoorMode(w);
   const start=startMinutes();
   let cand=SPOTS.filter(s=>{
     if(s.latitude==null) return false;
@@ -989,7 +1010,7 @@ function lunchCandidates(main,date){
 function pickSub(main,lunch,mainDriveMin,date,w){ return pickVariety(subCandidates(main,lunch,mainDriveMin,date,w),'shownSubs',20); }
 function subCandidates(main,lunch,mainDriveMin,date,w){
   const o=state.origin;
-  const rain=isRainMode(w);
+  const rain=isIndoorMode(w);
   // 余力枠は「直前のスポットから近くでもう一箇所」の趣旨。実際に直前になる地点(ランチがあればランチ)からの
   // 移動が SUB_MAX_DRIVE_MIN を超えるものは除外する。
   const prev=lunch||main;
@@ -1329,6 +1350,7 @@ function genFail(id){
   if(GEN_SEQ!==id) return;
   clearTimeout(__genTimer);
   GEN_SEQ++;
+  try{ if(typeof gtag==='function') gtag('event','planner_no_result',seoP({reason:'timeout'})); }catch(e){}
   showGenError('🙏 プランをうまく作れませんでした');
 }
 function showGenError(title){
@@ -1921,14 +1943,14 @@ async function sharePlan(){
   if(navigator.share){
     try{
       await navigator.share({title:'きょうのおでかけプラン',text,url});
-      if(typeof gtag==='function') gtag('event','plan_share',{method:'webshare'});
+      if(typeof gtag==='function') gtag('event','plan_share',{method:'webshare'}); gtag('event','planner_share',seoP({method:'webshare'}));
     }catch(e){ /* user cancelled share sheet */ }
     return;
   }
   try{
     await copyToClipboard(url);
     showToast('リンクをコピーしました');
-    if(typeof gtag==='function') gtag('event','plan_share',{method:'copy'});
+    if(typeof gtag==='function') gtag('event','plan_share',{method:'copy'}); gtag('event','planner_share',seoP({method:'copy'}));
   }catch(e){
     showToast('コピーに失敗しました');
   }
@@ -2637,6 +2659,23 @@ async function customGenerate(){
 
 async function initFromShareOrWizard(){
   const qs=new URLSearchParams(location.search);
+  // SEOページからの条件引継ぎ: ?from=市町村&mode=indoor(旧rain=1互換)&budget=free&src=ページ識別子
+  try{
+    const _src=qs.get('src');
+    if(_src){ try{ sessionStorage.setItem('odemaru_src',String(_src).slice(0,64)); }catch(e){} }
+    const _mode=qs.get('mode'), _rain=qs.get('rain');
+    if(_mode==='indoor'||_rain==='1'){ state.indoorPref=true; }
+    if(qs.get('budget')==='free'){ state.budget='free'; }
+    const _from=qs.get('from');
+    let _gotFrom=0;
+    if(_from){
+      const c=CITIES.find(c=>c[0]===_from||c[0].indexOf(_from)===0||_from.indexOf(c[0])===0);
+      if(c){ state.origin={name:c[0],lat:c[1],lng:c[2],isAnjo:c[0]==='安城市'}; _gotFrom=1; }
+    }
+    if(_src||_from||_mode||_rain){
+      if(typeof gtag==='function') gtag('event','planner_landing',{src:seoSrc(),got_from:_gotFrom,got_mode:state.indoorPref?1:0});
+    }
+  }catch(e){}
   if(qs.get('custom')==='1'){ initCustom(); return; }
   if(qs.get('share')==='1'){
     const r=restoreFromShare(qs);
@@ -2686,6 +2725,7 @@ function showResult(){
   const res=document.getElementById('result');
   res.style.display='block';
   if(!state.plans.length){
+    if(typeof gtag==='function') gtag('event','planner_no_result',seoP({reason:'empty'}));
     const nxtDrive={'20':'40','40':'60','60':'any'}[state.driveTime]||null;
     const widenBtn=nxtDrive?('<button onclick="approveWiden(\''+nxtDrive+'\')" style="margin:6px 0;background:#e8853d;color:#fff;border:none;border-radius:12px;padding:13px 18px;font-weight:800">🚗 移動時間を'+(nxtDrive==='any'?'「遠くても大丈夫」':'〜'+nxtDrive+'分')+'まで広げて探す</button><br>'):'';
     // 無料中心のときは「予算だけ緩めて近場を守る」選択肢も出す(どちらを守るかをユーザーが選ぶ)
@@ -2697,6 +2737,7 @@ function showResult(){
     return;
   }
   const p=state.plans[state.variant%state.plans.length];
+  if(typeof gtag==='function') gtag('event','planner_complete',seoP());
   const routeUrl=buildRouteUrl(p);
   const total=Math.floor(p.totalDrive/60), tm=p.totalDrive%60;
   const driveStr=(total?total+'時間':'')+(tm?tm+'分':'')||'0分';
@@ -2705,6 +2746,9 @@ function showResult(){
     html+='<div class="sharedbanner">共有されたプランです ・ <a href="./plan.html">自分のプランを作る →</a></div>';
   }
   html+='<div style="text-align:center">'+weatherBadge()+'</div>';
+  if(state.indoorPref&&!isRainMode(state.weather)){
+    html+='<div class="wxbadge" style="background:#eef4fb;border:1px solid #b9d2ee;color:#2c5a8a">☔ 雨の日ページから、室内中心で組んでいます <button type="button" onclick="clearIndoorPref()" style="margin-left:8px;padding:4px 10px;border-radius:10px;border:1px solid #b9d2ee;background:#fff;color:#2c5a8a;font-size:.78rem;font-weight:700">天気に合わせた通常プランに戻す</button></div>';
+  }
   html+='<div class="parentline">🗣 '+esc(parentSummary())+'</div>';
   if(startMinutes()>=12*60+30){
     html+='<div class="notice" style="margin:8px 0;background:#fff4e5;border:1px solid #f0c48a;border-radius:10px;padding:10px 12px;font-size:.82rem">🍴 午後からの出発のため、お昼ごはんは済ませてからの出発を想定しています。プラン内の食事枠は「カフェ・おやつ休憩」や「早めの夕食」としてご利用ください。</div>';
@@ -2920,6 +2964,12 @@ function restart(){
 }
 
 /* init */
+window.__plannerStarted=false;
+document.addEventListener('click',function(e){
+  if(window.__plannerStarted) return;
+  const st=e.target&&e.target.closest?e.target.closest('.step'):null;
+  if(st){ window.__plannerStarted=true; try{ if(typeof gtag==='function') gtag('event','planner_start',seoP()); }catch(err){} }
+},true);
 try{ if(!/[?&]share=1/.test(location.search)) loadPrefs(); }catch(e){}
 initFromShareOrWizard();
 </script>

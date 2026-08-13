@@ -473,7 +473,7 @@ function slotpickAdd(i){
     slots[SLOTPICK]={n:SPOTS[i].name};
     localStorage.setItem('odemaru_custom_sel_v1',JSON.stringify({v:2,ts:Date.now(),li:SLOTLI,slots:slots.slice(0,Math.max(SLOTLEN,slots.length))}));
   }catch(e){}
-  location.href='./plan.html?custom=1';
+  (typeof gtag==='function'&&gtag('event','map_planner_start',{n:(window.planSel||[]).length||1})),location.href='./plan.html?custom=1';
 }
 function selHas(i){ return planSel.indexOf(i)>=0; }
 function toggleSel(i){
@@ -539,7 +539,7 @@ function makeCustomPlanFromSel(){
     }
     localStorage.setItem('odemaru_custom_sel_v1', JSON.stringify({v:2,ts:Date.now(),li:li,slots:slots.map(s=>s?{n:s.name}:null)}));
   }catch(e){}
-  location.href='./plan.html?custom=1';
+  (typeof gtag==='function'&&gtag('event','map_planner_start',{n:(window.planSel||[]).length||1})),location.href='./plan.html?custom=1';
 }
 function openSheet(i){
   const s=SPOTS[i];

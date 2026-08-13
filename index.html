@@ -287,13 +287,13 @@ footer p{margin:0 0 6px}
     <div class="planhero">
       <p class="ph-q">今日どこ行く？</p>
       <p class="ph-t">30秒で今日のおでかけが決まる</p>
-      <a class="ph-btn" href="./plan.html">🎯 おでかけプランを作る</a>
+      <a onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-plan'})" class="ph-btn" href="./plan.html">🎯 おでかけプランを作る</a>
       <p class="ph-s">質問に答えるだけ・無料・登録不要</p>
     </div>
       <div class="planhero" style="background:linear-gradient(135deg,#4a8c5f,#3b7350);margin-top:14px">
         <p class="ph-q">🗺 マップから自分で選ぶ</p>
         <p class="ph-t">気になる場所を選ぶだけで、1日プランに</p>
-        <a class="ph-btn" href="./map.html" style="color:#3b7350">🗺 マップから選んでプランを作る</a>
+        <a onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-map'})" class="ph-btn" href="./map.html" style="color:#3b7350">🗺 マップから選んでプランを作る</a>
         <p class="ph-s">祖父母の家・予約したお店も入れられる・無料・登録不要</p>
       </div>
   </div>
