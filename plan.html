@@ -517,6 +517,8 @@ function closingInfo(s,arrivalMin){
   const isFood=(s.play_types||[]).includes('food');
   const need=isFood?60:Math.max(60,Math.min((typeof stayMinutes==='function'?(stayMinutes(s)||60):60)-15,105));
   if(remain<need) return {exclude:true,bonus:false,note:null};
+  // 退館余裕: 閉館15分前までに最低45分遊べない施設は候補不成立(注記で残さない)
+  if(!isFood&&(bh.closeMin-15-t)<45) return {exclude:true,bonus:false,note:null};
   if(remain<need+30) return {exclude:false,bonus:false,note:'※閉館まで時間が短いため、短時間利用がおすすめです'};
   return {exclude:false,bonus:false,note:null};
 }
@@ -736,6 +738,11 @@ function scoreSpot(s,date,w,arrivalMin){
   if(state.budget==='free'&&s.is_free) sc+=1;
   // 営業時間未登録は軽く減点(順位を下げるだけ。候補不足時は採用可)
   if(!s.business_hours&&!s.closed_days&&!pt.includes('food')) sc-=0.5;
+  // 0-2歳のみ: 遠いメインをなだらかに減点(除外はしない。40分超から10分ごとに-1、最大-4)
+  if(typeof toddlerOnlyNow==='function'&&toddlerOnlyNow()){
+    const dm0=driveMinutesFrom(state.origin,s);
+    if(dm0!=null&&dm0>40) sc-=Math.min(4,(dm0-40)/10);
+  }
   // night park / evening handling
   if(arrivalMin!=null){
     const t=((arrivalMin%1440)+1440)%1440;
@@ -1053,6 +1060,19 @@ function buildPlan(main,date,w,shareOverride){
       stay=Math.max(45,Math.floor((stay-(projected-toddlerCap))/15)*15);
     }
   }
+  // メイン滞在も閉館15分前まで(45分未満はclosingInfoで候補から除外済み)
+  (function(){
+    const mBh=parseBusinessHours(main);
+    if(!mBh) return;
+    const mLimit=mBh.closeMin-15;
+    if(t+stay>mLimit){
+      const ns=Math.max(45,Math.floor((mLimit-t)/15)*15);
+      if(ns<stay){
+        stay=ns;
+        main.__closeNote=(main.__closeNote?main.__closeNote+'／':'')+'※閉館が近いため滞在めやす〜'+stay+'分（閉館15分前までの利用がおすすめです）';
+      }
+    }
+  })();
   rows.push({type:'spot',time:t,spot:main,tag:'メイン',closeNote:main.__closeNote});
   t+=stay;
   let lastName=main.name, lastLat=main.latitude, lastLng=main.longitude, lastSpot=main;
@@ -1339,6 +1359,11 @@ function narrowerDrive(dt){
   if(dt==='60') return '40';
   if(dt==='40') return '20';
   return null;
+}
+function relaxBudgetRegen(){
+  state.budget='any';
+  if(typeof gtag==='function') gtag('event','plan_relax_budget');
+  generate();
 }
 function narrowRegen(){
   const nd=narrowerDrive(state.driveTime);
@@ -2663,8 +2688,10 @@ function showResult(){
   if(!state.plans.length){
     const nxtDrive={'20':'40','40':'60','60':'any'}[state.driveTime]||null;
     const widenBtn=nxtDrive?('<button onclick="approveWiden(\''+nxtDrive+'\')" style="margin:6px 0;background:#e8853d;color:#fff;border:none;border-radius:12px;padding:13px 18px;font-weight:800">🚗 移動時間を'+(nxtDrive==='any'?'「遠くても大丈夫」':'〜'+nxtDrive+'分')+'まで広げて探す</button><br>'):'';
-    res.innerHTML='<div class="empty"><p>ご指定の移動時間の範囲では、条件に合うスポットが見つかりませんでした。<br>範囲は勝手に広げないので、広げる場合は下のボタンからどうぞ。</p>'+
-      widenBtn+
+    // 無料中心のときは「予算だけ緩めて近場を守る」選択肢も出す(どちらを守るかをユーザーが選ぶ)
+    const freeBtn=(state.budget==='free')?('<button onclick="relaxBudgetRegen()" style="margin:6px 0;background:#fff;color:#b45f1d;border:1.5px solid #e8853d;border-radius:12px;padding:13px 18px;font-weight:800">💴 無料条件を外して'+(state.driveTime&&state.driveTime!=='any'?state.driveTime+'分圏内':'近場')+'で探す</button><br>'):'';
+    res.innerHTML='<div class="empty"><p>ご指定の移動時間の範囲では、条件に合うスポットが見つかりませんでした。<br>条件は勝手に変えないので、緩める場合は下のボタンからどうぞ。</p>'+
+      widenBtn+freeBtn+
       '<button onclick="restart()">条件を変えてやり直す</button></div>';
     window.scrollTo({top:0,behavior:'smooth'});
     return;
@@ -2739,6 +2766,12 @@ function showResult(){
   }
   if(p.retHome&&p.retHome<=(14*60+30)&&!(p.rows||[]).some(r=>r.opt)){
     html+='<div class="notice" style="margin:8px 0;background:#eef6ee;border:1px solid #9dc3a0;border-radius:10px;padding:9px 12px;font-size:.82rem;font-weight:700">🌤 半日プランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。午後も遊びたいときは、移動時間を広げると候補が増えます</div>';
+  }
+  if(state.weather&&state.weather.tmax!=null&&state.weather.tmax>=30){
+    const __hasOutdoor=(p.rows||[]).some(function(r){ return r.type==='spot'&&!r.opt&&r.spot&&r.spot.indoor_or_outdoor==='outdoor'; });
+    if(__hasOutdoor){
+      html+='<div class="notice" style="margin:8px 0;background:#fff3e6;border:1.5px solid #e0964a;border-radius:10px;padding:10px 12px;font-size:.82rem;font-weight:700">🥵 暑さ注意（最高'+Math.round(state.weather.tmax)+'℃予想）: 水分・帽子・日陰休憩を。屋外は短時間ずつがおすすめです</div>';
+    }
   }
   html+='<div class="plancard">';
   html+='<div class="plantitle">🎯 '+esc(state.origin.name)+'発 きょうのプラン <small>'+esc(whenLabel())+' / 案'+(state.planNo||1)+'</small></div>';
