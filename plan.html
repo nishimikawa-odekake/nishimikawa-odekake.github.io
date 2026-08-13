@@ -765,6 +765,31 @@ function rememberMains(names){
 const ACTIVE_SPORT_RE=/VS ?PARK|トランポリン|Mr\.? ?JUMP|ミスタージャンプ|ボルダリング|クライミング|スポッチャ|スケートリンク|スケート場|パルクール/i;
 function isActiveSportSpot(s){ return ACTIVE_SPORT_RE.test(String(s.name||'')+' '+String(s.kid_appeal||'')); }
 function toddlerOnlyNow(){ return state.ages&&state.ages.has('0-2')&&state.ages.size===1; }
+// 乳児だけでは楽しみにくい可能性のある施設(運動系+滝・ハイキング等の歩行量が多い場所)。断定せず注意のみ
+const TODDLER_CAUTION_RE=/滝|ハイキング|登山|渓谷|トレッキング|遊歩道|釣り|釣って/;
+function isToddlerCaution(s){ return isActiveSportSpot(s)||TODDLER_CAUTION_RE.test(String(s.name||'')+' '+String(s.kid_appeal||'')); }
+function budgetCapYen(){ return state.budget==='free'?0:(state.budget==='1000'?1000:(state.budget==='3000'?3000:null)); }
+// カスタムで選んだ施設のうち設定範囲を超えるもの [{name,dm}]
+function cpOverRange(){
+  const cap=capFor(state.driveTime);
+  if(!isFinite(cap)) return [];
+  const out=[];
+  (state.customSlots||[]).filter(Boolean).forEach(function(s){
+    if(s.__temp||s.latitude==null) return;
+    const dm=driveMinutesFrom(state.origin,s);
+    if(dm!=null&&dm>cap) out.push({name:s.name,dm:dm});
+  });
+  return out;
+}
+// 選んだ施設(非food)の入場料合計(1人あたり・読み取れる分のみ)
+function cpSelectedCost(){
+  let sum=0;
+  (state.customSlots||[]).filter(Boolean).forEach(function(s){
+    if(s.__temp||(s.play_types||[]).includes('food')) return;
+    const p=parsePrice(s); if(p!=null) sum+=p;
+  });
+  return sum;
+}
 function buildPool(date,w){
   const o=state.origin;
   const rain=isRainMode(w);
@@ -1378,6 +1403,8 @@ function parentSummary(){
     base='暑い時間帯を避け、涼しく遊べるスポットを中心にしたプランにしています。';
   } else if(isToddlerOnly){
     base='小さいお子さん連れなので、無理のない軽めのプランにしています。';
+  } else if(state.isCustomView&&['20','40','60'].includes(state.driveTime)&&cpOverRange().length){
+    base='自動提案は'+(state.origin&&state.origin.name?state.origin.name+'から':'')+'車'+state.driveTime+'分圏内で作成しています（えらんだ場所には範囲を超えるものがあります）。';
   } else if(state.driveTime==='20'){
     base=(state.origin&&state.origin.name?state.origin.name+'から':'')+'車20分圏内でまとめた、ご近所プランです。';
   } else if(state.driveTime==='40'){
@@ -2218,6 +2245,7 @@ function renderCustomPanel(){
     if(s){
       html+='<span style="flex:1;font-weight:700;font-size:.92rem;min-width:0;overflow-wrap:anywhere">'+esc(s.name)
         +(s.__bento?' <span style="font-size:.66rem;font-weight:600;color:#8a7a5a">（現地で食べる）</span>':(s.__temp?' <span style="font-size:.66rem;font-weight:600;color:#8a7a5a">（入力した場所）</span>':''))+'</span>';
+
       if(i2===__rli){
         html+='<span style="font-size:.66rem;font-weight:700;color:#b9a988;white-space:nowrap">お昼固定</span>';
       } else {
@@ -2237,6 +2265,24 @@ function renderCustomPanel(){
       }
     }
     html+='</div>';
+    // 選択スポットへの注意(消さずに注意のみ): 範囲超過・予算超過・乳児との相性
+    if(s&&!s.__temp&&!s.__bento){
+      const __notes=[];
+      const __cap3=capFor(state.driveTime);
+      if(isFinite(__cap3)&&s.latitude!=null){
+        const __dm3=driveMinutesFrom(state.origin,s);
+        if(__dm3!=null&&__dm3>__cap3) __notes.push('⚠️ 設定範囲('+state.driveTime+'分)を超えています（約'+__dm3+'分）');
+      }
+      const __bcap3=budgetCapYen();
+      if(__bcap3!=null&&!(s.play_types||[]).includes('food')){
+        const __pr3=parsePrice(s);
+        if(__pr3!=null&&__pr3>__bcap3) __notes.push('💴 入場料 約'+__pr3.toLocaleString()+'円（予算'+(__bcap3?__bcap3.toLocaleString()+'円':'無料')+'超）');
+      }
+      if(toddlerOnlyNow()&&isToddlerCaution(s)) __notes.push('👶 0〜2歳だけでは楽しめる内容が限られる可能性があります');
+      if(__notes.length){
+        html+='<div style="margin:0 6px;padding:5px 10px;font-size:.7rem;color:#8a6a3a;background:#fff8e1;border:1px solid #eadfba;border-top:none;border-radius:0 0 10px 10px">'+__notes.join('<br>')+'</div>';
+      }
+    }
     // ＋追加を開いた枠: その場候補3件+選択肢
     if(!s&&state.cpAddOpen===i2){
       const sug=state.cpSug[i2]||[];
@@ -2635,6 +2681,19 @@ function showResult(){
       const __un=__sel.length-__ok;
       if(__un>0){
         html+='<div class="notice" style="margin:8px 0;background:#f6f1e7;border:1px solid #d8c9b0;border-radius:10px;padding:9px 12px;font-size:.8rem">🕒 営業時間: 確認済み'+__ok+'件・未確認'+__un+'件。未確認の場所はおでかけ前に公式サイトでご確認ください</div>';
+      }
+    }
+  }
+  if(state.isCustomView){
+    const __ov=cpOverRange();
+    if(__ov.length&&['20','40','60'].includes(state.driveTime)){
+      html+='<div class="notice" style="margin:8px 0;background:#fff8e1;border:1.5px solid #e0b84a;border-radius:10px;padding:9px 12px;font-size:.8rem">🚗 自動提案は<b>'+state.driveTime+'分圏内</b>で作成しています。えらんだ'+__ov.map(function(o){return '「'+esc(o.name)+'」は出発地から約'+o.dm+'分';}).join('、')+'です</div>';
+    }
+    const __cap2=budgetCapYen();
+    if(__cap2!=null){
+      const __selCost=cpSelectedCost();
+      if(__selCost>__cap2){
+        html+='<div class="notice" style="margin:8px 0;background:#fff8e1;border:1.5px solid #e0b84a;border-radius:10px;padding:9px 12px;font-size:.8rem">💴 えらんだ施設の入場料(1人あたり 約'+__selCost.toLocaleString()+'円)だけで、ご指定の予算'+(__cap2?__cap2.toLocaleString()+'円':'（無料）')+'を超えます</div>';
       }
     }
   }
