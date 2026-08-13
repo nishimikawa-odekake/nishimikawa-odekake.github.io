@@ -2670,7 +2670,13 @@ async function initFromShareOrWizard(){
     let _gotFrom=0;
     if(_from){
       const c=CITIES.find(c=>c[0]===_from||c[0].indexOf(_from)===0||_from.indexOf(c[0])===0);
-      if(c){ state.origin={name:c[0],lat:c[1],lng:c[2],isAnjo:c[0]==='安城市'}; _gotFrom=1; }
+      if(c){
+        state.origin={name:c[0],lat:c[1],lng:c[2],isAnjo:c[0]==='安城市'}; _gotFrom=1;
+        const _sel=document.getElementById('originSel');
+        if(_sel){ for(const opt of _sel.options){ if(opt.textContent===c[0]){ _sel.value=opt.value; break; } } }
+        const _note=document.getElementById('geoNote');
+        if(_note) _note.textContent='ページの条件から出発地を「'+c[0]+'」にしています（変更もできます）';
+      }
     }
     if(_src||_from||_mode||_rain){
       if(typeof gtag==='function') gtag('event','planner_landing',{src:seoSrc(),got_from:_gotFrom,got_mode:state.indoorPref?1:0});
