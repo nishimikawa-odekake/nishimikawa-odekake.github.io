@@ -1115,7 +1115,7 @@ function buildPlan(main,date,w,shareOverride){
   } else {
     // 余力枠が無い通常ケース: 帰路はここで1回だけ表示（最後に居る場所からの帰路）
     const homeDm2=driveMinutesFrom(o,lastSpot)||legMinutes(lastLat,lastLng,o.lat,o.lng);
-    rows.push({type:'move',time:t,label:'🚗 帰路（約'+homeDm2+'分）',sub:transitLabel(lastName,'ご自宅',homeDm2)});
+    rows.push({type:'move',time:t,label:'🚗 帰路（約'+homeDm2+'分）',sub:transitLabel(lastName,'ご自宅',homeDm2)+'／帰着めやす '+fmtTime(t+homeDm2)+'ごろ'});
     legSum+=homeDm2;
   }
   // totals
@@ -1247,7 +1247,14 @@ function whenLabel(){
 function weatherBadge(){
   const w=state.weather;
   if(!w) return '';
-  if(isRainMode(w)) return '<div class="wxbadge">☔ おでかけ時間帯に雨予報なので室内プランにしました</div>';
+  if(isRainMode(w)){
+    if(state.isCustomView){
+      const sel=(state.customSlots||[]).filter(Boolean).filter(s=>!s.__temp&&!s.__bento);
+      const outdoor=sel.filter(s=>s.indoor_or_outdoor==='outdoor').length;
+      return '<div class="wxbadge">☔ おでかけ時間帯に雨予報です'+(outdoor?('。えらんだ場所に屋外が'+outdoor+'件含まれています（そのままでも、入れ替えてもOK）'):'')+'</div>';
+    }
+    return '<div class="wxbadge">☔ おでかけ時間帯に雨予報なので室内プランにしました</div>';
+  }
   if(w.transient) return '<div class="wxbadge">🌦 一時的ににわか雨の可能性あり（折りたたみ傘があると安心）</div>';
   if(w.tmax!=null&&w.tmax>=34) return '<div class="wxbadge">🥵 猛暑予報（最高'+Math.round(w.tmax)+'℃）水遊び・室内を優先しました</div>';
   if(w.tmax!=null) return '<div class="wxbadge">☀ お天気よさそう（最高'+Math.round(w.tmax)+'℃）</div>';
@@ -1330,6 +1337,18 @@ function rowHtml(r){
       '<div class="body"><div class="sname">'+esc(r.label)+'</div><div class="meta moveline">'+r.sub+'</div></div></div>';
   }
   const s=r.spot;
+  if(s.__temp){
+    let b='';
+    b+=(r.opt?'<span class="opt">⏱ 余力があれば</span><br>':'');
+    b+='<div class="sname">'+esc(s.name)+'</div>';
+    b+='<div class="meta" style="color:#8a7a5a">📍 個人で追加した予定（サイト掲載スポットではありません）</div>';
+    b+='<div class="sname" style="margin-top:2px"><small style="font-weight:600;color:var(--sub);font-size:.75rem">'+esc(r.tag)+(s.city?'・'+esc(s.city):'')+'</small></div>';
+    if(r.closeNote) b+='<div class="hourwarn">'+esc(r.closeNote)+'</div>';
+    if(!s.__bento) b+='<div class="links"><a class="map" href="'+esc('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent((s.latitude||'')+','+(s.longitude||'')))+'" target="_blank" rel="noopener" onclick="track(\'maps\')">地図で見る↗</a></div>';
+    return '<div class="tl'+(r.opt?' bonus':'')+'"><div class="rail"><span class="time">'+fmtTime(r.time)+'</span>'+
+      '<span class="icon">📍</span><span class="line"></span></div>'+
+      '<div class="body">'+b+'</div></div>';
+  }
   const slot=swapSlotFor(r);
   const swapInline=(slot&&!state.isSharedView)?' <button type="button" class="swapbtn sb-inline" onclick="openSwap(\''+slot+'\',this)">🔁 変更する</button>':'';
   const isFood=(s.play_types||[]).includes('food');
@@ -1826,6 +1845,23 @@ function customAutoAssign(items){
   return slots;
 }
 const MYPLACE_KEY='odemaru_myplaces_v1';
+// 出発地の保持: 編集⇄マップ⇄結果で一貫させる。保存値が不正・旧形式のときだけ安城市に戻す
+const ORIGIN_KEY='odemaru_custom_origin_v1';
+function cpSaveOrigin(){
+  try{
+    const o=state.origin;
+    if(o&&typeof o.name==='string'&&o.name&&isFinite(o.lat)&&isFinite(o.lng)){
+      localStorage.setItem(ORIGIN_KEY,JSON.stringify({name:o.name,lat:o.lat,lng:o.lng,isAnjo:!!o.isAnjo}));
+    }
+  }catch(e){}
+}
+function cpLoadOrigin(){
+  try{
+    const d=JSON.parse(localStorage.getItem(ORIGIN_KEY)||'null');
+    if(d&&typeof d.name==='string'&&d.name&&isFinite(d.lat)&&isFinite(d.lng)) return {name:d.name,lat:d.lat,lng:d.lng,isAnjo:!!d.isAnjo};
+  }catch(e){}
+  return null;
+}
 function myPlaces(){ try{ return JSON.parse(localStorage.getItem(MYPLACE_KEY)||'[]'); }catch(e){ return []; } }
 function saveMyPlace(sp){
   try{
@@ -1882,7 +1918,7 @@ function initCustom(){
     state.customSlots=customAutoAssign(items);
     state.cpLunchPos=1;
   }
-  if(!state.origin) state.origin={name:'安城市',lat:ANJO[0],lng:ANJO[1],isAnjo:true};
+  if(!state.origin) state.origin=cpLoadOrigin()||{name:'安城市',lat:ANJO[0],lng:ANJO[1],isAnjo:true};
   if(!state.when||state.when==='sat'||state.when==='sun') state.when=state.when||'today';
   state.cpScrolledOnce=false; state.cpAddOpen=null; state.cpTarget=null; state.cpSug={};
   cpSaveSlots();
@@ -1934,6 +1970,7 @@ function cpGeo(){
   if(note) note.textContent='現在地を取得中…';
   navigator.geolocation.getCurrentPosition(function(pos){
     state.origin={name:'現在地',lat:pos.coords.latitude,lng:pos.coords.longitude,isAnjo:false};
+    cpSaveOrigin();
     if(typeof gtag==='function') gtag('event','plan_custom_geo');
     renderCustomPanel();
   },function(){
@@ -2106,7 +2143,7 @@ function renderCustomPanel(){
     opts.forEach(k=>{
       html+='<button type="button" onclick="cpSetTarget('+k+')" style="'+(state.cpTarget===k?tOn:tOff)+';border-radius:999px;padding:5px 11px;font-weight:800;font-size:.76rem">'+labs[k]+'</button>';
     });
-    html+='</div>';
+    html+='</div><div style="font-size:.68rem;color:#8a7a5a;margin:0 0 8px">※追加先で「お昼」を選んだときだけ、食事の予定として組み込まれます（それ以外は立ち寄り先として扱います）</div>';
   })();
   html+=''
     +'<div style="font-size:.74rem;color:#8a7a5a;line-height:1.6;margin-bottom:8px">祖父母の家・予約したお店・ホテル・習いごと・お友だちの家など、マップにない場所もプランに入れられます。一度追加した場所は「マイプレイス」に保存され、次回から1タップで呼び出せます。（サイトには掲載されません）</div>'
@@ -2143,6 +2180,7 @@ function renderCustomPanel(){
       const parts=sel.value.split(',').map(Number);
       const nm=sel.options[sel.selectedIndex].textContent;
       state.origin={name:nm,lat:parts[0],lng:parts[1],isAnjo:(nm==='安城市')};
+      cpSaveOrigin();
     });
   }
   // スクロール: 初回表示のみトップ、以降は位置を保持
@@ -2391,8 +2429,22 @@ function showResult(){
   if(startMinutes()>=12*60+30){
     html+='<div class="notice" style="margin:8px 0;background:#fff4e5;border:1px solid #f0c48a;border-radius:10px;padding:10px 12px;font-size:.82rem">🍴 午後からの出発のため、お昼ごはんは済ませてからの出発を想定しています。プラン内の食事枠は「カフェ・おやつ休憩」や「早めの夕食」としてご利用ください。</div>';
   }
-  if(p.totalDrive>150){
-    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ 長距離プラン: 運転の合計が約'+Math.floor(p.totalDrive/60)+'時間'+(p.totalDrive%60?(p.totalDrive%60+'分'):'')+'あります。お子さんの負担にご注意ください</div>';
+  const __dh=Math.floor(p.totalDrive/60), __dm=p.totalDrive%60, __dstr='約'+(__dh?__dh+'時間':'')+(__dm?__dm+'分':(__dh?'':'0分'));
+  if(p.totalDrive>=180){
+    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ この組み合わせは移動が多すぎます（運転合計 '+__dstr+'）。'+(state.isCustomView?'1カ所減らす・近い場所に変える・2日に分けるのがおすすめです（下の「えらんだ場所を編集する」から変更できます）':'お子さんの負担が大きいため、近場のプランへの変更もご検討ください')+'</div>';
+  } else if(p.totalDrive>=120){
+    html+='<div class="notice" style="margin:8px 0;background:#fff8e1;border:1.5px solid #e0b84a;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🚗 移動が多めのプランです（運転合計 '+__dstr+'）。休憩をはさみながらどうぞ</div>';
+  }
+  // 営業時間の確認状況(カスタムのみ・確認できるデータがある施設だけを「確認済み」と数える)
+  if(state.isCustomView){
+    const __sel=(state.customSlots||[]).filter(Boolean).filter(s=>!s.__temp&&!s.__bento);
+    if(__sel.length){
+      const __ok=__sel.filter(s=>s.business_hours||s.closed_days).length;
+      const __un=__sel.length-__ok;
+      if(__un>0){
+        html+='<div class="notice" style="margin:8px 0;background:#f6f1e7;border:1px solid #d8c9b0;border-radius:10px;padding:9px 12px;font-size:.8rem">🕒 営業時間: 確認済み'+__ok+'件・未確認'+__un+'件。未確認の場所はおでかけ前に公式サイトでご確認ください</div>';
+      }
+    }
   }
   html+='<div class="plancard">';
   html+='<div class="plantitle">🎯 '+esc(state.origin.name)+'発 きょうのプラン <small>'+esc(whenLabel())+' / 案'+(state.planNo||1)+'</small></div>';
