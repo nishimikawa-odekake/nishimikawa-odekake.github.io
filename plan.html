@@ -1697,11 +1697,30 @@ function swapCandidates(slot,widenSteps){
   }
   return out;
 }
+// 変更候補カードの所要時間の基準点。main枠は出発地、それ以外は直前の地点。
+function swapPrevSpot(slot){
+  const p=currentPlanObj(); if(!p) return null;
+  if(slot==='lunch') return p.main||null;
+  if(slot==='sub') return p.lunch||p.main||null;
+  return null;
+}
+function swapShortName(n){
+  n=String(n||'');
+  return n.length>12?(n.slice(0,12)+'…'):n;
+}
 function swapCardHtml(slot,s,i){
-  const dm=state.origin?driveMinutesFrom(state.origin,s):null;
+  const prev=swapPrevSpot(slot);
+  let dm=null,dmLabel='';
+  if(prev&&prev.latitude!=null&&prev.longitude!=null&&s.latitude!=null&&s.longitude!=null){
+    dm=driveMinutesFrom({lat:prev.latitude,lng:prev.longitude,isAnjo:false},s);
+    if(dm!=null) dmLabel='🚗 '+esc(swapShortName(prev.name))+'から約'+dm+'分';
+  } else {
+    dm=state.origin?driveMinutesFrom(state.origin,s):null;
+    if(dm!=null) dmLabel='🚗 車で約'+dm+'分';
+  }
   const feats=(s.kid_features||[]).join(' ');
   const tags=[];
-  if(dm!=null) tags.push('🚗 車で約'+dm+'分');
+  if(dmLabel) tags.push(dmLabel);
   if(s.is_free===true) tags.push('🆓 無料');
   if(s.has_zashiki===true||/座敷/.test(feats)) tags.push('🍵 座敷あり');
   else if(s.has_kids_chair===true||/キッズチェア|子供椅子/.test(feats)) tags.push('🪑 子ども椅子');
@@ -1753,7 +1772,11 @@ function renderSwapPanel(slot,wrap){
   if(g&&g.original&&g.original!==cur&&!list.includes(g.original)) list.push(g.original);
   state.swapCands=state.swapCands||{};
   state.swapCands[slot]=list;
-  let inner=swapCurrentHtml(slot);
+  let inner='';
+  if(state.swapCycled&&state.swapCycled[slot]){
+    inner+='<div class="sc-cycled" style="font-size:11px;color:#888;margin:0 0 6px">🔁 最初の候補に戻りました</div>';
+  }
+  inner+=swapCurrentHtml(slot);
   if(!list.length){
     inner+='<div class="sc-none">この条件で入れ替えられる候補が見つかりませんでした</div>';
   } else {
@@ -1773,6 +1796,7 @@ function renderSwapPanel(slot,wrap){
   inner+=swapCloseHtml(slot);
   wrap.innerHTML=inner;
   wrap.style.display='block';
+  if(state.swapCycled) state.swapCycled[slot]=false;
 }
 function openSwap(slot,btn){
   if(typeof gtag==='function') gtag('event','plan_swap_open',{slot:slot});
@@ -1790,10 +1814,22 @@ function refreshSwap(slot,btn){
   if(typeof gtag==='function') gtag('event','plan_swap_refresh',{slot:slot});
   const seen=(state.swapSeen&&state.swapSeen[slot])||[];
   const all=swapFilterAll(slot);
-  let fresh=all.filter(s=>!seen.includes(s)).slice(0,3);
-  if(fresh.length<3){
-    const reuse=all.filter(s=>!fresh.includes(s)).slice(0,3-fresh.length);
-    fresh=fresh.concat(reuse);
+  state.swapCycled=state.swapCycled||{};
+  const unseen=all.filter(s=>!seen.includes(s));
+  let fresh;
+  if(!unseen.length&&all.length){
+    // 候補を出し尽くしたら履歴をリセットして最初の候補セットに戻る
+    state.swapSeen=state.swapSeen||{};
+    state.swapSeen[slot]=[];
+    state.swapCycled[slot]=true;
+    fresh=all.slice(0,3);
+  } else {
+    state.swapCycled[slot]=false;
+    fresh=unseen.slice(0,3);
+    if(fresh.length<3){
+      const reuse=all.filter(s=>!fresh.includes(s)).slice(0,3-fresh.length);
+      fresh=fresh.concat(reuse);
+    }
   }
   const nearKm0=(slot==='lunch'?10:15);
   fresh.forEach(s=>{ s.__swapFar=(s.__swapDistKm!=null&&s.__swapDistKm>nearKm0); });
