@@ -889,7 +889,7 @@ function lunchCandidates(main,date){
     if(s===main||s.latitude==null) return false;
     if(isJidokan(s)) return false; // 児童館・子育て支援センター系はプランナー対象外（🏠チップ専用）
     if(isSameComplex(s,main)) return false; // 同一敷地はメイン↔ランチでも除外（距離は例外だが施設名一致は除外）
-    if(!(s.play_types||[]).includes('food')) return false;
+    if(!isLunchable(s)) return false; // food主体の店のみ(公園×foodタグは対象外)
     // ランチは予算条件の対象外（昼食代はどのみち発生する別会計）だが、
     // 1人あたり LUNCH_MAX_YEN 円を超える価格が読み取れる店は常に除外する。
     // 価格不明(null)は通す（food候補の大半が価格未記載のため）。
@@ -1908,8 +1908,16 @@ function cpNormalizeLunch(){
   }
   state.cpLunchPos=t;
 }
-// お昼枠に入れてよいか: ごはん店(food/チェーン)または入力した場所(予約したお店など)のみ
-function cpIsFoodSpot(s){ return !!s&&(((s.play_types||[]).includes('food'))||s.is_chain===true||s.__temp===true); }
+// ランチ適格: foodタグがあり、かつ屋外遊び主体でない(公園にfoodタグが付く例: 小脇公園['food','active']等を除外)
+function isLunchable(s){
+  if(!s) return false;
+  if(s.is_chain===true) return true;
+  const pt=s.play_types||[];
+  if(!pt.includes('food')) return false;
+  return !(pt.includes('active')||pt.includes('nature')||pt.includes('water'));
+}
+// お昼枠に入れてよいか: ランチ適格な店、または入力した場所(予約したお店など)のみ
+function cpIsFoodSpot(s){ return !!s&&(isLunchable(s)||s.__temp===true); }
 function bentoSpot(){ return {name:'お弁当（持参）',city:'',play_types:['food'],is_free:true,__temp:true,__bento:true}; }
 function cpBento(){
   const li=cpLI();
@@ -1926,12 +1934,10 @@ function customAutoAssign(items){
   const slots=[null,null,null];
   const rest=[];
   items.forEach(s=>{
-    const isFood=(s.play_types||[]).includes('food')||s.is_chain===true;
-    if(isFood&&!slots[1]) slots[1]=s; else rest.push(s);
+    if(isLunchable(s)&&!slots[1]) slots[1]=s; else rest.push(s);
   });
   rest.forEach(s=>{
-    const isFood=(s.play_types||[]).includes('food')||s.is_chain===true;
-    const cand=isFood?[1,0,2]:[0,2];   // お昼枠(1)にはごはん店のみ
+    const cand=isLunchable(s)?[1,0,2]:[0,2];   // お昼枠(1)にはごはん店のみ
     const i=cand.find(k=>!slots[k]);
     if(i!==undefined) slots[i]=s;
   });
@@ -2096,8 +2102,7 @@ function cpSuggest(slot){
   let pool=SPOTS.filter(s=>{
     if(s.latitude==null) return false;
     if(typeof isJidokan==='function'&&isJidokan(s)) return false;
-    const isFood=(s.play_types||[]).includes('food');
-    if(__role==='lunch'){ if(!isFood) return false; } else { if(isFood) return false; }
+    if(__role==='lunch'){ if(!isLunchable(s)) return false; } else { if((s.play_types||[]).includes('food')&&isLunchable(s)) return false; }
     if(filled.some(x=>x===s||x.name===s.name)) return false;
     if(!budgetPass(s)) return false;
     const dmO=driveMinutesFrom(o,s); if(dmO==null||dmO>capMin) return false;
@@ -2340,6 +2345,15 @@ async function cpAddPlace(){
     renderCustomPanel();
   }catch(e){ msg.textContent='検索に失敗しました。通信環境をご確認のうえ、もう一度お試しください'; }
 }
+// 番人: ユーザーが選んだスポットが完成プランから漏れていないか検査(漏れたら理由つきで表示)
+function cpMissingSelected(plan){
+  try{
+    const sel=(state.customSlots||[]).filter(Boolean).filter(s=>!s.__bento).map(s=>s.name);
+    if(!sel.length) return [];
+    const inPlan=new Set((plan.rows||[]).filter(r=>r.type==='spot'&&r.spot).map(r=>r.spot.name));
+    return sel.filter(n=>!inPlan.has(n));
+  }catch(e){ return []; }
+}
 function cpBackToWizard(){
   const el=document.getElementById('customPanel'); if(el) el.style.display='none';
   restart();
@@ -2433,6 +2447,7 @@ async function customGenerate5(){
   else cost='入場料など 大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'')+'・ランチ代は別';
   const __lunchOut=(lunch&&!lunch.__bento)?lunch:null;
   const plan={rows,main:morning[0]||afternoon[0],lunch:__lunchOut,sub:afternoon[0]||null,totalDrive:legSum,cost,hasUnknown,homePriority:false,custom5:true,retHome:__retHome};
+  plan.__missing=cpMissingSelected(plan);
   state.shownMains=[plan.main]; state.shownLunches=__lunchOut?[__lunchOut]:[]; state.shownSubs=[];
   state.swapFixed={}; state.swapSeen={}; state.cycledNote=false;
   state.isSharedView=false; state.isCustomView=true; state.custom5Warn=warn;
@@ -2474,7 +2489,8 @@ async function customGenerate(){
   if(!main){
     document.getElementById('loading').style.display='none';
     renderCustomPanel();
-    const m2=document.getElementById('cpAddMsg'); if(m2) m2.textContent='この日に合う午前の候補が見つかりませんでした。場所を追加するか、日を変えてお試しください';
+    const m2=document.getElementById('cpAddMsg');
+    if(m2){ m2.textContent='⚠️ この日に合う午前の候補が見つかりませんでした。条件の「範囲」を広げるか、場所を追加してお試しください'; try{ m2.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){} }
     return;
   }
   if(!lunch){ try{ lunch=pickLunch(main,date); }catch(e){ lunch=null; } }
@@ -2484,6 +2500,7 @@ async function customGenerate(){
   state.isSharedView=false; state.isCustomView=true;
   state.excludedSpots=[]; state.lastPlanSpots=[];
   state.plans=[buildPlan(main,date,state.weather,{lunch:lunch||null,sub:sub||null})];
+  state.plans[0].__missing=cpMissingSelected(state.plans[0]);
   state.variant=0; state.planNo=1;
   if(!genOk(__gid)) return;
   document.getElementById('loading').style.display='none';
@@ -2589,6 +2606,9 @@ function showResult(){
         html+='<div class="notice" style="margin:8px 0;background:#f6f1e7;border:1px solid #d8c9b0;border-radius:10px;padding:9px 12px;font-size:.8rem">🕒 営業時間: 確認済み'+__ok+'件・未確認'+__un+'件。未確認の場所はおでかけ前に公式サイトでご確認ください</div>';
       }
     }
+  }
+  if(state.isCustomView&&p.__missing&&p.__missing.length){
+    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ えらんだ「'+p.__missing.map(esc).join('」「')+'」を今回のプランに組み込めませんでした。時間割・営業時間の都合の可能性があります。「えらんだ場所を編集する」から枠を調整してもう一度お試しください</div>';
   }
   if(p.retHome&&p.retHome<=(14*60+30)&&!(p.rows||[]).some(r=>r.opt)){
     html+='<div class="notice" style="margin:8px 0;background:#eef6ee;border:1px solid #9dc3a0;border-radius:10px;padding:9px 12px;font-size:.82rem;font-weight:700">🌤 半日プランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。午後も遊びたいときは、移動時間を広げると候補が増えます</div>';

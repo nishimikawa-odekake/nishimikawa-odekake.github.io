@@ -501,7 +501,7 @@ function toggleSel(i){
   if(SLOTPICK!=null){
     const s=SPOTS[i];
     const li=SLOTLI;
-    const isFood=((s.play_types||[]).includes('food'))||s.is_chain===true;
+    const isFood=s.is_chain===true||((s.play_types||[]).includes('food')&&!(s.play_types||[]).some(t=>t==='active'||t==='nature'||t==='water'));
     if(SLOTPICK===li&&!isFood){
       const b=document.getElementById('addPlanBtn');
       if(b) b.textContent='お昼の枠にはごはん店だけ入れられます🍽';
@@ -541,7 +541,9 @@ function makeCustomPlanFromSel(){
   if(!planSel.length) return;
   try{
     const items=planSel.map(i=>SPOTS[i]);
-    const foods=items.filter(s=>(s.play_types||[]).includes('food')||s.is_chain===true);
+    // ランチ適格=food主体のみ(公園にfoodタグが付くケースはお昼枠に入れない)
+    const isLunchable=s=>s.is_chain===true||((s.play_types||[]).includes('food')&&!(s.play_types||[]).some(t=>t==='active'||t==='nature'||t==='water'));
+    const foods=items.filter(isLunchable);
     const plays=items.filter(s=>!foods.includes(s));
     // 件数に応じた枠形状: ≤3=[午前,昼,午後] / 4=[午前,昼,午後1,午後2] / 5=[午前1,午前2,昼,午後1,午後2]
     const total=items.length;
