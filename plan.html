@@ -2000,13 +2000,24 @@ function initCustom(){
     state.customSlots=customAutoAssign(items);
     state.cpLunchPos=1;
   }
-  if(!state.origin) state.origin=cpLoadOrigin()||{name:'安城市',lat:ANJO[0],lng:ANJO[1],isAnjo:true};
+  // 保存済みの出発地(マップ・前回のカスタムで選んだもの)を最優先。無ければ既存値→安城市
+  const __so=cpLoadOrigin();
+  if(__so) state.origin=__so;
+  else if(!state.origin) state.origin={name:'安城市',lat:ANJO[0],lng:ANJO[1],isAnjo:true};
   if(!state.when||state.when==='sat'||state.when==='sun') state.when=state.when||'today';
   state.cpScrolledOnce=false; state.cpAddOpen=null; state.cpTarget=null; state.cpSug={};
   cpSaveSlots();
   renderCustomPanel();
 }
 function cpWhen(w){ state.when=w; renderCustomPanel(); }
+function cpToggleAge(a){
+  if(!state.ages) state.ages=new Set();
+  if(state.ages.has(a)){ if(state.ages.size>1) state.ages.delete(a); }
+  else state.ages.add(a);
+  renderCustomPanel();
+}
+function cpSetDrive(v){ state.driveTime=v; renderCustomPanel(); }
+function cpSetBudget(v){ state.budget=v; renderCustomPanel(); }
 function cpExpandAm(){
   const li=cpLI();
   if(state.customSlots.length>=5||li>=2) return;      // 午前は最大2枠
@@ -2146,6 +2157,27 @@ function renderCustomPanel(){
   html+='<div style="margin:10px 0"><b style="font-size:.85rem">📅 いつ行く？</b><br>'
     +'<button type="button" style="'+(state.when!=='tomorrow'?wOn:wOff)+';margin:4px 6px 0 0" onclick="cpWhen(\'today\')">きょう</button>'
     +'<button type="button" style="'+(state.when==='tomorrow'?wOn:wOff)+';margin:4px 0 0 0" onclick="cpWhen(\'tomorrow\')">あす</button></div>';
+  // プランの条件を明示(以前の入力を引き継ぐため、見えないまま使わない)
+  if(!state.ages||!state.ages.size) state.ages=new Set(['3-5']);
+  if(!state.driveTime) state.driveTime='any';
+  if(!state.budget) state.budget='any';
+  const cOn='background:#e8853d;color:#fff;border:1px solid #e8853d;border-radius:999px;padding:6px 12px;font-weight:800;font-size:.78rem';
+  const cOff='background:#fff;color:#6b5c40;border:1px solid #d8c9b0;border-radius:999px;padding:6px 12px;font-weight:700;font-size:.78rem';
+  html+='<div style="margin:10px 0;padding:10px;border:1px solid #e8ddcc;border-radius:12px;background:#fffdf8">'
+    +'<b style="font-size:.82rem">🎛 プランの条件</b><span style="font-size:.68rem;color:#8a7a5a">（空き枠の提案・時間割・警告に使います）</span>'
+    +'<div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:6px"><span style="font-size:.72rem;font-weight:800;color:#8a7a5a;min-width:3.2em">👶 年齢</span>';
+  [['0-2','0〜2歳'],['3-5','3〜5歳'],['elem','小学生']].forEach(function(a){
+    html+='<button type="button" onclick="cpToggleAge(\''+a[0]+'\')" style="'+(state.ages.has(a[0])?cOn:cOff)+'">'+a[1]+'</button>';
+  });
+  html+='</div><div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:5px"><span style="font-size:.72rem;font-weight:800;color:#8a7a5a;min-width:3.2em">🚗 範囲</span>';
+  [['20','20分'],['40','40分'],['60','60分'],['any','こだわらない']].forEach(function(a){
+    html+='<button type="button" onclick="cpSetDrive(\''+a[0]+'\')" style="'+(state.driveTime===a[0]?cOn:cOff)+'">'+a[1]+'</button>';
+  });
+  html+='</div><div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:5px"><span style="font-size:.72rem;font-weight:800;color:#8a7a5a;min-width:3.2em">💰 予算</span>';
+  [['free','無料中心'],['1000','〜1,000円'],['3000','〜3,000円'],['any','気にしない']].forEach(function(a){
+    html+='<button type="button" onclick="cpSetBudget(\''+a[0]+'\')" style="'+(state.budget===a[0]?cOn:cOff)+'">'+a[1]+'</button>';
+  });
+  html+='</div></div>';
   html+='<div style="margin:14px 0 4px;font-weight:800">えらんだ場所（'+cnt+'件）</div>';
   const mps=myPlaces();
   const __rli=cpLI();
