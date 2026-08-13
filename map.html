@@ -314,16 +314,22 @@ function unspiderfy(){
   spider={ids:null,orig:null,legs:[]};
 }
 function overlapGroup(i){
-  // 現在のズームで15px以内にある表示中ピンをグループ化
+  // 「本当に同じ場所」のピンだけをグループ化: 画面上15px以内 かつ 実距離150m以内
+  // (広域ズームで離れた施設まで巻き込むと、タップで地図やピンが動いて見えるため)
   const out=[];
   try{
+    const baseSpot=SPOTS[i];
     const base=map.latLngToContainerPoint(markers[i].getLatLng());
     SPOTS.forEach(function(s,j){
       const m=markers[j];
       if(!m||!map.hasLayer(m)) return;
       const p=map.latLngToContainerPoint(m.getLatLng());
       const dx=p.x-base.x, dy=p.y-base.y;
-      if(dx*dx+dy*dy<=15*15) out.push(j);
+      if(dx*dx+dy*dy>15*15) return;
+      // 実距離チェック(ららぽーと内の複数施設のような同一敷地のみ)
+      const dLat=(s.latitude-baseSpot.latitude)*111, dLng=(s.longitude-baseSpot.longitude)*91;
+      if(dLat*dLat+dLng*dLng>0.15*0.15) return;
+      out.push(j);
     });
   }catch(e){ return [i]; }
   return out.length?out:[i];
@@ -353,14 +359,7 @@ function onMarkerClick(i){
     unspiderfy();
   }
   const g=overlapGroup(i);
-  if(g.length>1){
-    // ズームが浅いうちは展開せずズームイン(広域でピンが動いて見えるのを防ぐ)
-    if(map.getZoom()<15){
-      map.setView(markers[i].getLatLng(),Math.min(map.getZoom()+2,16),{animate:false});
-      return;
-    }
-    spiderfy(g); return;   // 最大ズーム付近でまだ重なっているときだけ扇状展開
-  }
+  if(g.length>1){ spiderfy(g); return; }   // 同一敷地の重なりだけをその場で展開(地図は動かさない)
   openSheet(i);
 }
 // 余白タップ・地図移動・ズームで展開を閉じる
