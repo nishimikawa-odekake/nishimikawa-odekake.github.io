@@ -56,9 +56,10 @@ footer{border-top:1px solid #e7ddcd;padding:18px 0 40px;color:#7a746a;font-size:
 <main><div class="wrap">
 
 <article class="card">
-<p>あいち子育ておでかけマップは、<strong>二児のパパ</strong>が個人で運営している、子連れおでかけ情報サイトです。</p>
+<p>あいち子育ておでかけマップは、<strong>二児のパパ</strong>（愛知県在住・個人運営）がつくった、子連れおでかけ情報サイトです。西三河から始まった<strong>おでまるの「本店」</strong>にあたるサイトで、愛知県内のスポットをいちばん詳しく掲載しています。</p>
 <p>週末や雨の日に「子どもをどこへ連れて行こう？」と悩んだ経験から、愛知県内の子連れスポットを探しやすくまとめました。地図から近くのスポットを探したり、条件で絞り込んだり、質問に答えるだけで今日のおでかけプランを自動作成できる機能もあります。</p>
-<p>西三河から始めたこのマップは、現在では全国へ拡大。愛知版と全国版をあわせて、<span data-stat="prefs">47</span>都道府県・総掲載<span data-stat="total">13,859</span>スポットを掲載しています。</p>
+<p>ここで育てた仕組みを広げる形で、現在は<a href="https://kosodate-odekake.jp/">全国版（おでまる｜子育ておでかけマップ）</a>も同じ運営者が運営しています。愛知版と全国版をあわせて、<span data-stat="prefs">47</span>都道府県・総掲載<span data-stat="total">13,859</span>スポット（うち愛知版<span data-stat="aichi">1,126</span>スポット）を掲載しています。</p>
+<p>愛知県内のおでかけは本サイト、他県へのおでかけは全国版、と使い分けていただけます。</p>
 <h2>掲載情報の方針</h2>
 <p>掲載情報はすべて公式サイト等で確認し、確認日を記録しています。ただし営業時間・料金・休業日・設備情報などは予告なく変更される場合があります。お出かけの際は、必ず公式サイト等で最新情報をご確認ください。</p>
 
@@ -66,7 +67,7 @@ footer{border-top:1px solid #e7ddcd;padding:18px 0 40px;color:#7a746a;font-size:
 <tr><th>サイト名</th><td>あいち子育ておでかけマップ</td></tr>
 <tr><th>運営者</th><td>二児のパパ（個人運営）</td></tr>
 <tr><th>お問い合わせ</th><td><a href="mailto:info@kosodate-odekake.jp">info@kosodate-odekake.jp</a></td></tr>
-<tr><th>対象エリア</th><td>西三河を中心とした愛知県内</td></tr>
+<tr><th>対象エリア</th><td>西三河を中心とした愛知県内（他県は<a href="https://kosodate-odekake.jp/">全国版</a>）</td></tr>
 <tr><th>主な機能</th><td>地図検索・条件検索・自動プランナー・週末イベントリンク集</td></tr>
 <tr><th>掲載内容</th><td>公園・屋内施設・水遊び・雨の日・無料スポット・子連れ歓迎の飲食店・イベント情報</td></tr>
 </table>
@@ -100,6 +101,6 @@ footer{border-top:1px solid #e7ddcd;padding:18px 0 40px;color:#7a746a;font-size:
 <footer><div class="wrap">あいち子育ておでかけマップ｜愛知の子連れおでかけ・遊び場・ランチ検索
 <div class="footlinks"><a href="./about.html">運営者情報</a> | <a href="./disclaimer.html">免責事項</a> | <a href="./privacy.html">プライバシーポリシー</a> | <a href="https://docs.google.com/forms/d/e/1FAIpQLSdcSuUG_4MbFgNq-Ejn_cfDvXKhQdQZh4DxITrDiKlo4ocFfw/viewform" target="_blank" rel="noopener">お問い合わせ</a> | <a href="./request.html">掲載情報の修正・削除依頼</a></div>
 </div></footer>
-<script>(function(){try{fetch('https://kosodate-odekake.jp/stats.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(s){if(!s)return;document.querySelectorAll('[data-stat]').forEach(function(el){var k=el.getAttribute('data-stat');if(s[k]!=null)el.textContent=Number(s[k]).toLocaleString('ja-JP');});}).catch(function(){});}catch(e){}})();</script>
+<script>(function(){try{fetch('https://kosodate-odekake.jp/stats.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(s){if(!s)return;document.querySelectorAll('[data-stat]').forEach(function(el){var k=el.getAttribute('data-stat');var v=s;var parts=k.split(':');for(var i=0;i<parts.length;i++){if(v==null)return;v=v[parts[i]];}if(v==null||isNaN(Number(v)))return;el.textContent=Number(v).toLocaleString('ja-JP');});}).catch(function(){});}catch(e){}})();</script>
 </body>
 </html>
