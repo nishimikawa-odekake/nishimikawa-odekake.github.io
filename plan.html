@@ -1071,7 +1071,7 @@ function buildPlan(main,date,w,shareOverride){
       t=depart0;
       lastName=sub.name; lastLat=sub.latitude; lastLng=sub.longitude; lastSpot=sub;
       rows.push({type:'move',time:t,label:'🚗 帰路（約'+bdm0+'分）',sub:transitLabel(lastName,'ご自宅',bdm0)+'／帰着めやす '+fmtTime(t+bdm0)+'ごろ'});
-      legSum+=bdm0;
+      legSum+=bdm0; rows.__retHome=t+bdm0;
     }
   }
   if(afternoonMode){
@@ -1081,7 +1081,7 @@ function buildPlan(main,date,w,shareOverride){
     // 「🏠帰り道に寄るなら」の枝分かれ見出し＋余力枠を置く。
     const homeDm=driveMinutesFrom(o,lastSpot)||legMinutes(lastLat,lastLng,o.lat,o.lng);
     rows.push({type:'move',time:t,label:'🚗 帰路（約'+homeDm+'分）',sub:transitLabel(lastName,'ご自宅',homeDm)+'／帰着めやす '+fmtTime(t+homeDm)+'ごろ'});
-    legSum+=homeDm;
+    legSum+=homeDm; rows.__retHome=t+homeDm;
     // 余力枠: 本編完結後の独立カード。営業時間・最終受付・帰宅上限(18:00)を満たす場合のみ、
     // 「移動→滞在→帰路(再計算した帰着時刻)」のフル工程で提示する
     (function(){
@@ -1116,7 +1116,7 @@ function buildPlan(main,date,w,shareOverride){
     // 余力枠が無い通常ケース: 帰路はここで1回だけ表示（最後に居る場所からの帰路）
     const homeDm2=driveMinutesFrom(o,lastSpot)||legMinutes(lastLat,lastLng,o.lat,o.lng);
     rows.push({type:'move',time:t,label:'🚗 帰路（約'+homeDm2+'分）',sub:transitLabel(lastName,'ご自宅',homeDm2)+'／帰着めやす '+fmtTime(t+homeDm2)+'ごろ'});
-    legSum+=homeDm2;
+    legSum+=homeDm2; rows.__retHome=t+homeDm2;
   }
   // totals
   const spotsUsed=[main].concat(lunch?[lunch]:[],sub?[sub]:[]);
@@ -1131,7 +1131,7 @@ function buildPlan(main,date,w,shareOverride){
   else if(known===0&&hasUnknown) cost='入場料などは公式サイトで確認（ランチ代は別）';
   else cost='入場料など 大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'')+'・ランチ代は別';
   const homePriority = onlyToddler && !sub;
-  return {rows,main,lunch,sub,totalDrive,cost,hasUnknown,homePriority,bonusExtra:rows.__bonusExtra||0,bonusReturn:rows.__bonusReturn||null};
+  return {rows,main,lunch,sub,totalDrive,cost,hasUnknown,homePriority,bonusExtra:rows.__bonusExtra||0,bonusReturn:rows.__bonusReturn||null,retHome:rows.__retHome||null};
 }
 function generatePlans(date,w){
   let cap=capFor(state.driveTime);
@@ -1153,15 +1153,29 @@ function generatePlans(date,w){
   const mains=[];
   for(const s of tiered){ if(!mains.includes(s)) mains.push(s); if(mains.length>=3) break; }
   state.shownMains=mains.slice();
-  return mains.map(m=>{
+  const onlyT=state.ages.has('0-2')&&state.ages.size===1;
+  const kidCap=state.ages.has('elem')?null:(onlyT?18*60:(18*60+30));
+  const built=mains.map(m=>{
     let pl=buildPlan(m,date,w);
-    // 総移動時間の上限: 3時間超のプランは午後スポットを外して移動負担を抑える
-    if(pl.totalDrive>190&&pl.sub){
+    // 総移動時間の上限: 3時間超(乳児のみは130分超)のプランは午後スポットを外して移動負担を抑える
+    const driveLimit=onlyT?130:190;
+    if(pl.totalDrive>driveLimit&&pl.sub){
       const pl2=buildPlan(m,date,w,{lunch:pl.lunch||null,sub:null});
       if(pl2.totalDrive<pl.totalDrive) pl=pl2;
     }
+    // 幼児(小学生なし)は帰着18:30(乳児18:00)を上限に。超える案は午後スポットを外して再構成
+    if(kidCap&&pl.retHome&&pl.retHome>kidCap&&pl.sub){
+      const pl3=buildPlan(m,date,w,{lunch:pl.lunch||null,sub:null});
+      if(pl3.retHome&&pl3.retHome<=kidCap) pl=pl3;
+    }
+    if(kidCap&&pl.retHome&&pl.retHome>kidCap) pl.__late=true;
     return pl;
   });
+  // 上限内の案があればそれだけを出す。全案が超える場合のみ警告つきでそのまま出す
+  const within=built.filter(p=>!p.__late);
+  const out=within.length?within:built;
+  state.shownMains=out.map(p=>p.main);
+  return out;
 }
 // Regeneration for "別のプランにする": widen the main-spot pool to the top 10〜15 (quality floor
 // kept by ranking, not a fixed score cutoff) and shuffle-pick one that hasn't been shown yet this
@@ -1208,6 +1222,70 @@ function nextVarietyPlan(date,w){
   return plv;
 }
 
+/* ===== 生成の安全網: 例外・タイムアウトでもloadingのまま固まらない ===== */
+let GEN_SEQ=0, __genTimer=null;
+function genStart(kind){
+  state.__lastGen=kind;
+  const id=++GEN_SEQ;
+  hideGenError();
+  clearTimeout(__genTimer);
+  __genTimer=setTimeout(function(){
+    const L=document.getElementById('loading');
+    // loadingが既に閉じている(=候補なし等で正常に抜けた)場合は何もしない
+    if(GEN_SEQ===id&&L&&L.style.display!=='none'){
+      GEN_SEQ++;  // 以後、この生成が遅れて完了しても結果は無効(画面を上書きしない)
+      showGenError('⏳ 生成に時間がかかっています');
+    }
+  },12000);
+  return id;
+}
+function genOk(id){
+  if(GEN_SEQ!==id) return false;   // タイムアウト済み・別の生成が始まった → この結果は捨てる
+  clearTimeout(__genTimer);
+  return true;
+}
+function genFail(id){
+  if(GEN_SEQ!==id) return;
+  clearTimeout(__genTimer);
+  GEN_SEQ++;
+  showGenError('🙏 プランをうまく作れませんでした');
+}
+function showGenError(title){
+  const L=document.getElementById('loading'); if(L) L.style.display='none';
+  let e=document.getElementById('genError');
+  if(!e){
+    e=document.createElement('div'); e.id='genError';
+    if(L&&L.parentNode) L.parentNode.insertBefore(e,L.nextSibling); else document.body.appendChild(e);
+  }
+  e.innerHTML='<div style="margin:24px auto;max-width:480px;padding:18px;border:1.5px solid #e0b84a;background:#fff8e1;border-radius:14px;text-align:center">'
+    +'<div style="font-weight:800;margin-bottom:8px">'+title+'</div>'
+    +'<div style="font-size:.8rem;color:#6b5c40;margin-bottom:12px">通信状況などで時間がかかることがあります。もう一度お試しください。</div>'
+    +'<button type="button" onclick="genRetry()" style="width:100%;padding:12px;border-radius:10px;border:none;background:#e8853d;color:#fff;font-weight:800;font-size:.92rem;margin-bottom:8px">🔁 もう一度作る</button>'
+    +'<button type="button" onclick="genBack()" style="width:100%;padding:11px;border-radius:10px;border:1px solid #d8c9b0;background:#fff;font-size:.86rem">← 入力画面へ戻る</button>'
+    +'</div>';
+  e.style.display='block';
+}
+function hideGenError(){ const e=document.getElementById('genError'); if(e) e.style.display='none'; }
+function genRetry(){ if(state.__lastGen==='custom'){ customGenerate(); } else { generate(); } }
+function genBack(){
+  hideGenError();
+  const L=document.getElementById('loading'); if(L) L.style.display='none';
+  if(state.__lastGen==='custom'){ renderCustomPanel(); } else { restart(); }
+}
+// 「近い場所で作り直す」: 条件は維持し移動範囲だけ一段狭める(最短なら出さない)
+function narrowerDrive(dt){
+  if(dt==='any'||dt==null) return '60';
+  if(dt==='60') return '40';
+  if(dt==='40') return '20';
+  return null;
+}
+function narrowRegen(){
+  const nd=narrowerDrive(state.driveTime);
+  if(!nd) return;
+  state.driveTime=nd;
+  if(typeof gtag==='function') gtag('event','plan_narrow_regen',{to:nd});
+  generate();
+}
 /* ===== render result ===== */
 function approveWiden(next){
   if(typeof gtag==='function') gtag('event','plan_widen_approved',{to:next});
@@ -1215,6 +1293,8 @@ function approveWiden(next){
   generate();
 }
 async function generate(){
+  const __gid=genStart('wizard');
+  try{
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   document.getElementById('dots').style.display='none';
   document.getElementById('loading').style.display='block';
@@ -1236,8 +1316,10 @@ async function generate(){
   state.variant=0;
   state.planNo=1; // 表示用の通し番号（案1,2,3…）: plans配列のindexとは独立に1ずつ増やす
 
+  if(!genOk(__gid)) return;   // タイムアウト後の遅延完了は画面を上書きしない
   document.getElementById('loading').style.display='none';
   showResult();
+  }catch(e){ genFail(__gid); }
 }
 function whenLabel(){
   const map={today:'今日これから',tomorrow:'明日',sat:'今週末（土）',sun:'今週末（日）'};
@@ -2232,6 +2314,8 @@ async function customGenerate5(){
   let lunch=slots[li]||null;
   const afternoon=slots.slice(li+1).filter(Boolean);
   if(!(morning.length+afternoon.length)){ if(msg) msg.textContent='遊び場所を1つ以上えらんでください'; return; }
+  const __gid=genStart('custom');
+  try{
   if(typeof gtag==='function') gtag('event','plan_custom_generate5',{n:morning.length+afternoon.length+(lunch?1:0)});
   document.getElementById('customPanel').style.display='none';
   document.getElementById('loading').style.display='block';
@@ -2294,6 +2378,7 @@ async function customGenerate5(){
   const homeDm=lastSpot?(driveMinutesFrom(o,lastSpot)||legMinutes(lastLat,lastLng,o.lat,o.lng)):0;
   rows.push({type:'move',time:t,label:'🚗 帰路（約'+homeDm+'分）',sub:transitLabel(lastName,'ご自宅',homeDm)+'／帰着めやす '+fmtTime(t+homeDm)+'ごろ'});
   legSum+=homeDm;
+  const __retHome=t+homeDm;
   if(t+homeDm>capHome+30) warn=true;
   // 費用集計(既存ルール踏襲)
   const used=morning.concat((lunch&&!lunch.__bento)?[lunch]:[],afternoon);
@@ -2304,20 +2389,24 @@ async function customGenerate5(){
   else if(known===0&&hasUnknown) cost='入場料などは公式サイトで確認（ランチ代は別）';
   else cost='入場料など 大人1人あたり 目安'+known.toLocaleString()+'円'+(hasUnknown?'（一部要確認）':'')+'・ランチ代は別';
   const __lunchOut=(lunch&&!lunch.__bento)?lunch:null;
-  const plan={rows,main:morning[0]||afternoon[0],lunch:__lunchOut,sub:afternoon[0]||null,totalDrive:legSum,cost,hasUnknown,homePriority:false,custom5:true};
+  const plan={rows,main:morning[0]||afternoon[0],lunch:__lunchOut,sub:afternoon[0]||null,totalDrive:legSum,cost,hasUnknown,homePriority:false,custom5:true,retHome:__retHome};
   state.shownMains=[plan.main]; state.shownLunches=__lunchOut?[__lunchOut]:[]; state.shownSubs=[];
   state.swapFixed={}; state.swapSeen={}; state.cycledNote=false;
   state.isSharedView=false; state.isCustomView=true; state.custom5Warn=warn;
   state.excludedSpots=[]; state.lastPlanSpots=[];
   state.plans=[plan]; state.variant=0; state.planNo=1;
+  if(!genOk(__gid)) return;
   document.getElementById('loading').style.display='none';
   showResult();
+  }catch(e){ genFail(__gid); }
 }
 async function customGenerate(){
   const sel=state.customSlots.filter(Boolean);
   const msg=document.getElementById('cpAddMsg');
   if(!sel.length){ if(msg) msg.textContent='場所を1つ以上えらんでください（マップからえらぶ、または上の入力から追加）'; return; }
   if(state.customSlots.length>3||(state.customSlots[cpLI()]&&state.customSlots[cpLI()].__bento)){ return customGenerate5(); }
+  const __gid=genStart('custom');
+  try{
   if(typeof gtag==='function') gtag('event','plan_custom_generate',{n:sel.length});
   document.getElementById('customPanel').style.display='none';
   document.getElementById('loading').style.display='block';
@@ -2353,8 +2442,10 @@ async function customGenerate(){
   state.excludedSpots=[]; state.lastPlanSpots=[];
   state.plans=[buildPlan(main,date,state.weather,{lunch:lunch||null,sub:sub||null})];
   state.variant=0; state.planNo=1;
+  if(!genOk(__gid)) return;
   document.getElementById('loading').style.display='none';
   showResult();
+  }catch(e){ genFail(__gid); }
 }
 
 async function initFromShareOrWizard(){
@@ -2430,8 +2521,12 @@ function showResult(){
     html+='<div class="notice" style="margin:8px 0;background:#fff4e5;border:1px solid #f0c48a;border-radius:10px;padding:10px 12px;font-size:.82rem">🍴 午後からの出発のため、お昼ごはんは済ませてからの出発を想定しています。プラン内の食事枠は「カフェ・おやつ休憩」や「早めの夕食」としてご利用ください。</div>';
   }
   const __dh=Math.floor(p.totalDrive/60), __dm=p.totalDrive%60, __dstr='約'+(__dh?__dh+'時間':'')+(__dm?__dm+'分':(__dh?'':'0分'));
+  const __narrowBtn=(!state.isCustomView&&narrowerDrive(state.driveTime))?'<button type="button" onclick="narrowRegen()" style="display:block;width:100%;margin-top:8px;padding:11px;border-radius:10px;border:none;background:#e8853d;color:#fff;font-weight:800;font-size:.88rem">🔁 近い場所で作り直す</button>':'';
+  if(p.__late&&p.retHome){
+    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 帰宅が遅めのプランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。この条件では近い候補が見つかりませんでした'+__narrowBtn+'</div>';
+  }
   if(p.totalDrive>=180){
-    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ この組み合わせは移動が多すぎます（運転合計 '+__dstr+'）。'+(state.isCustomView?'1カ所減らす・近い場所に変える・2日に分けるのがおすすめです（下の「えらんだ場所を編集する」から変更できます）':'お子さんの負担が大きいため、近場のプランへの変更もご検討ください')+'</div>';
+    html+='<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ この組み合わせは移動が多すぎます（運転合計 '+__dstr+'）。'+(state.isCustomView?'1カ所減らす・近い場所に変える・2日に分けるのがおすすめです（下の「えらんだ場所を編集する」から変更できます）':'お子さんの負担が大きいため、近場のプランへの変更もご検討ください'+__narrowBtn)+'</div>';
   } else if(p.totalDrive>=120){
     html+='<div class="notice" style="margin:8px 0;background:#fff8e1;border:1.5px solid #e0b84a;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🚗 移動が多めのプランです（運転合計 '+__dstr+'）。休憩をはさみながらどうぞ</div>';
   }
@@ -2445,6 +2540,9 @@ function showResult(){
         html+='<div class="notice" style="margin:8px 0;background:#f6f1e7;border:1px solid #d8c9b0;border-radius:10px;padding:9px 12px;font-size:.8rem">🕒 営業時間: 確認済み'+__ok+'件・未確認'+__un+'件。未確認の場所はおでかけ前に公式サイトでご確認ください</div>';
       }
     }
+  }
+  if(p.retHome&&p.retHome<=(14*60+30)&&!(p.rows||[]).some(r=>r.opt)){
+    html+='<div class="notice" style="margin:8px 0;background:#eef6ee;border:1px solid #9dc3a0;border-radius:10px;padding:9px 12px;font-size:.82rem;font-weight:700">🌤 半日プランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。午後も遊びたいときは、移動時間を広げると候補が増えます</div>';
   }
   html+='<div class="plancard">';
   html+='<div class="plantitle">🎯 '+esc(state.origin.name)+'発 きょうのプラン <small>'+esc(whenLabel())+' / 案'+(state.planNo||1)+'</small></div>';
