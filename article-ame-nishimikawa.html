@@ -72,8 +72,26 @@ ol.steps li,ul.tips li{margin:0 0 8px}
 .summer-chips a{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #ecd9bf;border-radius:999px;padding:7px 13px;font-size:.85rem;font-weight:700;color:#6a5c46;text-decoration:none;white-space:nowrap}
 .summer-note{font-size:.68rem;color:#b0a695;margin:6px 0 0}
 </style>
+<style id="odm-chrome">
+.odm-sitebar{background:#fffdf9;border-bottom:1px solid #e8e0d4}
+.odm-sitebar-in{max-width:980px;margin:0 auto;padding:7px 14px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.odm-brand{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:.92rem;color:#4a4238;text-decoration:none;line-height:1.2}
+.odm-brand img{display:block;width:24px;height:24px}
+.odm-nat{font-size:.72rem;color:#7a746a;text-decoration:none;white-space:nowrap;border:1px solid #e0d6c6;border-radius:999px;padding:3px 10px}
+.odm-nat:hover{color:#e8853d}
+.odm-fbrand{font-weight:700;margin:0 0 4px}
+.odm-fbrand img{width:22px;height:22px;vertical-align:-5px;margin-right:5px;display:inline-block}
+.odm-fnat{margin:10px 0 2px}
+.odm-fnat a{color:inherit;font-weight:700}
+.odm-flinks{margin-top:8px;font-size:.72rem;line-height:2}
+@media(max-width:420px){.odm-brand{font-size:.8rem}.odm-sitebar-in{padding:6px 10px;gap:6px}.odm-nat{font-size:.68rem;padding:3px 8px}}
+</style>
 </head>
 <body>
+<!-- odm-sitebar:start -->
+<div class="odm-sitebar"><div class="odm-sitebar-in"><a class="odm-brand" href="./"><img src="/assets/odemaru-mark.png" alt="おでまる" width="24" height="24" decoding="async">あいち子育ておでかけマップ</a><a class="odm-nat" href="https://kosodate-odekake.jp/">全国版 &rsaquo;</a></div></div>
+<!-- odm-sitebar:end -->
+
 <header class="hero"><div class="wrap">
 <p class="bc"><a href="https://nishimikawa-odekake.com/">あいち子育ておでかけマップ</a> &rsaquo; 西三河の雨の日子連れ遊び場12選</p>
 <h1>西三河の雨の日子連れ遊び場12選</h1>
@@ -138,6 +156,15 @@ ol.steps li,ul.tips li{margin:0 0 8px}
 </aside>
 
 </div></main>
-<footer><div class="wrap">あいち子育ておでかけマップ｜愛知の子連れおでかけ・遊び場・ランチ検索<div class="footlinks" style="margin-top:8px;font-size:.72rem"><a href="./about.html">運営者情報</a> | <a href="./disclaimer.html">免責事項</a> | <a href="./privacy.html">プライバシーポリシー</a> | <a href="https://docs.google.com/forms/d/e/1FAIpQLSdcSuUG_4MbFgNq-Ejn_cfDvXKhQdQZh4DxITrDiKlo4ocFfw/viewform" target="_blank" rel="noopener">お問い合わせ</a> | <a href="./request.html">掲載情報の修正・削除依頼</a></div></div></footer>
+<footer>
+<div class="wrap">
+<p class="odm-fbrand"><img src="/assets/odemaru-mark.png" alt="" width="22" height="22" loading="lazy" decoding="async">あいち子育ておでかけマップ</p>
+<p class="odm-fdesc">愛知県内<span data-stat="aichi">1,126</span>カ所を掲載。二児のパパが個人で運営しています。</p>
+<p class="odm-fnote">掲載情報は作成時点のものです。おでかけ前に各公式サイトで最終確認をお願いします。</p>
+<p class="odm-fnat">🌏 <a href="https://kosodate-odekake.jp/">全国版「おでまる｜子育ておでかけマップ」</a> — 全<span data-stat="prefs">47</span>都道府県・総掲載<span data-stat="total">14,898</span>スポット</p>
+<p class="odm-flinks"><a href="./about.html">運営者情報</a> | <a href="./disclaimer.html">免責事項</a> | <a href="./privacy.html">プライバシーポリシー</a> | <a href="https://kosodate-odekake.jp/odemaru/">おでまるって？</a> | <a href="https://docs.google.com/forms/d/e/1FAIpQLSdcSuUG_4MbFgNq-Ejn_cfDvXKhQdQZh4DxITrDiKlo4ocFfw/viewform" target="_blank" rel="noopener">お問い合わせ</a> | <a href="./request.html">掲載情報の修正・削除依頼</a></p>
+</div>
+<script>(function(){try{fetch('https://kosodate-odekake.jp/stats.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(s){if(!s)return;document.querySelectorAll('[data-stat]').forEach(function(el){var k=el.getAttribute('data-stat');var v=s;var parts=k.split(':');for(var i=0;i<parts.length;i++){if(v==null)return;v=v[parts[i]];}if(v==null||isNaN(Number(v)))return;el.textContent=Number(v).toLocaleString('ja-JP');});}).catch(function(){});}catch(e){}})();</script>
+</footer>
 </body>
 </html>
