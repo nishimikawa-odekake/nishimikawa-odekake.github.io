@@ -473,7 +473,7 @@ function slotpickAdd(i){
     slots[SLOTPICK]={n:SPOTS[i].name};
     localStorage.setItem('odemaru_custom_sel_v1',JSON.stringify({v:2,ts:Date.now(),li:SLOTLI,slots:slots.slice(0,Math.max(SLOTLEN,slots.length))}));
   }catch(e){}
-  (typeof gtag==='function'&&gtag('event','map_planner_start',{n:(window.planSel||[]).length||1})),location.href='./plan.html?custom=1';
+  (typeof gtag==='function'&&gtag('event','map_planner_start',{n:(window.planSel||[]).length||1})),location.href='./plan.html?custom=1'+(function(){try{var v=new URLSearchParams(location.search).get('src');return v?'&src='+encodeURIComponent(v):'';}catch(e){return '';}})();
 }
 function isLunchableSpot(s){ return !!s && (s.is_chain===true||((s.play_types||[]).includes('food')&&!(s.play_types||[]).some(function(t){return t==='active'||t==='nature'||t==='water';}))); }
 function selWouldHaveFood(i){ return planSel.concat([i]).some(function(x){ return isLunchableSpot(SPOTS[x]); }); }
@@ -555,7 +555,7 @@ function makeCustomPlanFromSel(){
     while(ptr<rest.length&&slots.length<5) slots.push(rest[ptr++]);
     localStorage.setItem('odemaru_custom_sel_v1', JSON.stringify({v:2,ts:Date.now(),li:li,slots:slots.map(s=>s?{n:s.name}:null)}));
   }catch(e){}
-  (typeof gtag==='function'&&gtag('event','map_planner_start',{n:(window.planSel||[]).length||1})),location.href='./plan.html?custom=1';
+  (typeof gtag==='function'&&gtag('event','map_planner_start',{n:(window.planSel||[]).length||1})),location.href='./plan.html?custom=1'+(function(){try{var v=new URLSearchParams(location.search).get('src');return v?'&src='+encodeURIComponent(v):'';}catch(e){return '';}})();
 }
 function openSheet(i){
   const s=SPOTS[i];

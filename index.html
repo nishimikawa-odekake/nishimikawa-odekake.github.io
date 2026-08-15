@@ -248,8 +248,8 @@ footer p{margin:0 0 6px}
 .card .aff:hover{border-color:var(--accent);color:var(--accent-d)}
 .card .aff .pr{font-size:.6rem;color:#b0a695;font-weight:700}
 /* 週末天気ウィジェット */
-.wxbar{display:none;margin:12px auto 0;max-width:700px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:9px 13px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.wxbar.show{display:block}
+.wxbar{display:block;visibility:hidden;min-height:150px;margin:12px auto 0;max-width:700px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:9px 13px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.wxbar.show{visibility:visible}@media(max-width:389px){.wxbar{min-height:196px}}
 .wxbar-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .wxbar-title{font-size:.78rem;font-weight:800;color:#5a4632;white-space:nowrap}
 .wxbar-days{display:flex;gap:10px;flex:1 1 auto;flex-wrap:wrap}
@@ -272,6 +272,12 @@ footer p{margin:0 0 6px}
 .planhero .ph-btn{display:inline-block;background:#fff;color:var(--accent-d);font-weight:900;font-size:1.05rem;padding:12px 26px;border-radius:999px;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.18)}
 .planhero .ph-btn:active{transform:scale(.98)}
 .planhero .ph-s{margin:8px 0 0;font-size:.72rem;opacity:.85}
+.ph-grid{display:grid;gap:11px;margin:12px 0 0}
+.ph-opt{display:block;text-decoration:none;color:inherit}
+.ph-opt .ph-btn{display:block;width:100%;box-sizing:border-box;padding:13px 14px;font-size:1.05rem}
+.ph-opt.is-sub .ph-btn{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.92);box-shadow:none}
+.ph-cap{margin:5px 0 0;font-size:.73rem;opacity:.9;line-height:1.45}
+@media(max-width:389px){.ph-opt .ph-btn{font-size:1rem;padding:12px 10px}}
 </style>
 <style id="odm-chrome">
 .odm-sitebar{background:#fffdf9;border-bottom:1px solid #e8e0d4}
@@ -298,6 +304,15 @@ footer p{margin:0 0 6px}
     <h1><img src="/assets/odemaru-mark.png" alt="おでまる - あいち子育ておでかけマップ" width="30" height="30" style="display:inline-block;vertical-align:-6px;margin-right:6px">あいち子育ておでかけマップ</h1>
     <p class="catch">愛知の"子どもが喜ぶ場所"だけを集めたおでかけマップ</p>
     <p class="creator">愛知県内<span data-stat="aichi">1,126</span>カ所を掲載（おでかけスポット460＋児童館276館＋子連れチェーン店390）。二児のパパが個人で運営しています。</p>
+    <div class="planhero">
+      <p class="ph-q">今日どこ行く？</p>
+      <p class="ph-t">30秒で今日のおでかけが決まる</p>
+      <div class="ph-grid">
+        <a class="ph-opt" onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-plan'})" href="./plan.html?src=top_hero_planner"><span class="ph-btn">🎯 おでかけプランを作る</span><span class="ph-cap" style="display:block">おでまるが条件から自動で組み立て・質問に答えるだけ30秒</span></a>
+        <a class="ph-opt is-sub" onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-map'})" href="./map.html?src=top_hero_mapselect"><span class="ph-btn">🗺️ マップから自分で選ぶ</span><span class="ph-cap" style="display:block">行きたい場所を選んでプランに・祖父母の家や予約したお店も入れられる</span></a>
+      </div>
+      <p class="ph-s">無料・登録不要</p>
+    </div>
     <div class="odm-media" style="background:#fff;border:1px solid #e6e0d6;border-radius:12px;padding:10px 12px;margin:10px 0 0">
       <p style="margin:0;font-size:.82rem;font-weight:700;color:#c9713f">📰 中日新聞に掲載されました</p>
       <p style="margin:4px 0 0;font-size:.78rem;color:#5c574e;line-height:1.6">2026年8月15日 中日新聞「三河総合」面で、おでまる（あいち子育ておでかけマップ）をご紹介いただきました。</p>
@@ -312,19 +327,7 @@ footer p{margin:0 0 6px}
       <p class="wxbar-src">天気: Open-Meteo</p>
     </div>
     <!-- weekly-banner: 週次更新時に件数を書き換え -->
-    <a class="topbanner" href="/weekend/">📅 今週末のイベント（毎週木曜更新）→</a>
-    <div class="planhero">
-      <p class="ph-q">今日どこ行く？</p>
-      <p class="ph-t">30秒で今日のおでかけが決まる</p>
-      <a onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-plan'})" class="ph-btn" href="./plan.html">🎯 おでかけプランを作る</a>
-      <p class="ph-s">質問に答えるだけ・無料・登録不要</p>
-    </div>
-      <div class="planhero" style="background:linear-gradient(135deg,#4a8c5f,#3b7350);margin-top:14px">
-        <p class="ph-q">🗺 マップから自分で選ぶ</p>
-        <p class="ph-t">気になる場所を選ぶだけで、1日プランに</p>
-        <a onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-map'})" class="ph-btn" href="./map.html" style="color:#3b7350">🗺 マップから選んでプランを作る</a>
-        <p class="ph-s">祖父母の家・予約したお店も入れられる・無料・登録不要</p>
-      </div>
+    <a class="topbanner" href="/weekend/?src=top_banner_weekend">📅 今週末のイベント（毎週木曜更新）→</a>
   </div>
 </header>
 
@@ -1184,6 +1187,7 @@ async function updateWeather(){
 (function(){
   const rb=document.getElementById('wxbarRain');
   if(rb) rb.addEventListener('click',()=>{
+    if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top_wx_rain',position:'wxbar-rain',rain:1});
     state.rain=true; setChip('[data-f="rain"]'); apply();
     const list=document.querySelector('.listwrap')||document.querySelector('.cards');
     if(list) list.scrollIntoView({behavior:'smooth',block:'start'});
