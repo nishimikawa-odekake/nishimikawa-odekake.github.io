@@ -11,6 +11,13 @@
   gtag('js', new Date());
   gtag('config', 'G-8CDXHXFG9F');
 </script>
+<script>
+/* === おでまる Instagramフォロー導線 ===
+   新聞流入向け案内の表示期限（この日を過ぎたら自動的に非表示）。変更はこの1行だけ。 */
+var IG_NEWS_NOTICE_UNTIL = '2026-08-31';
+function igFollowTrack(pos){try{if(typeof gtag==='function')gtag('event','ig_follow_click',{position:pos});}catch(e){}}
+function igNewsNoticeActive(){try{var d=new Date();var t=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);return t<=IG_NEWS_NOTICE_UNTIL;}catch(e){return false;}}
+</script>
 <meta name="google-site-verification" content="Nfs_SxbXHLkNUnpUxyqPTuQx__y9nLNq0hhPFKrpB_E" />
 <title>おでまる｜あいち子育ておでかけマップ - 愛知の子連れおでかけ・遊び場・ランチ検索</title>
 <meta name="description" content="おでまる（あいち子育ておでかけマップ）は、質問に答えるだけで30秒で今日のおでかけが決まる愛知の子育ておでかけサービス。愛知県の子連れおでかけスポット460件と児童館276館、子連れで行けるチェーン飲食店390店の計1,126カ所を地図で検索。公園・水族館・科学館・工場見学から子連れランチまで。安城など出発地を選んで所要時間で絞り込み。雨の日OK・無料スポットも。">
@@ -329,6 +336,16 @@ footer p{margin:0 0 6px}
   </a>
 </div>
 
+<!-- IG_FOLLOW:news_banner（IG_NEWS_NOTICE_UNTIL を過ぎると自動的に表示されません） -->
+<div class="wrap">
+  <section id="igNewsNotice" aria-label="中日新聞をご覧の方へ" style="display:none;background:#fffdf8;border:1px dashed #f0c48a;border-radius:14px;padding:14px 14px;margin:14px 0 0">
+    <p style="margin:0;font-size:.86rem;font-weight:700;color:#c9713f;line-height:1.6">📰 中日新聞を見て来てくださった方へ ありがとうございます！</p>
+    <p style="margin:6px 0 0;font-size:.8rem;color:#5c574e;line-height:1.7">おでまるInstagramでは毎週、愛知の週末イベント・雨の日スポットを配信しています🌻</p>
+    <a href="https://www.instagram.com/nishimikawa_odekake/" target="_blank" rel="noopener" onclick="igFollowTrack('news_banner')" style="display:inline-block;margin:10px 0 0;background:#c9713f;color:#fff;text-decoration:none;padding:9px 18px;border-radius:999px;font-size:.83rem;font-weight:700">📷 Instagramをフォローする</a>
+  </section>
+</div>
+<script>if(igNewsNoticeActive()){document.getElementById('igNewsNotice').style.display='block';}</script>
+
 <section class="moods">
   <div class="wrap">
     <h2 style="display:flex;align-items:center;gap:8px"><img src="/assets/odemaru-wave.png" alt="おでまる" width="42" height="45" style="flex:none">気分で選ぶ</h2>
@@ -406,9 +423,9 @@ footer p{margin:0 0 6px}
 
       <div class="weekend" style="margin-top:18px">
         <h3>今週末のおでかけ 🎪</h3>
-        <p>最新イベント情報はInstagramでお知らせ！</p>
+        <p><b>毎週木曜｜週末イベントまとめをInstagramで配信</b><br>フォローして週末の候補を保存👇</p>
         <div class="actions">
-          <a class="btn insta" href="https://www.instagram.com/nishimikawa_odekake/" target="_blank" rel="noopener">📷 Instagram</a>
+          <a class="btn insta" href="https://www.instagram.com/nishimikawa_odekake/" target="_blank" rel="noopener" onclick="igFollowTrack('weekend_section')">📷 Instagramをフォロー</a>
           <a class="btn links" href="./links.html">今週末のリンク集 →</a>
         </div>
       </div>
@@ -484,7 +501,7 @@ footer p{margin:0 0 6px}
     <p>子育て世帯向けの施設・イベント情報を随時掲載しています。掲載のご相談や掲載内容の修正はお気軽にご連絡ください。</p>
     <a class="btn contact" id="contactBtn" href="./request.html">掲載についてのご相談はこちら →</a>
   </section>
-  <p style="text-align:center;margin:18px auto 6px;font-size:.86rem;color:var(--sub)">📅 週末イベントは毎週木曜にInstagramで配信中 → <a href="https://www.instagram.com/nishimikawa_odekake/" target="_blank" rel="noopener" style="font-weight:700">@nishimikawa_odekake</a></p>
+  <p style="text-align:center;margin:18px auto 6px;font-size:.86rem;color:var(--sub)">📅 週末イベントは毎週木曜にInstagramで配信中 → <a href="https://www.instagram.com/nishimikawa_odekake/" target="_blank" rel="noopener" onclick="igFollowTrack('footer')" style="font-weight:700">@nishimikawa_odekake</a></p>
 </div>
 
 

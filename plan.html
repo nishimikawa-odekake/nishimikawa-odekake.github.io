@@ -11,6 +11,13 @@
   gtag('js', new Date());
   gtag('config', 'G-8CDXHXFG9F');
 </script>
+<script>
+/* === おでまる Instagramフォロー導線 ===
+   新聞流入向け案内の表示期限（この日を過ぎたら自動的に非表示）。変更はこの1行だけ。 */
+var IG_NEWS_NOTICE_UNTIL = '2026-08-31';
+function igFollowTrack(pos){try{if(typeof gtag==='function')gtag('event','ig_follow_click',{position:pos});}catch(e){}}
+function igNewsNoticeActive(){try{var d=new Date();var t=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);return t<=IG_NEWS_NOTICE_UNTIL;}catch(e){return false;}}
+</script>
 <title>おでかけプランナー｜おでまる（あいち子育ておでかけマップ）- 30秒で今日のおでかけが決まる</title>
 <meta name="description" content="出発地・日程・お子さんの年齢・予算を選ぶだけで、愛知の子連れおでかけプランを自動作成。天気予報も自動反映して雨の日は室内プランに。移動時間・費用の目安つきタイムラインで、きょうのおでかけがすぐ決まります。">
 <link rel="canonical" href="https://nishimikawa-odekake.com/plan.html">
@@ -301,6 +308,25 @@ footer a{color:var(--sub)}
 
   <!-- RESULT -->
   <section id="result"></section>
+
+<!-- IG_FOLLOW:planner_result （プラン結果が出たときだけ表示。プランナーのロジックには一切触れない） -->
+  <section id="igFollowResult" aria-label="Instagramのご案内" style="display:none;background:linear-gradient(135deg,#fff6ef,#fdeee2);border:1px solid #f0c48a;border-radius:16px;padding:16px 14px;margin:16px 0 0;text-align:center">
+    <p style="margin:0;font-size:.95rem;font-weight:700;color:#c9713f;line-height:1.6">🌻 「週末どこ行く？」を毎週Instagramで配信中</p>
+    <p style="margin:6px 0 0;font-size:.82rem;color:#5c574e;line-height:1.7">木曜は愛知の週末イベントまとめ、雨の日は室内スポット。<br>次のおでかけ先えらびに、そのまま使えます。</p>
+    <a href="https://www.instagram.com/nishimikawa_odekake/" target="_blank" rel="noopener" onclick="igFollowTrack('planner_result')" style="display:inline-block;margin:12px 0 0;background:#c9713f;color:#fff;text-decoration:none;padding:11px 22px;border-radius:999px;font-size:.9rem;font-weight:700">📷 @nishimikawa_odekake をフォロー</a>
+  </section>
+  <script>
+  (function(){
+    var r=document.getElementById('result'), b=document.getElementById('igFollowResult');
+    if(!r||!b) return;
+    function upd(){
+      var on = r.innerHTML.trim()!=='' && r.style.display!=='none';
+      b.style.display = on ? 'block' : 'none';
+    }
+    try{ new MutationObserver(upd).observe(r,{childList:true,subtree:true,attributes:true,attributeFilter:['style']}); }catch(e){}
+    upd();
+  })();
+  </script>
 
   <p style="font-size:.74rem;color:var(--sub);line-height:1.6;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:14px 0 0">掲載情報は作成時点のものです。最新情報は公式サイトをご確認ください。<br><a href="./request.html">情報の修正・削除依頼はこちら</a></p>
 </div>
