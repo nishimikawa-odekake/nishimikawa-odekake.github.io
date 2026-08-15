@@ -475,6 +475,8 @@ function slotpickAdd(i){
   }catch(e){}
   (typeof gtag==='function'&&gtag('event','map_planner_start',{n:(window.planSel||[]).length||1})),location.href='./plan.html?custom=1';
 }
+function isLunchableSpot(s){ return !!s && (s.is_chain===true||((s.play_types||[]).includes('food')&&!(s.play_types||[]).some(function(t){return t==='active'||t==='nature'||t==='water';}))); }
+function selWouldHaveFood(i){ return planSel.concat([i]).some(function(x){ return isLunchableSpot(SPOTS[x]); }); }
 function selHas(i){ return planSel.indexOf(i)>=0; }
 function toggleSel(i){
   if(SLOTPICK!=null){
@@ -501,6 +503,11 @@ function toggleSel(i){
       if(btn) btn.textContent='えらべるのは5件までです（どれかを外してください）';
       updateSelBar(); return;
     }
+    // 昼食枠を空けるぶん、ごはん店なしで5件目は入らない(黙って消さず警告する)
+    if(planSel.length>=4 && !selWouldHaveFood(i)){
+      if(btn) btn.textContent='5件選ぶ場合は、ごはん店を1件含めてください🍽';
+      updateSelBar(); return;
+    }
     planSel.push(i);
   }
   if(btn){
@@ -525,9 +532,15 @@ function makeCustomPlanFromSel(){
     const foods=items.filter(isLunchable);
     const plays=items.filter(s=>!foods.includes(s));
     // 件数に応じた枠形状: ≤3=[午前,昼,午後] / 4=[午前,昼,午後1,午後2] / 5=[午前1,午前2,昼,午後1,午後2]
+    // ごはん店を選んでいない場合は昼枠が空くぶん1枠多く確保する(選んだ場所を落とさない)
     const total=items.length;
     let shape,li;
-    if(total<=3){ shape=3; li=1; } else if(total===4){ shape=4; li=1; } else { shape=5; li=2; }
+    if(foods.length>0){
+      if(total<=3){ shape=3; } else if(total===4){ shape=4; } else { shape=5; }
+    } else {
+      shape=Math.min(5,Math.max(3,total+1));
+    }
+    li=(shape===5)?2:1;
     const slots=new Array(shape).fill(null);
     if(foods[0]) slots[li]=foods[0];
     // 残り(2件目以降のfood含む)を選んだ順に空き枠へ(昼枠以外)
@@ -537,6 +550,9 @@ function makeCustomPlanFromSel(){
       if(k===li||slots[k]) continue;
       slots[k]=rest[ptr++];
     }
+    // 念のための安全網: 溢れた場合は昼枠(空のとき)→末尾の順で必ず収容し、選んだ場所を捨てない
+    if(ptr<rest.length&&!slots[li]) slots[li]=rest[ptr++];
+    while(ptr<rest.length&&slots.length<5) slots.push(rest[ptr++]);
     localStorage.setItem('odemaru_custom_sel_v1', JSON.stringify({v:2,ts:Date.now(),li:li,slots:slots.map(s=>s?{n:s.name}:null)}));
   }catch(e){}
   (typeof gtag==='function'&&gtag('event','map_planner_start',{n:(window.planSel||[]).length||1})),location.href='./plan.html?custom=1';
