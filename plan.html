@@ -1066,6 +1066,29 @@ function applyDriveMoodTier(pool){
   }
   return pool;
 }
+// 初回メイン枠が毎回同じ施設になる問題の是正。
+// tier順・スコア順の先頭をそのまま採用すると、最高スコアの施設が固定で1案目に出続ける
+// (とだがわこどもランド等)。ここでは「条件適合スコアがトップとほぼ同等(=僅差)」かつ
+// 「同じランク帯」の上位候補だけを取り出してシャッフルし、先頭に並べ直す。
+// スコアが低い施設は母集団に入れないので、品質を落とさずに1案目だけを分散させる。
+const HEAD_DIVERSITY_WINDOW=10;  // 見る上位件数
+const HEAD_DIVERSITY_MARGIN=1.0; // トップからの許容スコア差
+function diversifyHead(pool){
+  if(!pool||pool.length<2) return pool;
+  const win=pool.slice(0,Math.min(HEAD_DIVERSITY_WINDOW,pool.length));
+  const top=win[0];
+  const topSc=(top.__sc==null?0:top.__sc);
+  const topTier=top.tier||'B';
+  // ランク帯を落とさない(Sが先頭ならSのみ、Aが先頭ならS/Aのみ)
+  const okTier=s=>{ const t=s.tier||'B'; return topTier==='S'?(t==='S'):(topTier==='A'?(t==='S'||t==='A'):true); };
+  // 20分(近場優先)のときだけは「近さ」の意図を壊さないよう、最短候補+10分以内に限定
+  const okNear=s=>state.driveTime!=='20'||s.__dm==null||top.__dm==null||s.__dm<=top.__dm+10;
+  const eq=win.filter(s=>(s.__sc==null?0:s.__sc)>=topSc-HEAD_DIVERSITY_MARGIN&&okTier(s)&&okNear(s));
+  if(eq.length<2) return pool;
+  const shuffled=shuffle(eq);
+  const rest=pool.filter(s=>!shuffled.includes(s));
+  return shuffled.concat(rest);
+}
 // 「別のプランにする」の多様化: メイン枠と同じ履歴+上位シャッフル方式をランチ枠・余力枠にも適用。
 // sorted(適合スコア降順)の上位topN程度から、まだ出していないものをシャッフルで選ぶ。
 // 全部出し切ったら履歴をリセット（直前のものだけは連続回避）して一巡させる。
@@ -1424,7 +1447,7 @@ function generatePlans(date,w){
   }
   // 移動時間は「上限」。候補が少なくても勝手に範囲を広げない(広げるのはユーザーが明示的に承認した場合のみ)。
   if(!pool.length) return [];
-  const tiered=applyDriveMoodTier(pool);
+  const tiered=diversifyHead(applyDriveMoodTier(pool));
   // variety: distinct mains for up to 3 variants
   const mains=[];
   for(const s of tiered){ if(!mains.includes(s)) mains.push(s); if(mains.length>=3) break; }
