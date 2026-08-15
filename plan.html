@@ -592,13 +592,26 @@ function alwaysOpenPark(s){
 }
 // ユーザーが明示的に選ぶ画面(1か所変更)では未確認スポットも提示してよい
 let ALLOW_UNKNOWN_HOURS=false;
+/* [開放フラグ] 営業時間が未確認(business_hours=null)のスポットを、通常候補として全開放するか。
+   true  = 全開放。自動生成/別プラン/1か所変更/候補一覧/カスタムプランのすべてで通常候補扱い。
+           確定枠に入った場合はカードに「🕐 営業時間は要確認」+公式サイト導線を出す。
+   false = 従来のP0挙動(未確認は確定枠に入れず、予備候補 RESERVE_SPOTS に回す)。
+   ※これは「未確認」だけの話。営業時間が判明していて営業時間外/定休日のスポットは
+     closingInfo() / isClosedOn() が従来どおり完全除外する(この開放では一切緩めない)。 */
+var ALLOW_UNVERIFIED_HOURS = true;
+// 営業時間が未確認(未登録)のスポットか。開放フラグの影響を受けない純粋な判定(表示用)。
+function isUnverifiedHours(s){
+  if(!s) return false;
+  if(s.business_hours) return false;      // 登録あり -> closingInfo 判定の世界
+  if(alwaysOpenPark(s)) return false;     // 常時開園の公園は「未確認」扱いしない
+  return true;
+}
 // true = 営業時間が未登録で、自動で確定枠に入れてはいけないスポット
 function hoursUnknown(s){
   if(!s) return false;
+  if(ALLOW_UNVERIFIED_HOURS) return false; // 全開放中: 未確認を理由に除外しない
   if(ALLOW_UNKNOWN_HOURS) return false;
-  if(s.business_hours) return false;      // 登録あり -> 通常の closingInfo 判定へ
-  if(alwaysOpenPark(s)) return false;     // 常時開園の公園
-  return true;
+  return isUnverifiedHours(s);
 }
 // 除外された候補は「営業状況未確認の予備候補」として結果画面下部に別表示する
 let RESERVE_SPOTS=[];
@@ -1723,8 +1736,11 @@ function rowHtml(r){
   if(/要予約|予約制|完全予約|事前予約/.test(infoTxt)){
     body+='<div class="meta" style="color:#b45309;font-weight:700">📞 予約が必要な場合があります。事前に公式サイトでご確認ください</div>';
   }
-  if(!s.business_hours&&!s.closed_days&&!isFood){
-    body+='<div class="meta" style="color:#8a7a5a">🕒 営業時間が未確認のスポットです。'+HOURS_UNVERIFIED_LINE+'</div>';
+  // 未確認スポットが確定枠に入ったら必ず明示する(飲食/定休日ありも含む。文言は1回だけ)
+  if(isUnverifiedHours(s)){
+    body+='<div class="meta" style="color:#8a7a5a">🕐 営業時間は要確認。'+HOURS_UNVERIFIED_LINE
+      +(s.official_url?' <a href="'+esc(s.official_url)+'" target="_blank" rel="noopener" onclick="track(\'hours_unverified_official\')" style="color:#1a73e8;font-weight:700">公式サイトで確認↗</a>':'')
+      +'</div>';
   }
   if(typeof isActiveSportSpot==='function'&&isActiveSportSpot(s)){
     body+='<div class="meta" style="color:#b45309;font-weight:700">⚠️ 年齢・身長制限がある場合があります。対象年齢を公式サイトでご確認ください</div>';
@@ -1883,7 +1899,7 @@ function swapCardHtml(slot,s,i){
   else if(s.has_kids_chair===true||/キッズチェア|子供椅子/.test(feats)) tags.push('🪑 子ども椅子');
   else if(s.rain_friendly===true||s.indoor_or_outdoor==='indoor') tags.push('☔ 屋内');
   const farNote=(s.__swapFar?'<span class="sc-far">📍 ご指定の移動圏より少し遠めです</span>':'')
-    +((!s.business_hours&&!alwaysOpenPark(s)&&s.is_chain!==true)?'<span class="sc-far" style="color:#8a7a5a">🕒 営業時間が未確認です。'+HOURS_UNVERIFIED_LINE+'</span>':'');
+    +((isUnverifiedHours(s)&&s.is_chain!==true)?'<span class="sc-far" style="color:#8a7a5a">🕒 営業時間が未確認です。'+HOURS_UNVERIFIED_LINE+'</span>':'');
   return '<button type="button" class="swapcard" onclick="applySwap(\''+slot+'\','+i+')">'+
     '<span class="sc-name">'+esc(s.name)+'<span class="sc-choose">これに変更 →</span></span>'+
     '<span class="sc-meta">'+esc(s.city||'')+(tags.length?'・'+tags.join('・'):'')+'</span>'+farNote+'</button>';
