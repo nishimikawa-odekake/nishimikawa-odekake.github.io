@@ -605,6 +605,12 @@ let RESERVE_SPOTS=[];
 function resetReserve(){ RESERVE_SPOTS=[]; }
 function noteReserve(s){ if(s&&RESERVE_SPOTS.indexOf(s)<0&&RESERVE_SPOTS.length<24) RESERVE_SPOTS.push(s); }
 /* ===== P0 fix stage2: 予備候補(営業状況が未確認のスポット)の共通UI ===== */
+// [表示切替フラグ] プランが正常に生成できたときに、結果画面下部の
+// 「🕒 営業状況が未確認のスポット」セクションを表示するかどうか。
+// 未確認スポットは「1か所変更」の候補一覧にも出てくるため冗長と判断し false(非表示)にしている。
+// true に戻せば従来どおり結果下部にも一覧が出る(ロジックは削除していないので1行で復帰可能)。
+// ※候補不足でプランが0件のとき(ctx='empty')は、このフラグに関係なく常に表示する(行き止まり画面の防止)。
+var SHOW_RESERVE_AFTER_PLAN = false;
 // 文言はサイト全体で1種類に統一する(断定しない・正直に)。
 const HOURS_UNVERIFIED_LINE='おでかけ前に公式サイトで営業時間をご確認ください';
 let RESERVE_SHOWN=[];
@@ -3120,7 +3126,8 @@ function showResult(){
     html+='<div class="notice">※ '+esc(dlab)+'圏内では条件に合う候補が少なかったため、少し範囲を広げています。</div>';
   }
   // P0: 営業時間が未登録で確定枠から外したスポットを「予備候補」として別表示する(確定枠には入れない)
-  if(!state.isSharedView&&!state.isCustomView){
+  // SHOW_RESERVE_AFTER_PLAN=false のあいだは表示のみ抑止する(reserveHtml/openReserveSwap は候補不足時に使うため残す)
+  if(SHOW_RESERVE_AFTER_PLAN&&!state.isSharedView&&!state.isCustomView){
     html+=reserveHtml('plan',[p.main,p.lunch,p.sub].filter(Boolean));
   }
   html+='<div class="noticebottom">'+
