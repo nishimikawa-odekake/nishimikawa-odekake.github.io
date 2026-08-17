@@ -736,31 +736,50 @@ function focusCard(i){
 
 // 一括描画直後は遅延画像の読込・失敗(.photoのremove)で一覧の高さが変わり、
 // scrollTo の目標値が古くなってカードを通り過ぎる。描画確定を待って移動し、
-// その後も数回だけ現在位置を再計測して補正する。利用者が自分で操作したら即中止。
+// その後も数回だけ現在位置を再計測して補正する。
+// - rAFは非表示タブで停止するため、setTimeoutのフォールバックで必ず開始させる
+// - 中止リスナーは開始直後に同期登録する
+// - 完了/中止時にタイマーとリスナーを解除し、次の呼び出しは前回を打ち切る
+let _cardScrollJob=null;
 function scrollToCardStable(el){
+  if(_cardScrollJob) _cardScrollJob.cancel();
   const bar=document.getElementById('filterbar');
   const targetY=()=>{
     const off=(bar?bar.offsetHeight:0)+14;
     return Math.max(0,el.getBoundingClientRect().top+window.pageYOffset-off);
   };
-  let aborted=false;
-  const stop=()=>{aborted=true;};
   const EVS=['wheel','touchstart','keydown'];
-  EVS.forEach(t=>window.addEventListener(t,stop,{passive:true}));
-  const cleanup=()=>EVS.forEach(t=>window.removeEventListener(t,stop));
-  // レイアウト確定を2フレーム待ってから初回スクロール
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    if(aborted){cleanup();return;}
+  const timers=[];
+  const job={
+    done:false,
+    cancel:function(){
+      if(job.done) return;
+      job.done=true;
+      timers.forEach(clearTimeout); timers.length=0;
+      EVS.forEach(t=>window.removeEventListener(t,job.cancel));
+      if(_cardScrollJob===job) _cardScrollJob=null;
+    }
+  };
+  _cardScrollJob=job;
+  EVS.forEach(t=>window.addEventListener(t,job.cancel,{passive:true}));
+  let started=false;
+  const start=function(){
+    if(started||job.done) return;
+    started=true;
     window.scrollTo({top:targetY(),behavior:'smooth'});
     const steps=[250,550,900,1400];
-    steps.forEach((ms,idx)=>setTimeout(()=>{
-      if(!aborted){
-        const y=targetY();
-        if(Math.abs(window.pageYOffset-y)>4) window.scrollTo({top:y,behavior:idx<2?'smooth':'auto'});
-      }
-      if(idx===steps.length-1) cleanup();
-    },ms));
-  }));
+    steps.forEach(function(ms,idx){
+      timers.push(setTimeout(function(){
+        if(!job.done){
+          const y=targetY();
+          if(Math.abs(window.pageYOffset-y)>4) window.scrollTo({top:y,behavior:idx<2?'smooth':'auto'});
+        }
+        if(idx===steps.length-1) job.cancel();
+      },ms));
+    });
+  };
+  requestAnimationFrame(function(){requestAnimationFrame(start);});
+  timers.push(setTimeout(start,120));   // rAFが来ない環境のフォールバック
 }
 
 // rich mini-card popup (rendered on demand → always current origin/minutes)
