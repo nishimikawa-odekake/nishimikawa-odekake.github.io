@@ -718,8 +718,16 @@ try{
 })();
 
 function focusCard(i){
-  const el=document.getElementById('card-'+i);
-  if(!el) return;
+  let el=document.getElementById('card-'+i);
+  if(!el){
+    // 段階表示(listLimit)で未生成の場合は、対象が入る位置まで伸ばして再描画してから移動する
+    let rank=0, pos=-1;
+    for(let j=0;j<SPOTS.length;j++){ if(matches(SPOTS[j])){ if(j===i){pos=rank;} rank++; } }
+    if(pos<0) return;                    // 現在の絞り込み条件に合致しない＝リストに存在しない
+    if(pos>=listLimit){ listLimit=pos+1; applyRender(true); }
+    el=document.getElementById('card-'+i);
+    if(!el) return;
+  }
   document.querySelectorAll('.card.hl').forEach(c=>c.classList.remove('hl'));
   el.classList.add('hl');
   // offset the smooth scroll by the sticky filter bar so the card lands fully visible
