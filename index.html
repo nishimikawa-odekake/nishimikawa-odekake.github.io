@@ -730,12 +730,37 @@ function focusCard(i){
   }
   document.querySelectorAll('.card.hl').forEach(c=>c.classList.remove('hl'));
   el.classList.add('hl');
-  // offset the smooth scroll by the sticky filter bar so the card lands fully visible
-  const bar=document.getElementById('filterbar');
-  const off=(bar?bar.offsetHeight:0)+14;
-  const y=el.getBoundingClientRect().top+window.pageYOffset-off;
-  window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  scrollToCardStable(el);
   setTimeout(()=>el.classList.remove('hl'),2600);
+}
+
+// 一括描画直後は遅延画像の読込・失敗(.photoのremove)で一覧の高さが変わり、
+// scrollTo の目標値が古くなってカードを通り過ぎる。描画確定を待って移動し、
+// その後も数回だけ現在位置を再計測して補正する。利用者が自分で操作したら即中止。
+function scrollToCardStable(el){
+  const bar=document.getElementById('filterbar');
+  const targetY=()=>{
+    const off=(bar?bar.offsetHeight:0)+14;
+    return Math.max(0,el.getBoundingClientRect().top+window.pageYOffset-off);
+  };
+  let aborted=false;
+  const stop=()=>{aborted=true;};
+  const EVS=['wheel','touchstart','keydown'];
+  EVS.forEach(t=>window.addEventListener(t,stop,{passive:true}));
+  const cleanup=()=>EVS.forEach(t=>window.removeEventListener(t,stop));
+  // レイアウト確定を2フレーム待ってから初回スクロール
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(aborted){cleanup();return;}
+    window.scrollTo({top:targetY(),behavior:'smooth'});
+    const steps=[250,550,900,1400];
+    steps.forEach((ms,idx)=>setTimeout(()=>{
+      if(!aborted){
+        const y=targetY();
+        if(Math.abs(window.pageYOffset-y)>4) window.scrollTo({top:y,behavior:idx<2?'smooth':'auto'});
+      }
+      if(idx===steps.length-1) cleanup();
+    },ms));
+  }));
 }
 
 // rich mini-card popup (rendered on demand → always current origin/minutes)
