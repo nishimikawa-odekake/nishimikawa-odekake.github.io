@@ -70,6 +70,8 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
 
 /* count badge */
 .countbadge{position:fixed;left:50%;transform:translateX(-50%);top:calc(84px + env(safe-area-inset-top));z-index:480;background:rgba(61,58,52,.85);color:#fff;font-size:.72rem;font-weight:700;padding:5px 12px;border-radius:999px;pointer-events:none}
+#skipPlanBtn{position:absolute;right:10px;top:calc(80px + env(safe-area-inset-top));z-index:485;display:none;font-size:.74rem;font-weight:700;padding:7px 11px;border-radius:999px;border:1.5px solid var(--accent);background:#fff;color:var(--accent-d);white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.12);cursor:pointer}
+#skipPlanBtn:active{transform:scale(.95)}
 
 /* bottom filter chip row */
 .chipbar{position:fixed;left:0;right:0;bottom:0;z-index:500;display:flex;gap:6px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));overflow-x:auto;background:linear-gradient(to top,rgba(250,246,239,.97),rgba(250,246,239,.8));backdrop-filter:blur(4px);-webkit-overflow-scrolling:touch}
@@ -135,6 +137,7 @@ html,body{margin:0;padding:0;height:100%;overflow:hidden;font-family:-apple-syst
   <button id="originGeo" type="button">📍現在地</button>
 </div>
 <div class="countbadge" id="countBadge">該当…件</div>
+<button id="skipPlanBtn" type="button" onclick="skipToPlan()">選ばずプランへ →</button>
 
 <div id="map" role="application" aria-label="スポットの地図"></div>
 <button id="recenterBtn" type="button" aria-label="現在地へ戻る" title="現在地へ戻る">⌖</button>
@@ -522,7 +525,19 @@ function updateSelBar(){
   const bar=document.getElementById('selBar'); if(!bar) return;
   const t=document.getElementById('selBarTxt'); if(t) t.textContent='🗓 えらんだ場所 '+planSel.length+'件';
   bar.classList.toggle('show',planSel.length>0);
+  updateSkipBtn();
 }
+// 選択0件のときだけ出す「選ばずプランへ」(枠指定モード中は常に非表示)
+function updateSkipBtn(){
+  const b=document.getElementById('skipPlanBtn'); if(!b) return;
+  b.style.display=(SLOTPICK==null&&(window.planSel||planSel||[]).length===0)?'block':'none';
+}
+function skipToPlan(){
+  try{ localStorage.removeItem('odemaru_custom_sel_v1'); }catch(e){}
+  if(typeof gtag==='function') gtag('event','map_planner_start',{n:0,src:'map_skip'});
+  location.href='./plan.html?custom=1&src=map_skip';
+}
+updateSkipBtn();
 function clearSel(){ planSel=[]; updateSelBar(); }
 function makeCustomPlanFromSel(){
   if(!planSel.length) return;
