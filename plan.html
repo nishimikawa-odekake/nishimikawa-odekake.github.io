@@ -201,7 +201,7 @@ footer a{color:var(--sub)}
 <header class="top">
   <h1>🎯 きょうのプラン</h1>
   <p>質問に答えるだけ、家族のおでかけを自動作成</p>
-  <a class="home" href="./index.html">← マップにもどる</a>
+  <a class="home" id="homeLink" href="./index.html">← トップにもどる</a>
 </header>
 
 <div class="wrap">
@@ -3344,6 +3344,15 @@ document.addEventListener('click',function(e){
 },true);
 try{ if(!/[?&]share=1/.test(location.search)) loadPrefs(); }catch(e){}
 initFromShareOrWizard();
+
+// カスタムプラン時は上部の戻りリンクをマップへ向ける（通常時はトップ）
+(function(){
+  try{
+    var q=new URLSearchParams(location.search);
+    var a=document.getElementById('homeLink');
+    if(a&&q.get('custom')==='1'){ a.href='./map.html'; a.textContent='← マップにもどる'; }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
