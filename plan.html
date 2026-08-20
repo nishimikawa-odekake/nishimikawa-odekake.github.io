@@ -1566,8 +1566,17 @@ function buildPlan(main,date,w,shareOverride){
   const homePriority = onlyToddler && !sub;
   return {rows,main,lunch,sub,totalDrive,cost,hasUnknown,homePriority,bonusExtra:rows.__bonusExtra||0,bonusReturn:rows.__bonusReturn||null,retHome:rows.__retHome||null,costKnown:known,bonusPrice:(rows.__bonusIsBonus?rows.__bonusPrice:null)};
 }
+// 当日プランとして出発時刻が現実的か。UI(refreshTodayAvailability)を迂回した経路
+// (共有URLの復元など)でも過去時刻・深夜のプランを生成しないための保険。
+function todayStartFeasible(){
+  const d=state.depart;
+  if(state.when!=='today'||!d||d.mode!=='offset') return true;
+  return startMinutes()<=TODAY_LAST_START;
+}
 function generatePlans(date,w){
   resetReserve();
+  state.tooLateToday=false;
+  if(!todayStartFeasible()){ state.tooLateToday=true; return []; }
   let cap=capFor(state.driveTime);
   CURRENT_CAP=cap;
   let pool=buildPool(date,w);
@@ -1616,6 +1625,7 @@ function generatePlans(date,w){
 // session. When every reasonable candidate has already been shown, reset the history (but avoid
 // immediately repeating the very last one) and note that we've gone through a full cycle.
 function nextVarietyPlan(date,w){
+  if(!todayStartFeasible()){ state.tooLateToday=true; return null; }
   const cap=capFor(state.driveTime);
   CURRENT_CAP=cap;
   let pool=buildPool(date,w);
@@ -3257,6 +3267,14 @@ function showResult(){
   const res=document.getElementById('result');
   res.style.display='block';
   if(!state.plans.length){
+    if(state.tooLateToday){
+      if(typeof gtag==='function') gtag('event','planner_no_result',seoP({reason:'too_late_today'}));
+      res.innerHTML='<div class="empty"><p>🌙 今日はもう遅い時間のため、当日のおでかけプランはご用意できません。</p>'
+        +'<p style="font-size:.86rem;color:#8a7a5a">「明日」や「今週末」を選ぶと、朝からのプランをご提案できます。</p>'
+        +'<button onclick="restart()">日付を選び直す</button></div>';
+      window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }
     if(typeof gtag==='function') gtag('event','planner_no_result',seoP({reason:'empty'}));
     const nxtDrive={'20':'40','40':'60','60':'any'}[state.driveTime]||null;
     const widenBtn=nxtDrive?('<button onclick="approveWiden(\''+nxtDrive+'\')" style="margin:6px 0;background:#e8853d;color:#fff;border:none;border-radius:12px;padding:13px 18px;font-weight:800">🚗 移動時間を'+(nxtDrive==='any'?'「遠くても大丈夫」':'〜'+nxtDrive+'分')+'まで広げて探す</button><br>'):'';
