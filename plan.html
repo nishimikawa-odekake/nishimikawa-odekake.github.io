@@ -457,6 +457,61 @@ function legMinutes(aLat,aLng,bLat,bLng){
   const km=haversineKm(aLat,aLng,bLat,bLng);
   return Math.max(5,Math.round(km*2.2/5)*5);
 }
+// ===== 「直前地点から近い順」共通ヘルパー =====
+// 枠の基準点(アンカー): main=出発地 / lunch=メイン / sub=ランチ||メイン。
+// swapPrevSpot() と同じ考え方だが、main枠では出発地を {latitude,longitude} 形に正規化して返す。
+function slotAnchor(slot){
+  let prev=null;
+  try{ prev=(typeof swapPrevSpot==='function')?swapPrevSpot(slot):null; }catch(e){ prev=null; }
+  if(prev&&prev.latitude!=null&&prev.longitude!=null){
+    return {latitude:prev.latitude,longitude:prev.longitude,name:prev.name,spot:prev,isOrigin:false};
+  }
+  const o=(typeof state!=='undefined')?state.origin:null;
+  if(o&&o.lat!=null&&o.lng!=null){
+    return {latitude:o.lat,longitude:o.lng,name:o.name,spot:null,isOrigin:true};
+  }
+  return null;
+}
+// 変更候補カードに表示される所要分。swapCardHtml() と完全に同じ式にすること(並び=表示の担保)。
+function anchorDisplayMin(anchor,s){
+  if(!anchor||!s||s.latitude==null||s.longitude==null) return null;
+  if(!anchor.isOrigin&&anchor.latitude!=null&&anchor.longitude!=null){
+    return legMinutes(anchor.latitude,anchor.longitude,s.latitude,s.longitude);
+  }
+  return state.origin?driveMinutesFrom(state.origin,s):null;
+}
+// 距離昇順ソート。第1キー legMinutes(5分丸めのため同値多発)、第2キー haversineKm(同値の安定化)。
+function sortByNearest(list,aLat,aLng){
+  if(!list||aLat==null||aLng==null) return list;
+  list.forEach(function(s){
+    if(s&&s.latitude!=null&&s.longitude!=null){
+      s.__anchorKm=haversineKm(aLat,aLng,s.latitude,s.longitude);
+      s.__anchorMin=legMinutes(aLat,aLng,s.latitude,s.longitude);
+    }else if(s){ s.__anchorKm=Infinity; s.__anchorMin=Infinity; }
+  });
+  list.sort(function(a,b){ return (a.__anchorMin-b.__anchorMin)||(a.__anchorKm-b.__anchorKm); });
+  return list;
+}
+// 距離昇順を保ったまま「±bandKm の帯の中だけ」でタイブレークキーを効かせる。
+// 比較関数に帯判定を直接書くと推移律が壊れるため、距離順に粗くグルーピングしてから帯内でソートする。
+// 帯内の入れ替えしか起きないので、結果の距離列は「bandKm を超えて崩れない」ことが保証される。
+function bandedTiebreak(list,keyOf,tieOf,bandKm){
+  if(!list||list.length<2) return list;
+  const band=(bandKm==null?2:bandKm);
+  list.sort(function(a,b){ return keyOf(a)-keyOf(b); });
+  const out=[];
+  let i=0;
+  while(i<list.length){
+    const base=keyOf(list[i]);
+    let j=i;
+    while(j<list.length&&(keyOf(list[j])-base)<=band) j++;
+    const grp=list.slice(i,j);
+    grp.sort(function(a,b){ return (tieOf(b)-tieOf(a))||(keyOf(a)-keyOf(b)); });
+    for(let k=0;k<grp.length;k++) out.push(grp[k]);
+    i=j;
+  }
+  return out;
+}
 const PLAY={
   animal:{e:'🦁'},active:{e:'🛝'},water:{e:'💦'},create:{e:'🔬'},
   vehicle:{e:'🚃'},indoor:{e:'☔'},food:{e:'🍽'},nature:{e:'🌳'},museum_science:{e:'🔬'}
@@ -1149,7 +1204,7 @@ function pickVariety(sorted,historyKey,topCount){
   state[historyKey].push(picked);
   return picked;
 }
-function pickLunch(main,date){ return pickVariety(lunchChainCap(lunchCandidates(main,date),25),'shownLunches',25); }
+function pickLunch(main,date){ return pickVariety(lunchChainCap(lunchCandidates(main,date),25),'shownLunches',5); } // ③ 近距離上位5件を母集団に
 // ランチ枠のシャッフル母集団に入れるチェーンの上限。
 // 母集団に残った地元店の数に対する比率で決めるので、地元店が多いエリアでは地元店が主役になり、
 // 地元候補が乏しいエリア（周辺に地元の子連れ向け飲食店が無い）でだけチェーンが主役になる。
@@ -1218,21 +1273,24 @@ function lunchCandidates(main,date){
   }
   cc.forEach(s=>{
     const feats=(s.kid_features||[]).join(' ');
-    let sc=-s.__km*0.5;
-    if(/座敷|お座敷/.test(feats)) sc+=2;
-    if(/キッズチェア|キッズメニュー|子供椅子|お子様/.test(feats)) sc+=1;
+    let tie=0;
+    if(/座敷|お座敷/.test(feats)) tie+=2;
+    if(/キッズチェア|キッズメニュー|子供椅子|お子様/.test(feats)) tie+=1;
     if(s.is_chain===true){
-      if(!scarce) sc-=0.5;                       // 周辺候補が5件未満なら減点を打ち消す
-      if(onlyToddler&&feats) sc+=1;              // 0-2歳のみ: 設備のあるチェーンを後押し
-      if(cheapBudget) sc+=0.5;                   // 予算free/1000: 安定した低価格帯
-      if(s.__km>10) sc-=2;                       // 距離重視: 遠いチェーンは基本的に上位にしない
+      if(!scarce) tie-=0.5;                      // 周辺候補が5件未満なら減点を打ち消す
+      if(onlyToddler&&feats) tie+=1;             // 0-2歳のみ: 設備のあるチェーンを後押し
+      if(cheapBudget) tie+=0.5;                  // 予算free/1000: 安定した低価格帯
+      if(s.__km>10) tie-=2;                      // 距離重視: 遠いチェーンは基本的に上位にしない
     }
-    s.__lsc=sc;
+    s.__tie=tie;                                 // ⑥ 設備加点-チェーン減点(距離成分は含めない)
+    s.__lsc=-s.__km*0.5+tie;                     // 旧スコア(参照用に残す。並べ替えには使わない)
   });
-  cc.sort((a,b)=> b.__lsc-a.__lsc || a.__km-b.__km);
+  // ①⑥ 並べ替えは「メイン(=直前地点)からの距離 __km 昇順」。
+  // 設備(座敷/キッズ)・チェーン補正は ±2km の距離帯の中だけで効くタイブレークに降格する。
+  cc=bandedTiebreak(cc,function(s){return s.__km;},function(s){return s.__tie;},2);
   return cc;
 }
-function pickSub(main,lunch,mainDriveMin,date,w){ return pickVariety(subCandidates(main,lunch,mainDriveMin,date,w),'shownSubs',20); }
+function pickSub(main,lunch,mainDriveMin,date,w){ return pickVariety(subCandidates(main,lunch,mainDriveMin,date,w),'shownSubs',8); } // ④ 近距離上位8件を母集団に
 function subCandidates(main,lunch,mainDriveMin,date,w){
   const o=state.origin;
   const rain=isIndoorMode(w);
@@ -1270,16 +1328,18 @@ function subCandidates(main,lunch,mainDriveMin,date,w){
     if(hoursUnknown(s)){ noteReserve(s); return false; } // P0: 営業時間未登録は確定枠に入れない
     const dmO=driveMinutesFrom(o,s);
     if(dmO==null||dmO>CURRENT_CAP) return false;
-    s.__subkm=km; s.__dmO=dmO;
+    // ② 並べ替えの基準点を「直前地点 prev(=ランチ||メイン)」に修正する(旧: メインからの距離 km)。
+    // km(メインからの距離)は上の15km判定で使うだけ。__mainkm として保持しておく。
+    s.__mainkm=km;
+    s.__subkm=(prev&&prev.latitude!=null&&prev.longitude!=null)
+      ? haversineKm(prev.latitude,prev.longitude,s.latitude,s.longitude) : km;
+    s.__dmO=dmO;
     // 帰り道方向(出発地からの所要がメインより小さい)は加点扱いにする(以前はハード条件で候補ゼロの主因だった)
     s.__homeward=(mainDriveMin!=null&&dmO<mainDriveMin);
     return true;
   });
-  c.sort((a,b)=>{
-    const sa=-a.__subkm+(a.__homeward?4:0), sb=-b.__subkm+(b.__homeward?4:0);
-    return sb-sa;
-  });
-  return c;
+  // ①⑥ 並べ替えは prev からの距離 __subkm 昇順。__homeward(帰り道方向)は ±2km 帯内のタイブレークに降格。
+  return bandedTiebreak(c,function(s){return s.__subkm;},function(s){return s.__homeward?1:0;},2);
 }
 function startMinutes(){
   const d=state.depart;
@@ -1913,16 +1973,23 @@ function swapCandidates(slot,widenSteps){
   // 近接条件: いま選択中のスポットの付近を優先し、全然違う方向の候補を出さない。
   // 基本は現スポットから15km(ランチは10km)以内。「広げる」1段ごとに+10km。
   // 付近で3件に満たないときだけ距離順で遠い候補も後ろに足す(遠い分は「遠め」を明示)。
-  const refSpot=(state.swapFixed&&state.swapFixed[slot]&&state.swapFixed[slot].original)||(currentPlanObj()?currentPlanObj()[slot]:null);
+  // ① 基準点は「その枠に現在入っているスポット」ではなく「その枠の直前地点」(main=出発地/lunch=メイン/sub=ランチ||メイン)。
+  // swapCardHtml() の表示基準と一致するので、カードに出る「◯◯から約N分」が必ず昇順になる。
+  const refSpot=slotAnchor(slot);
   let nearAllowKm=null;
   if(refSpot&&refSpot.latitude!=null&&refSpot.longitude!=null){
     nearAllowKm=(slot==='lunch'?10:15)+10*(widenSteps||0);
-    const withD=list.filter(s=>s&&s.latitude!=null&&s.longitude!=null)
-      .map(s=>({s,d:haversineKm(refSpot.latitude,refSpot.longitude,s.latitude,s.longitude)}));
-    withD.sort((a,b)=>a.d-b.d);
-    withD.forEach(x=>{ x.s.__swapDistKm=x.d; });
-    const near=withD.filter(x=>x.d<=nearAllowKm).map(x=>x.s);
-    list=near.length>=3?near:withD.map(x=>x.s);
+    const cands=list.filter(s=>s&&s.latitude!=null&&s.longitude!=null);
+    // 第1キー legMinutes(5分丸め) / 第2キー haversineKm。__anchorMin/__anchorKm が付く。
+    sortByNearest(cands,refSpot.latitude,refSpot.longitude);
+    if(refSpot.isOrigin){
+      // main枠のカードは driveMinutesFrom(出発地,s) を表示するので、その式で並べ直す(表示=並び順の担保)。
+      cands.forEach(s=>{ const m=anchorDisplayMin(refSpot,s); s.__anchorMin=(m==null?1e9:m); });
+      cands.sort((a,b)=>(a.__anchorMin-b.__anchorMin)||(a.__anchorKm-b.__anchorKm));
+    }
+    cands.forEach(s=>{ s.__swapDistKm=s.__anchorKm; });
+    const near=cands.filter(s=>s.__anchorKm<=nearAllowKm);
+    list=near.length>=3?near:cands;
   }
   const out=swapFilter(list);
   // 指定圏を超える候補に「遠め」フラグ（黙って条件を破らないための明示）
@@ -2088,16 +2155,20 @@ function swapFilterAll(slot){
   const baseCap=capFor(state.driveTime);
   const cap=(state.expandedDrive&&CURRENT_CAP&&CURRENT_CAP>baseCap)?CURRENT_CAP:baseCap;
   let list=swapListFor(slot,cap);
-  // 「ほかの候補を見る」でも近接条件を適用(現スポット付近を優先・距離順)
-  const refSpot=(state.swapFixed&&state.swapFixed[slot]&&state.swapFixed[slot].original)||p[slot]||null;
+  // ①「ほかの候補を見る」も直前地点(main=出発地/lunch=メイン/sub=ランチ)基準の距離昇順にする。
+  // swapCandidates() と同じアンカーを使うので、カードに出る「◯◯から約N分」が昇順になる。
+  const refSpot=slotAnchor(slot);
   if(refSpot&&refSpot.latitude!=null&&refSpot.longitude!=null){
     const nearKm=(slot==='lunch'?10:15);
-    const withD=list.filter(s=>s&&s.latitude!=null&&s.longitude!=null)
-      .map(s=>({s,d:haversineKm(refSpot.latitude,refSpot.longitude,s.latitude,s.longitude)}));
-    withD.sort((a,b)=>a.d-b.d);
-    withD.forEach(x=>{ x.s.__swapDistKm=x.d; });
-    const near=withD.filter(x=>x.d<=nearKm).map(x=>x.s);
-    list=near.length>=3?near:withD.map(x=>x.s);
+    const cands=list.filter(s=>s&&s.latitude!=null&&s.longitude!=null);
+    sortByNearest(cands,refSpot.latitude,refSpot.longitude);
+    if(refSpot.isOrigin){
+      cands.forEach(s=>{ const m=anchorDisplayMin(refSpot,s); s.__anchorMin=(m==null?1e9:m); });
+      cands.sort((a,b)=>(a.__anchorMin-b.__anchorMin)||(a.__anchorKm-b.__anchorKm));
+    }
+    cands.forEach(s=>{ s.__swapDistKm=s.__anchorKm; });
+    const near=cands.filter(s=>s.__anchorKm<=nearKm);
+    list=near.length>=3?near:cands;
   }
   const inPlan=[p.main,p.lunch,p.sub].filter(Boolean);
   const out=[];
