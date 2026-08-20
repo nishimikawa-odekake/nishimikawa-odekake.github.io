@@ -2187,7 +2187,7 @@ function swapCardHtml(slot,s,i){
 // パネル共通部品: 現在選択中の表示 と 閉じるボタン
 function swapCurrentHtml(slot){
   const p=currentPlanObj(); if(!p) return '';
-  const cur=slot==='main'?p.main:(slot==='lunch'?p.lunch:p.sub);
+  const cur=swapCurSpot(slot); // 【実装1】cs<k>(カスタム枠)でもその枠の中身を表示する
   if(!cur) return '';
   return '<div class="sc-current"><span class="sc-cur-label">現在選択中</span><span class="sc-cur-name">'+esc(cur.name)+'</span><span class="sc-cur-note">※候補を選ぶまでプランは変わりません</span></div>';
 }
@@ -2419,6 +2419,24 @@ function buildRouteUrl(p){
   return url;
 }
 /* ===== share ===== */
+// 【実装2】カスタムプラン(3〜5枠)の共有URL用ヘルパー。
+// 保存形式は cpSaveSlots() と同じアイテム形状({n} / {n,bento} / {n,lat,lng,addr,temp})を流用する。
+function shareIsCustomPlan(p){
+  try{
+    if(state.isCustomView) return true;
+    if(p&&p.custom5) return true;
+    // 保険: 実効枠配列がこのプランの中身と一致するとき(共有ビューからの再共有など)
+    const a=csSlotsEff();
+    if(!Array.isArray(a)||!a.length||!a.some(Boolean)) return false;
+    const sp=((p&&p.rows)?p.rows:[]).filter(r=>r.type==='spot').map(r=>r.spot).filter(Boolean);
+    return sp.length>0&&sp.every(s=>a.some(x=>x&&(x===s||x.name===s.name)));
+  }catch(e){ return false; }
+}
+function shareSlotItems(){
+  const e=csSlotsEff();
+  const a=(Array.isArray(e)&&e.length)?e:(state.cpPlanSlots||state.customSlots||[]);
+  return a.map(s=>!s?null:(s.__bento?{n:s.name,bento:1}:(s.__temp?{n:s.name,lat:s.latitude,lng:s.longitude,addr:s.city,temp:1}:{n:s.name})));
+}
 function buildShareUrl(p){
   const parts=['share=1'];
   const originName=state.origin?state.origin.name:'安城市';
@@ -2443,6 +2461,18 @@ function buildShareUrl(p){
   const subRow=spots.find(r=>r!==mainRow&&r!==lunchRow&&(r.tag==='午後スポット'||r.tag==='余力があれば'));
   if(lunchRow) parts.push('lunch='+encodeURIComponent(lunchRow.spot.name));
   if(subRow) parts.push('sub='+encodeURIComponent(subRow.spot.name));
+  // 【実装2】カスタムのときだけ枠順(cs)とお昼枠位置(csli)を追加する。
+  // 通常プランではこのブロックを通らないのでURLは従来と完全に同一。失敗時は従来URLにフォールバック。
+  try{
+    if(shareIsCustomPlan(p)){
+      const items=shareSlotItems();
+      if(items.length){
+        const li=(state.customSlots&&state.customSlots.length===items.length)?cpLI():cpLIFor(items.length);
+        parts.push('cs='+encodeURIComponent(JSON.stringify(items)));
+        parts.push('csli='+li);
+      }
+    }
+  }catch(e){ /* cs付与に失敗しても従来の main/lunch/sub だけで共有できる */ }
   return location.origin+location.pathname+'?'+parts.join('&');
 }
 function showToast(msg){
@@ -2491,7 +2521,27 @@ async function sharePlan(){
 // rebuild wizard state + a concrete plan from share URL params; returns the plan object or null
 function restoreFromShare(qs){
   const mainName=qs.get('main');
-  const mainSpot=mainName?SPOTS.find(s=>s.name===mainName):null;
+  let mainSpot=mainName?SPOTS.find(s=>s.name===mainName):null;
+  // 【実装2】cs= があれば枠順を復元する(cs が無いときの挙動は従来どおり)
+  let csSlots=null, csLi=null;
+  const __csRaw=qs.get('cs');
+  if(__csRaw){
+    try{
+      let arr=null;
+      try{ arr=JSON.parse(__csRaw); }catch(e){ arr=JSON.parse(decodeURIComponent(__csRaw)); }
+      if(Array.isArray(arr)&&arr.length){
+        // 解決できない要素は null にして順番は保持する
+        csSlots=arr.map(it=>{ try{ return cpResolveItem(it)||null; }catch(e){ return null; } });
+        while(csSlots.length<3) csSlots.push(null);
+        csSlots=csSlots.slice(0,5);
+        if(!csSlots.some(Boolean)) csSlots=null;
+        const __li=parseInt(qs.get('csli'),10);
+        if(!isNaN(__li)) csLi=__li;
+      }
+    }catch(e){ csSlots=null; csLi=null; }
+  }
+  // main が解決できなくても cs があれば最初の枠で代替する(cs が無いときの既存挙動は変えない)
+  if(!mainSpot&&csSlots) mainSpot=csSlots.find(Boolean)||null;
   if(!mainSpot) return null;
   const from=qs.get('from')||'安城市';
   let lat=qs.has('lat')?parseFloat(qs.get('lat')):NaN;
@@ -2525,6 +2575,12 @@ function restoreFromShare(qs){
   const subName=qs.get('sub');
   const lunchSpot=lunchName?(SPOTS.find(s=>s.name===lunchName)||null):null;
   const subSpot=subName?(SPOTS.find(s=>s.name===subName)||null):null;
+  if(csSlots){
+    state.customSlots=csSlots;                       // 長さは3〜5にクランプ済み
+    if(csLi!=null) state.cpLunchPos=csLi;
+    try{ if(typeof cpNormalizeLunch==='function') cpNormalizeLunch(); }catch(e){}
+    return {mainSpot,lunchSpot,subSpot,customSlots:state.customSlots.slice()};
+  }
   return {mainSpot,lunchSpot,subSpot};
 }
 
@@ -3409,7 +3465,17 @@ async function initFromShareOrWizard(){
         }
         state.weather=await fetchWeather();
         const date=targetDate(state.when);
-        const plan=buildPlan(r.mainSpot,date,state.weather,{lunch:r.lunchSpot,sub:r.subSpot});
+        // 【実装2】cs で枠順が来ていれば、その順番・件数のままカスタムとして組み直す。
+        // 夜間ガード(上のブロック)より後なので、抑止の挙動は従来どおり。
+        let plan;
+        if(r.customSlots&&r.customSlots.length){
+          CURRENT_CAP=capFor(state.driveTime);
+          state.cpPlanSlots=r.customSlots.slice();
+          plan=buildCustomPlanFromSlots(r.customSlots.slice(),date,state.weather);
+          state.custom5Warn=!!plan.__warn;
+        } else {
+          plan=buildPlan(r.mainSpot,date,state.weather,{lunch:r.lunchSpot,sub:r.subSpot});
+        }
         state.plans=[plan];
         state.variant=0;
         state.planNo=1;
