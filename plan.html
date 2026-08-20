@@ -3171,6 +3171,13 @@ async function customGenerate(){
   const msg=document.getElementById('cpAddMsg');
   if(!sel.length){ if(msg) msg.textContent='場所を1つ以上えらんでください（マップからえらぶ、または上の入力から追加）'; return; }
   if(state.customSlots.length>3||(state.customSlots[cpLI()]&&state.customSlots[cpLI()].__bento)){ return customGenerate5(); }
+  // 当日が成立しない時間帯では3枠版でも当日生成しない(customGenerate5 と同じガード)。
+  // パネルを開いたまま18:00をまたいだ場合もここで止まる。
+  if(!todayStartFeasible()){
+    state.when='tomorrow'; state.cpTodayBlocked=true;
+    if(msg) msg.textContent='🌙 今日はもう遅い時間のため、「あす」に切り替えました。もう一度「プランを作る」を押してください。';
+    renderCustomPanel(); return;
+  }
   const __gid=genStart('custom');
   try{
   if(typeof gtag==='function') gtag('event','plan_custom_generate',{n:sel.length});
@@ -3250,6 +3257,18 @@ async function initFromShareOrWizard(){
       document.getElementById('loading').style.display='block';
       document.getElementById('result').style.display='none';
       try{
+        // 共有プランが「今日」で、当日が成立しない時間帯なら復元しない(過去/深夜の行程を表示しない)。
+        if(state.when==='today'&&!todayStartFeasible()){
+          state.tooLateToday=true;
+          document.getElementById('loading').style.display='none';
+          const __res=document.getElementById('result');
+          __res.style.display='block';
+          __res.innerHTML='<div class="empty"><p>🌙 共有されたプランは「今日」のものですが、今日はもう遅い時間のため表示できません。</p>'
+            +'<p style="font-size:.86rem;color:#8a7a5a">「明日」や「今週末」なら、朝からのプランをご提案できます。</p>'
+            +'<button onclick="location.href=\'./plan.html\'">自分のプランを作る</button></div>';
+          window.scrollTo({top:0,behavior:'smooth'});
+          return;
+        }
         state.weather=await fetchWeather();
         const date=targetDate(state.when);
         const plan=buildPlan(r.mainSpot,date,state.weather,{lunch:r.lunchSpot,sub:r.subSpot});
