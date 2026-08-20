@@ -134,7 +134,6 @@ header.hero .creator{font-size:.72rem;color:var(--sub);margin:2px 0 4px;opacity:
 .checked{font-size:.68rem;color:#a89f90;margin:9px 0 0}
 .kidfeat{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 10px}
 .kidfeat .kf{font-size:.72rem;background:var(--food-b);color:#a13a54;border-radius:999px;padding:3px 9px;font-weight:700;white-space:nowrap}
-.srcnote{font-size:.72rem;color:var(--sub);margin:0 0 6px}
 .foodnote{font-size:.68rem;color:#b08a92;margin:7px 0 0;line-height:1.4}
 
 /* weekend card */
@@ -900,10 +899,6 @@ function cardHTML(s,i){
   if(isFood && Array.isArray(s.kid_features) && s.kid_features.length){
     kidfeat='<div class="kidfeat">'+s.kid_features.map(f=>`<span class="kf">${esc(f)}</span>`).join('')+'</div>';
   }
-  let srcnote='';
-  if(isFood && s.source_note){
-    srcnote=`<p class="srcnote">紹介: Instagram @nishimika_waiwai</p>`;
-  }
   const foodDisclaimer=isFood?`<p class="foodnote">※営業情報は変わりやすいため、お店の最新の発信をご確認ください。</p>`:'';
   const checked=(s.checked_at?`<p class="checked">情報確認日: ${esc(s.checked_at)}</p>`:'')+foodDisclaimer;
   return `<article class="card" id="card-${i}" data-i="${i}">
@@ -915,7 +910,6 @@ function cardHTML(s,i){
       <div class="badges">${badges}</div>
       ${kidfeat}
       ${info}
-      ${srcnote}
       <div class="actions">${actions}</div>
       ${aff}
       ${checked}
