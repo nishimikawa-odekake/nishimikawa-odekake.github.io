@@ -2583,8 +2583,11 @@ function cpSuggest(slot){
   const arrGuess=__role==='am'?start+30:(__role==='lunch'?start+150:start+270);
   const o=state.origin;
   const filled=state.customSlots.filter(Boolean);
-  const ref=state.customSlots[0]||filled[0]||null;
-  const refLat=ref?ref.latitude:o.lat, refLng=ref?ref.longitude:o.lng;
+  // 基準点は「直前に選択済みのスポット」。1枠目(直前が無い場合)は出発地。
+  // cpSugTimeLabel() の表示基準(cpPrevSpot)と一致させることで、カードの「◯◯から約N分」が昇順になる。
+  const ref=(typeof cpPrevSpot==='function'?cpPrevSpot(slot):null)||null;
+  const refLat=(ref&&ref.latitude!=null)?ref.latitude:o.lat;
+  const refLng=(ref&&ref.longitude!=null)?ref.longitude:o.lng;
   const capMin=capFor(state.driveTime||'any');
   let pool=SPOTS.filter(s=>{
     if(s.latitude==null) return false;
@@ -2614,13 +2617,16 @@ function cpSuggest(slot){
   } else {
     state.cpSugCycled[slot]=false;
   }
-  // 上位10件からシャッフルで3件(押すたびに入れ替え)
-  for(let x=base.length-1;x>0;x--){ const y=Math.floor(Math.random()*(x+1)); const t2=base[x]; base[x]=base[y]; base[y]=t2; }
+  // 距離昇順のまま「まだ出していない近い順の3件」を出す。
+  // (旧: 上位10件をシャッフルして3件。並び順が崩れる原因だったので廃止。
+  //  「もっと見る」の入れ替えは cpSugSeen による繰り上げで従来どおり機能する)
   let out2=base.slice(0,3);
   if(out2.length<3){
     // 足りなければ既出の再利用を許可(見た目上いつも3件そろえる)
     top.forEach(s=>{ if(out2.length<3&&!out2.includes(s)) out2.push(s); });
   }
+  // 補充で順序が乱れる可能性があるため最後に距離昇順で確定させる
+  out2.sort((a,b)=>(a.__cpD-b.__cpD));
   state.cpSugSeen[slot]=(state.cpSugSeen[slot]||[]).concat(out2.map(s=>s.name).filter(n=>!(state.cpSugSeen[slot]||[]).includes(n)));
   return out2;
 }
