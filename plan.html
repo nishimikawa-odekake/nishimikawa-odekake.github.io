@@ -1825,8 +1825,10 @@ function weatherBadge(){
     }
     return '<div class="wxbadge">☔ おでかけ時間帯に雨予報なので室内プランにしました</div>';
   }
-  if(w.transient) return '<div class="wxbadge">🌦 一時的ににわか雨の可能性あり（折りたたみ傘があると安心）</div>';
+  // 表示優先順位: 雨モード → 猛暑 → にわか雨注意 → 通常天気。
+  // (旧実装は にわか雨 が猛暑より先で、🌤+36℃+降水確率高め のときに猛暑注意が隠れていた)
   if(w.tmax!=null&&w.tmax>=34) return '<div class="wxbadge">🥵 猛暑予報（最高'+Math.round(w.tmax)+'℃）水遊び・室内を優先しました</div>';
+  if(w.transient) return '<div class="wxbadge">🌦 一時的ににわか雨の可能性あり（折りたたみ傘があると安心）</div>';
   if(w.tmax!=null) return '<div class="wxbadge">☀ お天気よさそう（最高'+Math.round(w.tmax)+'℃）</div>';
   return '';
 }
