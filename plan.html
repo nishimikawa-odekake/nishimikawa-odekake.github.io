@@ -245,6 +245,7 @@ footer a{color:var(--sub)}
     <p class="qsub">お天気を自動でチェックします</p>
     <div class="bigbtns" id="whenBtns">
       <button class="bigbtn" data-when="today">今日これから<small>いまから準備してGO</small></button>
+      <p id="todayLateNote" class="hint" style="display:none">🌙 今日はもう遅い時間のため、「明日」以降のおでかけからお選びください。</p>
       <button class="bigbtn" data-when="tomorrow">明日<small>あしたのおでかけ</small></button>
       <button class="bigbtn" data-when="sat">今週末（土）</button>
       <button class="bigbtn" data-when="sun">今週末（日）</button>
@@ -872,6 +873,7 @@ document.querySelectorAll('#whenBtns .bigbtn').forEach(b=>b.addEventListener('cl
   state.depart=null;
   document.querySelectorAll('#departTodayBtns .bigbtn,#departDayBtns .bigbtn').forEach(x=>x.classList.remove('on'));
   const isToday=state.when==='today';
+  if(isToday) refreshTodayAvailability();
   document.getElementById('departWrap').style.display='block';
   document.getElementById('departQ').textContent=isToday?'何時に出発？':'出発は？';
   document.getElementById('departTodayBtns').style.display=isToday?'':'none';
@@ -1341,11 +1343,44 @@ function subCandidates(main,lunch,mainDriveMin,date,w){
   // ①⑥ 並べ替えは prev からの距離 __subkm 昇順。__homeward(帰り道方向)は ±2km 帯内のタイブレークに降格。
   return bandedTiebreak(c,function(s){return s.__subkm;},function(s){return s.__homeward?1:0;},2);
 }
+// 当日プラン(「今日これから」)として現実的な出発時刻の上限。
+// 既存ロジックの境界に合わせている: 0-2歳のみは到着17:30以降を除外、帰宅上限は18:00(乳児)/18:30(未就学)、
+// 屋外系は到着19:00以降を除外。出発18:00を超えると、ほぼ全ての枠が成立しない。
+const TODAY_LAST_START=18*60;
+function nowMinutes(){ const n=new Date(); return n.getHours()*60+n.getMinutes(); }
+// 「今日これから」の各出発オフセットが成立するか(出発時刻が上限内か)
+function todayOffsetOk(min){ return Math.round((nowMinutes()+min)/30)*30 <= TODAY_LAST_START; }
+// 「今日これから」自体が選べるか(最短の30分後でも上限を超えるなら不可)
+function todayPlanAvailable(){ return todayOffsetOk(30); }
+// 「今日これから」ボタンと出発オフセットボタンの活性/非活性を現在時刻から更新する
+function refreshTodayAvailability(){
+  const todayBtn=document.querySelector('#whenBtns .bigbtn[data-when="today"]');
+  const avail=todayPlanAvailable();
+  if(todayBtn){
+    todayBtn.disabled=!avail;
+    todayBtn.classList.toggle('disabled',!avail);
+    const sm=todayBtn.querySelector('small');
+    if(sm){
+      if(!avail){ if(!sm.dataset.orig) sm.dataset.orig=sm.textContent; sm.textContent='今日はもう遅い時間です'; }
+      else if(sm.dataset.orig){ sm.textContent=sm.dataset.orig; }
+    }
+  }
+  const note=document.getElementById('todayLateNote');
+  if(note) note.style.display=avail?'none':'';
+  document.querySelectorAll('#departTodayBtns .bigbtn').forEach(function(b){
+    const ok=todayOffsetOk(parseInt(b.dataset.depart,10)||0);
+    b.disabled=!ok; b.classList.toggle('disabled',!ok);
+    if(!ok) b.classList.remove('on');
+  });
+}
 function startMinutes(){
   const d=state.depart;
   if(state.when==='today'&&d&&d.mode==='offset'){
     const now=new Date(); let m=now.getHours()*60+now.getMinutes()+d.min;
-    m=Math.round(m/30)*30; if(m>19*60)m=13*60; return m;
+    m=Math.round(m/30)*30;
+    // 旧実装は m>19:00 のとき 13:00 へ巻き戻していた(過去時刻のプランが生成される不具合)。
+    // 巻き戻しは廃止。遅い時間帯は UI 側(今日これから/出発オフセットの非活性)で入口を閉じる。
+    return m;
   }
   if(d&&d.mode==='slot') return d.slot==='noon'?13*60:9*60+30;
   return 9*60+30; // 9:30 fallback
@@ -1581,18 +1616,20 @@ function generatePlans(date,w){
 // session. When every reasonable candidate has already been shown, reset the history (but avoid
 // immediately repeating the very last one) and note that we've gone through a full cycle.
 function nextVarietyPlan(date,w){
-  let cap=capFor(state.driveTime);
+  const cap=capFor(state.driveTime);
   CURRENT_CAP=cap;
   let pool=buildPool(date,w);
-  state.expandedDrive=false; // 前回の結果を引きずらない（拡張したときだけ注記を出す）
-  while(pool.length<3 && cap!==Infinity){
-    const widerCap=nextCap(cap);
-    CURRENT_CAP=widerCap;
-    const pool2=buildPool(date,w);
-    if(pool2.length>pool.length){ pool=pool2; state.expandedDrive=true; }
-    cap=widerCap;
+  // C) 移動時間は「上限」。候補が少なくても勝手に範囲を広げない(初回生成 generatePlans と同じ方針)。
+  //    旧実装は pool<3 のとき 20→40→60→無制限 と自動拡張していた。
+  state.expandedDrive=false;
+  state.ringRelaxed=false;
+  // 距離帯(41〜60分等)に候補が無い場合のみ、初回と同じく近場も含めて再収集(上限は超えない)
+  if(!pool.length&&(state.driveTime==='40'||state.driveTime==='60')){
+    window.RING_RELAX=true;
+    pool=buildPool(date,w);
+    window.RING_RELAX=false;
+    if(pool.length) state.ringRelaxed=true;
   }
-  CURRENT_CAP=cap;
   if(!pool.length) return null;
   const tiered=applyDriveMoodTier(pool);
   const uniq=[];
@@ -1617,7 +1654,20 @@ function nextVarietyPlan(date,w){
   state.shownMains.push(picked);
   state.cycledNote=cycled;
   let plv=buildPlan(picked,date,w);
-  if(plv.totalDrive>190&&plv.sub){ const plv2=buildPlan(picked,date,w,{lunch:plv.lunch||null,sub:null}); if(plv2.totalDrive<plv.totalDrive) plv=plv2; }
+  // B) 初回生成(generatePlans)と同じ年齢・負担軽減ガードを適用する。
+  //    旧実装は総運転190分の一律判定のみで、0-2歳のみの130分上限と帰宅時刻上限が抜けていた。
+  const onlyT=state.ages.has('0-2')&&state.ages.size===1;
+  const kidCap=state.ages.has('elem')?null:(onlyT?18*60:(18*60+30));
+  const driveLimit=onlyT?130:190;
+  if(plv.totalDrive>driveLimit&&plv.sub){
+    const plv2=buildPlan(picked,date,w,{lunch:plv.lunch||null,sub:null});
+    if(plv2.totalDrive<plv.totalDrive) plv=plv2;
+  }
+  if(kidCap&&plv.retHome&&plv.retHome>kidCap&&plv.sub){
+    const plv3=buildPlan(picked,date,w,{lunch:plv.lunch||null,sub:null});
+    if(plv3.retHome&&plv3.retHome<=kidCap) plv=plv3;
+  }
+  if(kidCap&&plv.retHome&&plv.retHome>kidCap) plv.__late=true;
   return plv;
 }
 
