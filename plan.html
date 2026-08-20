@@ -904,11 +904,16 @@ document.querySelectorAll('#budgetBtns .bigbtn').forEach(b=>b.addEventListener('
 }));
 
 /* ===== weather ===== */
+// 雨モードの主判定は weather code。降水確率が高いだけでは雨モードにしない。
+// 区分は index.html の wxEmoji() と同一基準:
+//   0=☀️ / 1-2=🌤 / 3=☁️ / 45-48=🌫 … 通常モード
+//   51-67,80-82=🌧 / 71-77,85-86=❄️ / 95以上=⛈ … 雨モード(雪は雨天相当で屋内優先)
+function isRainCode(c){ return c!=null && c>=51; }
 async function fetchWeather(){
   try{
     const o=state.origin;
     const url='https://api.open-meteo.com/v1/forecast?latitude='+o.lat+'&longitude='+o.lng+
-      '&daily=weather_code,temperature_2m_max,precipitation_probability_max&hourly=precipitation_probability&timezone=Asia%2FTokyo&forecast_days=7';
+      '&daily=weather_code,temperature_2m_max,precipitation_probability_max&hourly=precipitation_probability,weather_code&timezone=Asia%2FTokyo&forecast_days=7';
     const ctrl=new AbortController(); const t=setTimeout(()=>ctrl.abort(),6000);
     const r=await fetch(url,{signal:ctrl.signal}); clearTimeout(t);
     if(!r.ok) return null;
@@ -927,25 +932,35 @@ async function fetchWeather(){
     // 40%以上が1時間だけ等のごく一時的な場合は雨モードにせず「にわか雨注意」フラグのみ。
     try{
       const hp=(j.hourly&&j.hourly.precipitation_probability)||[];
+      const hc=(j.hourly&&j.hourly.weather_code)||[];
       const ht=(j.hourly&&j.hourly.time)||[];
-      if(hp.length&&ht.length){
+      if((hp.length||hc.length)&&ht.length){
         let sMin; try{sMin=startMinutes();}catch(e){sMin=9*60+30;}
         const sH=Math.max(7,Math.min(16,Math.floor(sMin/60)));
         const eH=Math.min(18,sH+7);
         const y=td.getFullYear(),mo=('0'+(td.getMonth()+1)).slice(-2),da=('0'+td.getDate()).slice(-2);
         const dstr=y+'-'+mo+'-'+da;
-        let rainH=0,maxP=null,cnt=0;
+        let rainH=0,maxP=null,cnt=0,codeSeen=0,rainCodeH=0;
         for(let k=0;k<ht.length;k++){
           if(ht[k].slice(0,10)!==dstr) continue;
           const hh=parseInt(ht[k].slice(11,13),10);
           if(hh<sH||hh>=eH) continue;
+          const c=hc[k];
+          if(c!=null){ codeSeen++; if(isRainCode(c)) rainCodeH++; }
           const v=hp[k];
           if(v==null) continue;
           cnt++;
           if(maxP==null||v>maxP) maxP=v;
           if(v>=40) rainH++;
         }
-        if(cnt>=3){
+        if(codeSeen>=3){
+          // 主判定: おでかけ時間帯に雨・雷雨・雪の weather code が含まれるか
+          w.rainMode=(rainCodeH>=1);
+          // 通常モードでも降水確率が高い時間があれば「にわか雨注意」だけ出す(表示用)
+          if(!w.rainMode&&rainH>=1) w.transient=true;
+          if(maxP!=null) w.windowMax=maxP;
+        } else if(cnt>=3){
+          // フォールバック: hourly の weather code が取れなかった場合のみ従来の降水確率判定
           if(rainH>=2){ w.rainMode=true; }
           else { w.rainMode=false; if(rainH===1) w.transient=true; }
           if(maxP!=null) w.windowMax=maxP;
@@ -962,7 +977,8 @@ function isRainMode(w){
   if(!w) return false;
   if(w.rainMode===true) return true;
   if(w.rainMode===false) return false;
-  return w.precip!=null&&w.precip>=50;
+  // hourly が取れなかった場合は日別の weather code で判定する(旧: 降水確率>=50)
+  return isRainCode(w.code);
 }
 // SEOページ由来の「室内優先」希望。実際の天気予報(rainMode)とは分離して管理する
 function isIndoorMode(w){ return isRainMode(w)||state.indoorPref===true; }
