@@ -1375,15 +1375,21 @@ function refreshTodayAvailability(){
 }
 function startMinutes(){
   const d=state.depart;
-  if(state.when==='today'&&d&&d.mode==='offset'){
-    const now=new Date(); let m=now.getHours()*60+now.getMinutes()+d.min;
-    m=Math.round(m/30)*30;
-    // 旧実装は m>19:00 のとき 13:00 へ巻き戻していた(過去時刻のプランが生成される不具合)。
-    // 巻き戻しは廃止。遅い時間帯は UI 側(今日これから/出発オフセットの非活性)で入口を閉じる。
-    return m;
+  if(state.when==='today'){
+    // 当日は必ず「今から」を基準にする。過去時刻の出発でプランを組まない。
+    // 旧実装は m>19:00 のとき 13:00 へ巻き戻し、depart未設定(カスタムプランの「きょう」)では
+    // 9:30 にフォールバックしていたため、午後・夕方でも過去時刻のプランが生成されていた。
+    const now=nowMinutes();
+    const base=Math.round((now+((d&&d.mode==='offset')?d.min:30))/30)*30;
+    if(d&&d.mode==='slot'){
+      // 当日にスロット指定が来た場合も過去にはしない
+      const slotM=d.slot==='noon'?13*60:9*60+30;
+      return Math.max(base,slotM);
+    }
+    return base;
   }
   if(d&&d.mode==='slot') return d.slot==='noon'?13*60:9*60+30;
-  return 9*60+30; // 9:30 fallback
+  return 9*60+30; // 9:30 fallback（あす・週末）
 }
 function buildPlan(main,date,w,shareOverride){
   const o=state.origin;
@@ -1569,8 +1575,9 @@ function buildPlan(main,date,w,shareOverride){
 // 当日プランとして出発時刻が現実的か。UI(refreshTodayAvailability)を迂回した経路
 // (共有URLの復元など)でも過去時刻・深夜のプランを生成しないための保険。
 function todayStartFeasible(){
-  const d=state.depart;
-  if(state.when!=='today'||!d||d.mode!=='offset') return true;
+  // 当日プランは depart の指定有無にかかわらず判定する。
+  // (カスタムプランの「きょう」は depart 未設定のまま来るため、旧実装は素通りしていた)
+  if(state.when!=='today') return true;
   return startMinutes()<=TODAY_LAST_START;
 }
 function generatePlans(date,w){
@@ -2552,7 +2559,11 @@ function initCustom(){
   cpSaveSlots();
   renderCustomPanel();
 }
-function cpWhen(w){ state.when=w; renderCustomPanel(); }
+function cpWhen(w){
+  // 「きょう」が成立しない時間帯では切り替えず、「あす」を案内する
+  if(w==='today'&&!todayPlanAvailable()){ state.when='tomorrow'; state.cpTodayBlocked=true; renderCustomPanel(); return; }
+  state.cpTodayBlocked=false; state.when=w; renderCustomPanel();
+}
 function cpToggleAge(a){
   if(!state.ages) state.ages=new Set();
   if(state.ages.has(a)){ if(state.ages.size>1) state.ages.delete(a); }
@@ -2814,9 +2825,15 @@ function renderCustomPanel(){
     +'<div id="cpGeoNote" style="font-size:.72rem;color:#8a7a5a;margin-top:3px">'+(state.origin&&state.origin.name==='現在地'?'📍 現在地から出発します':'')+'</div></div>';
   const wOn='background:#e8853d;color:#fff;border:1px solid #e8853d;border-radius:999px;padding:8px 18px;font-weight:800;font-size:.9rem';
   const wOff='background:#fff;color:#6b5c40;border:1px solid #d8c9b0;border-radius:999px;padding:8px 18px;font-weight:700;font-size:.9rem';
+  // 「きょう」が成立しない時間帯(出発がTODAY_LAST_STARTを超える)は選べないようにし、「あす」へ寄せる
+  const __todayOk=todayPlanAvailable();
+  if(!__todayOk&&state.when!=='tomorrow'){ state.when='tomorrow'; state.cpTodayBlocked=true; }
+  const wDis='background:#f3ece2;color:#b3a794;border:1px solid #e2d7c5;border-radius:999px;padding:8px 18px;font-weight:700;font-size:.9rem;cursor:not-allowed';
   html+='<div style="margin:10px 0"><b style="font-size:.85rem">📅 いつ行く？</b><br>'
-    +'<button type="button" style="'+(state.when!=='tomorrow'?wOn:wOff)+';margin:4px 6px 0 0" onclick="cpWhen(\'today\')">きょう</button>'
-    +'<button type="button" style="'+(state.when==='tomorrow'?wOn:wOff)+';margin:4px 0 0 0" onclick="cpWhen(\'tomorrow\')">あす</button></div>';
+    +'<button type="button"'+(__todayOk?'':' disabled')+' style="'+(!__todayOk?wDis:(state.when!=='tomorrow'?wOn:wOff))+';margin:4px 6px 0 0" onclick="cpWhen(\'today\')">きょう</button>'
+    +'<button type="button" style="'+(state.when==='tomorrow'?wOn:wOff)+';margin:4px 0 0 0" onclick="cpWhen(\'tomorrow\')">あす</button>'
+    +(__todayOk?'':'<p style="font-size:.78rem;color:#8a7a5a;margin:6px 0 0">🌙 今日はもう遅い時間のため、「あす」のプランをご提案します。</p>')
+    +'</div>';
   // プランの条件を明示(以前の入力を引き継ぐため、見えないまま使わない)
   if(!state.ages||!state.ages.size) state.ages=new Set(['3-5']);
   if(!state.driveTime) state.driveTime='any';
@@ -3035,6 +3052,12 @@ function editCustom(){
 // 4〜5枠のカスタムプラン: 選んだ順に「午前→お昼→午後」で時間割を自動配分する専用エンジン
 async function customGenerate5(){
   const msg=document.getElementById('cpAddMsg');
+  // 当日が成立しない時間帯ではカスタムプランも当日生成しない(UI迂回・復元経路の保険)
+  if(!todayStartFeasible()){
+    state.when='tomorrow'; state.cpTodayBlocked=true;
+    if(msg) msg.textContent='🌙 今日はもう遅い時間のため、「あす」に切り替えました。もう一度「プランを作る」を押してください。';
+    renderCustomPanel(); return;
+  }
   // 「おでまるが提案します」の空きスポット枠を実際に埋める(選択内容の保存は変えない)
   const slots=state.customSlots.slice();
   const li=cpLI();
@@ -3529,6 +3552,10 @@ document.addEventListener('click',function(e){
 },true);
 try{ if(!/[?&]share=1/.test(location.search)) loadPrefs(); }catch(e){}
 initFromShareOrWizard();
+// 「いつ行く？」を表示した時点で「今日これから」が適切に非活性になるよう、起動時にも反映する。
+// (旧実装は日付ボタンを押したときにしか呼ばれず、初回表示では有効なままだった)
+try{ refreshTodayAvailability(); }catch(e){}
+try{ setInterval(function(){ try{ refreshTodayAvailability(); }catch(e){} }, 60000); }catch(e){}
 
 // カスタムプラン時は上部の戻りリンクをマップへ向ける（通常時はトップ）
 (function(){
