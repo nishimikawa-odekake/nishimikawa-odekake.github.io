@@ -370,6 +370,20 @@ function officialLinkLabel(url){
   }
   return '公式サイト';
 }
+function sourceLinkName(url){
+  if(!url) return '公式サイト';
+  var u=String(url);
+  if(/tabelog\.com/.test(u)) return '食べログ';
+  if(/hotpepper\.jp/.test(u)) return 'ホットペッパー';
+  if(/instagram\.com/.test(u)){
+    var key=u.replace(/[?#].*$/,'').replace(/\/+$/,'')+'/';
+    for(var i=0;i<OFFICIAL_INSTAGRAM_URLS.length;i++){
+      if(OFFICIAL_INSTAGRAM_URLS[i]===key) return '公式Instagram';
+    }
+    return 'Instagram';
+  }
+  return '公式サイト';
+}
 
 const CITIES=[
   ["安城市",34.9585,137.0801,"西三河"],["岡崎市",34.9547,137.1740,"西三河"],["豊田市",35.0824,137.1563,"西三河"],
@@ -1795,7 +1809,7 @@ function rowHtml(r){
   // 未確認スポットが確定枠に入ったら必ず明示する(飲食/定休日ありも含む。文言は1回だけ)
   if(isUnverifiedHours(s)){
     body+='<div class="meta" style="color:#8a7a5a">🕐 営業時間は要確認。'+HOURS_UNVERIFIED_LINE
-      +(s.official_url?' <a href="'+esc(s.official_url)+'" target="_blank" rel="noopener" onclick="track(\'hours_unverified_official\')" style="color:#1a73e8;font-weight:700">公式サイトで確認↗</a>':'')
+      +(s.official_url?' <a href="'+esc(s.official_url)+'" target="_blank" rel="noopener" onclick="track(\'hours_unverified_official\')" style="color:#1a73e8;font-weight:700">'+esc(sourceLinkName(s.official_url))+'で確認↗</a>':'')
       +'</div>';
   }
   if(typeof isActiveSportSpot==='function'&&isActiveSportSpot(s)){

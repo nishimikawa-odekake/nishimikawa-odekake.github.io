@@ -195,6 +195,20 @@ function officialLinkLabel(url){
   }
   return '公式サイト';
 }
+function sourceLinkName(url){
+  if(!url) return '公式サイト';
+  var u=String(url);
+  if(/tabelog\.com/.test(u)) return '食べログ';
+  if(/hotpepper\.jp/.test(u)) return 'ホットペッパー';
+  if(/instagram\.com/.test(u)){
+    var key=u.replace(/[?#].*$/,'').replace(/\/+$/,'')+'/';
+    for(var i=0;i<OFFICIAL_INSTAGRAM_URLS.length;i++){
+      if(OFFICIAL_INSTAGRAM_URLS[i]===key) return '公式Instagram';
+    }
+    return 'Instagram';
+  }
+  return '公式サイト';
+}
 
 
 const ANJO=[34.958,137.080];
