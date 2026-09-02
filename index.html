@@ -265,18 +265,19 @@ footer p{margin:0 0 6px}
 .topbanner:hover{background:var(--accent);color:#fff}
 .topbanner.planbanner{margin-top:8px;background:var(--accent);color:#fff;border-color:var(--accent)}
 .topbanner.planbanner:hover{background:var(--accent-d);border-color:var(--accent-d)}
-.planhero{max-width:700px;margin:12px auto 0;background:linear-gradient(135deg,var(--accent),var(--accent-d));border-radius:18px;padding:18px 16px 16px;text-align:center;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.planhero{max-width:700px;margin:12px auto 0;background:linear-gradient(135deg,var(--accent),var(--accent-d));border-radius:18px;padding:16px 14px 14px;text-align:center;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.12)}
 .planhero .ph-q{margin:0;font-size:1.3rem;font-weight:900;letter-spacing:.02em}
-.planhero .ph-t{margin:4px 0 10px;font-size:.95rem;font-weight:700;opacity:.95}
+.planhero .ph-t{margin:3px 0 8px;font-size:.92rem;font-weight:700;opacity:.95}
 .planhero .ph-btn{display:inline-block;background:#fff;color:var(--accent-d);font-weight:900;font-size:1.05rem;padding:12px 26px;border-radius:999px;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.18)}
 .planhero .ph-btn:active{transform:scale(.98)}
-.planhero .ph-s{margin:8px 0 0;font-size:.72rem;opacity:.85}
-.ph-grid{display:grid;gap:11px;margin:12px 0 0}
+.planhero .ph-s{margin:7px 0 0;font-size:.7rem;opacity:.85}
+.ph-grid{display:grid;gap:9px;margin:10px 0 0}
 .ph-opt{display:block;text-decoration:none;color:inherit}
-.ph-opt .ph-btn{display:block;width:100%;box-sizing:border-box;padding:13px 14px;font-size:1.05rem}
+.ph-opt .ph-btn{display:block;width:100%;box-sizing:border-box;padding:12px 12px;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ph-opt.is-sub .ph-btn{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.92);box-shadow:none}
-.ph-cap{margin:5px 0 0;font-size:.73rem;opacity:.9;line-height:1.45}
-@media(max-width:389px){.ph-opt .ph-btn{font-size:1rem;padding:12px 10px}}
+.ph-cap{margin:4px 0 0;font-size:.72rem;opacity:.92;line-height:1.4}
+@media(max-width:389px){.ph-opt .ph-btn{font-size:.98rem;padding:11px 8px}}
+@media(min-width:640px){.ph-grid{grid-template-columns:repeat(3,1fr);gap:12px;align-items:start}.ph-opt .ph-btn{font-size:1rem;padding:12px 10px}}
 /* AFF_HIDE_20260816: アフィリエイト表示の一時停止。復帰時はこのブロックを削除するだけでよい */
 aside.summer{display:none!important}
 .card .aff{display:none!important}
@@ -310,14 +311,12 @@ aside.summer{display:none!important}
       <p class="ph-q">今日どこ行く？</p>
       <p class="ph-t">30秒で今日のおでかけが決まる</p>
       <div class="ph-grid">
-        <a class="ph-opt" onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-plan'})" href="./plan.html?src=top_hero_planner"><span class="ph-btn">🎯 おでかけプランを作る</span><span class="ph-cap" style="display:block">おでまるが条件から自動で組み立て・質問に答えるだけ30秒</span></a>
-        <a class="ph-opt is-sub" onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-map'})" href="./map.html?src=top_hero_mapselect"><span class="ph-btn">🗺️ マップから自分で選ぶ</span><span class="ph-cap" style="display:block">行きたい場所を選んでプランに・祖父母の家や予約したお店も入れられる</span></a>
+        <a class="ph-opt" onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-plan'})" href="./plan.html?src=top_hero_planner"><span class="ph-btn">🎯 おでかけプランを作る</span><span class="ph-cap" style="display:block">質問に答えるだけ・おでまるが30秒で自動作成</span></a>
+        <a class="ph-opt is-sub" onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-map'})" href="./map.html?src=top_hero_mapselect"><span class="ph-btn">🗺️ マップから自分で選ぶ</span><span class="ph-cap" style="display:block">行きたい場所を選んでプランに・予約店や祖父母の家もOK</span></a>
+        <!-- weekly-banner: 週次更新時はボタン本体の「18選」の件数だけ書き換える（説明文は固定） -->
+        <a class="ph-opt is-sub" onclick="if(typeof gtag==='function')gtag('event','seo_cta_click',{src:'top',position:'hero-weekend'})" href="/weekend/?src=top_hero_weekend"><span class="ph-btn">📅 今週末のイベント18選</span><span class="ph-cap" style="display:block">予約なしで行ける・毎週木曜更新</span></a>
       </div>
       <p class="ph-s">無料・登録不要</p>
-    </div>
-    <div class="odm-media" style="background:#fff;border:1px solid #e6e0d6;border-radius:12px;padding:10px 12px;margin:10px 0 0">
-      <p style="margin:0;font-size:.82rem;font-weight:700;color:#c9713f">📰 中日新聞に掲載されました</p>
-      <p style="margin:4px 0 0;font-size:.78rem;color:#5c574e;line-height:1.6">2026年8月15日 中日新聞「三河総合」面で、おでまる（あいち子育ておでかけマップ）をご紹介いただきました。</p>
     </div>
     <p class="note">公園・水遊び・室内遊び場から子連れランチまで、今日の気分と出発地で選べます。</p>
     <div class="wxbar" id="wxbar" aria-live="polite">
@@ -328,8 +327,10 @@ aside.summer{display:none!important}
       </div>
       <p class="wxbar-src">天気: Open-Meteo</p>
     </div>
-    <!-- weekly-banner: 週次更新時に件数を書き換え -->
-    <a class="topbanner" href="/weekend/?src=top_banner_weekend">📅 8/29・30の週末イベント15選（毎週木曜更新）→</a>
+    <div class="odm-media" style="background:#fff;border:1px solid #e6e0d6;border-radius:12px;padding:10px 12px;margin:10px auto 0;max-width:700px">
+      <p style="margin:0;font-size:.82rem;font-weight:700;color:#c9713f">📰 中日新聞に掲載されました</p>
+      <p style="margin:4px 0 0;font-size:.78rem;color:#5c574e;line-height:1.6">2026年8月15日 中日新聞「三河総合」面で、おでまる（あいち子育ておでかけマップ）をご紹介いただきました。</p>
+    </div>
   </div>
 </header>
 
