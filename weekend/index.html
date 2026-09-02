@@ -673,6 +673,7 @@ function samePlace(aName,aLat,aLng,s,minKm){
 }
 /* ---------- 本体プランナー移植: ランチのチェーン上限(2026-08-30修正版) ---------- */
 var LUNCH_CHAIN_PER_LOCAL=0.5;
+var RESV_RE=/要予約|予約制|完全予約|事前予約|予約必須/;   // 週末版: 予約なしで行けるプランなので、予約必須の掲載情報は候補から外す
 function lunchChainCap(sorted){
   if(!sorted.length) return sorted;
   var hasLocal=false;
@@ -718,6 +719,7 @@ function pickLunch(oLat,oLng,oName,city,date,departMin,exclude,needMin,maxKm){
     if(samePlace(oName,oLat,oLng,s,0.15)) continue;
     if(exclude&&exclude.indexOf(s)>=0) continue;
     if(isClosedOn(s,date)) continue;
+    if(RESV_RE.test(String(s.business_hours||'')+' '+String(s.price_text||''))) continue;   // 完全予約制の店は入れない
     var km=haversineKm(oLat,oLng,s.latitude,s.longitude);
     if(km>maxKm) continue;
     var arr2=departMin+legMinutes(oLat,oLng,s.latitude,s.longitude);
@@ -764,6 +766,7 @@ function pickSpot(oLat,oLng,oName,city,date,departMin,exclude,venueName,venueLat
     if(ex) continue;
     if(isClosedOn(s,date)) continue;
     if(/休館中|休業中|改修工事|閉鎖中|臨時休/.test(String(s.business_hours||'')+' '+String(s.closed_days||''))) continue;   // 掲載情報に休館・改修の注記がある施設は確定枠に入れない
+    if(RESV_RE.test(String(s.business_hours||'')+' '+String(s.price_text||'')+' '+String(s.closed_days||''))) continue;   // 要予約の施設は「予約なしで行ける」プランに入れない
     var km=haversineKm(oLat,oLng,s.latitude,s.longitude);
     if(km>maxKm) continue;
     var arr=departMin+legMinutes(oLat,oLng,s.latitude,s.longitude);
