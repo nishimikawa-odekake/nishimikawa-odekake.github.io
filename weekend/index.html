@@ -739,7 +739,12 @@ function pickLunch(oLat,oLng,oName,city,date,departMin,exclude,needMin,maxKm){
   for(var k=0;k<capped.length;k++){
     for(var j2=0;j2<cands.length;j2++){ if(cands[j2].s===capped[k]){ ordered.push(cands[j2]); break; } }
   }
-  return cityFirst(ordered,city);
+  var cf=cityFirst(ordered,city);
+  /* 初期表示の近い5件（市内ブロック内）は地元店を先に並べる（安城デモの「地元店を±1.5km帯で優先」の趣旨を初期表示にも適用） */
+  var cy=0; while(cy<cf.length && inCity(cf[cy].s,city)) cy++;
+  var top=Math.min(cy,5);
+  if(top>1){ var loc=[],ch=[]; for(var q=0;q<top;q++){ (cf[q].s.is_chain===true?ch:loc).push(cf[q]); } cf=loc.concat(ch).concat(cf.slice(top)); }
+  return cf;
 }
 /* departMin: 出発時刻。到着後 needMin 遊べる所だけ。venueName/venueLat: 会場と同一施設は除外 */
 function pickSpot(oLat,oLng,oName,city,date,departMin,exclude,venueName,venueLat,venueLng,needMin,maxKm){
@@ -859,7 +864,7 @@ function buildPlan(ev,dateStr,lunchN,spotN,torchKey){
         S0={c:c0,start:mStart0,end:Math.min(mustLeave,mStart0+90),leg:leg0}; break;
       }
     }
-    var lunchDepart=Math.max(visitEnd+15, 675);
+    var lunchDepart=Math.max(visitEnd+15, 660);          // 11:00より前にはランチへ出ない
     if(t.allDay && lunchDepart>720) lunchDepart=720;
     if(t.allDay) notes.push('会場は'+esc(ev.timeText)+'。午前の見学（'+fmtTime(t.start)+'〜'+fmtTime(visitEnd)+'頃）を想定して組んでいます。');
     var lunches=pickLunch(v.lat,v.lng,vName,city,date,lunchDepart,[],60,8);
@@ -867,7 +872,7 @@ function buildPlan(ev,dateStr,lunchN,spotN,torchKey){
     if(!L) return {rows:null};
     // イベントが早く終わりランチまで90分以上空くなら、間に午前のおでかけを入れる
     var Smid=null;
-    if(!S0 && lunchDepart-visitEnd>=90){
+    if(!S0 && lunchDepart-visitEnd>=60){
       var mid=pickSpot(v.lat,v.lng,vName,city,date,visitEnd,[L.s],vName,v.lat,v.lng,60,10);
       var cm=pickNth(mid,spotN);
       if(cm){ var legML=legMinutes(cm.s.latitude,cm.s.longitude,L.s.latitude,L.s.longitude);
