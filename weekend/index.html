@@ -359,7 +359,7 @@ window.WK_TORCH = {
     { key:'aisai',    date:'2026-09-06', start:'15:00', city:'愛西市', cityShort:'愛西市', venue:'道の駅 ふれあいの里HASUパーク', address:'愛知県愛西市森川町井桁西27', lat:35.1443072, lng:136.69459, route:'道の駅 ふれあいの里HASUパーク', note:'2周回', src:'大会公式コース図（愛西市）＋Googleマップ' },
     { key:'nishio',   date:'2026-09-06', start:'15:00', city:'西尾市', cityShort:'西尾市', venue:'吉良ワイキキビーチ', address:'愛知県西尾市吉良町宮崎東甚作3', lat:34.782635, lng:137.0974357, route:'吉良ワイキキビーチ', note:'', src:'大会公式コース図（西尾市）＋Googleマップ' },
     { key:'tsushima', date:'2026-09-06', start:'17:00', city:'津島市', cityShort:'津島市', venue:'天王川公園', address:'愛知県津島市宮川町1丁目 地内', lat:35.1723987, lng:136.7202335, route:'天王川公園', note:'園内を2周回', src:'大会公式コース図（津島市）＋Googleマップ' },
-    { key:'gamagori', date:'2026-09-06', start:'17:00', city:'蒲郡市', cityShort:'蒲郡市', venue:'竹島園地（ゴール）', address:'愛知県蒲郡市竹島町2-2', lat:34.8151165, lng:137.2335325, route:'竹島園地', note:'16:00〜キッズダンス応援ステージ／みなとオアシスがまごおりスタート→竹島園地ゴール（17:00〜17:30セレブレーション）。16:40〜17:15頃 生命の海科学館周辺に交通規制', src:'大会公式コース図（蒲郡市）＋蒲郡市公式＋おでまる掲載座標' }
+    { key:'gamagori', date:'2026-09-06', start:'17:00', city:'蒲郡市', cityShort:'蒲郡市', venue:'竹島園地（ゴール）', address:'愛知県蒲郡市竹島町2-2', lat:34.8151165, lng:137.2335325, route:'竹島園地', note:'16:00〜キッズダンス応援ステージ／みなとオアシスがまごおりスタート→竹島園地ゴール（17:00〜17:30セレブレーション）。16:40〜17:15頃 生命の海科学館周辺に交通規制', arriveBefore:60, planNote:'16:40〜17:15頃は生命の海科学館周辺で交通規制があるため、規制前の16:00（キッズダンス応援ステージ開始）到着で組んでいます。', src:'大会公式コース図（蒲郡市）＋蒲郡市公式＋おでまる掲載座標' }
   ]
 };
 
@@ -390,7 +390,7 @@ window.WK_EVENTS = [
     rain:'小雨決行・荒天時は9/6(日)に延期', rainLevel:'note',
     highlight:'7年ぶりに戻ってきた漁港の花火。夕方からマルシェ、暗くなってから打ち上げ。会場に駐車場はありません（名鉄東幡豆駅 徒歩5分）。',
     official_url:'https://www.city.nishio.aichi.jp/kurashi/kotsu/1001409/1012381.html',
-    access:'会場周辺に駐車場なし。名鉄東幡豆駅から徒歩5分（西尾市公式）',
+    access:'会場周辺に駐車場なし。名鉄東幡豆駅から徒歩5分（西尾市公式）', transitTo:'東幡豆駅', transitNote:'名鉄蒲郡線 東幡豆駅 徒歩5分',
     plan:{ start:'17:00', end:'20:30', endAssumed:true, foodOnSite:true, noCar:true } },
   { id:4, area:'nagoya', name:'下水道科学館まつり2026', short:'無料で1日、下水道科学館まつり',
     dates:['2026-09-05','2026-09-06'], timeText:'9/5(土)・6(日) 9:30〜16:30',
@@ -818,6 +818,7 @@ function eventTimes(ev,pt){
   if(start==null) return null;
   if(end==null) end=start+90;
   var before=p.arriveBefore!=null?p.arriveBefore:15;
+  if(ev.torch&&pt&&pt.arriveBefore!=null) before=pt.arriveBefore;
   var dur=end-start;
   var allDay=dur>=300;
   var stay = p.stayMin!=null ? p.stayMin : (allDay ? 120 : Math.min(dur,120));
@@ -839,8 +840,9 @@ function buildPlan(ev,dateStr,lunchN,spotN,torchKey){
   var rows=[], notes=[];
   var pickNth=makePickNth(ev.id*7+(torchKey?torchKey.length:0),city);
   if(t.assumed) notes.push(t.assumed);
+  if(ev.torch&&v.planNote) notes.push(v.planNote);
   if(t.endAssumed) notes.push('終了時刻が公式に記載されていないため、プラン上の滞在時間は目安です。');
-  if(t.noCar) notes.push('会場周辺に駐車場がありません。会場へは公共交通（名鉄東幡豆駅 徒歩5分）でお出かけください。');
+  if(t.noCar) notes.push('会場周辺に駐車場がありません（公式）。車は午後のスポットまでにして、会場へは公共交通でお出かけください（'+(ev.transitNote||'')+'）。駅周辺の駐車場は保証できないため、Googleマップの車ルートは会場の手前までにしています。');
   var arriveAt=t.start-t.before;                       // イベント到着時刻（開始前の余裕込み）
   var pattern;
   if(t.start>=960) pattern='D';                        // 16:00〜 夜イベント: 午前→ランチ→午後→(早め夕食)→イベント
@@ -928,7 +930,8 @@ function buildPlan(ev,dateStr,lunchN,spotN,torchKey){
     rows.push(evRow({from:'ランチのお店',km:haversineKm(L2.s.latitude,L2.s.longitude,v.lat,v.lng)}));
   } else {
     // D: 午前のおでかけ → ランチ → 午後のおでかけ → (早め夕食) → 夜イベント
-    var wantDinner = t.start>=1020 && !t.foodOnSite;      // 17:00以降開始で会場に飲食がない場合のみ
+    var wantDinner = arriveAt>=1005 && !t.foodOnSite;      // 会場到着が16:45以降で、会場に飲食がない場合のみ早め夕食を入れる
+    if(!wantDinner && !t.foodOnSite && t.start>=1020) notes.push('会場到着を早めているため夕食枠は入れていません。夕食はイベント後に会場周辺でどうぞ。');
     var mspotsD=pickSpot(v.lat,v.lng,vName,city,date,570,[],vName,v.lat,v.lng,60,10);   // 9:30発
     var SD1=pickNth(mspotsD,spotN);
     var oLat=SD1?SD1.s.latitude:v.lat, oLng=SD1?SD1.s.longitude:v.lng, oName=SD1?SD1.s.name:vName;
@@ -1036,7 +1039,8 @@ function rowHTML(r){
   return '<li class="pl-row '+cls+'">'
     +'<div class="pl-time"><span>'+fmtTime(r.time)+'</span><i>'+icon+'</i></div>'
     +'<div class="pl-body">'
-      +(r.km!=null?'<div class="pl-leg">'+(r.from?esc(r.from)+'から':'')+'車で約'+Math.max(5,Math.round(r.km*2.2/5)*5)+'分（'+r.km.toFixed(1)+'km）</div>':'')
+      +(r.kind==='event'&&r.t&&r.t.noCar?'<div class="pl-leg">🚃 '+(r.from?esc(r.from)+'から':'')+'公共交通で（'+esc(r.ev.transitNote||'')+'）。会場に駐車場はありません</div>'
+        :(r.km!=null?'<div class="pl-leg">'+(r.from?esc(r.from)+'から':'')+'車で約'+Math.max(5,Math.round(r.km*2.2/5)*5)+'分（'+r.km.toFixed(1)+'km）</div>':''))
       +'<div class="pl-head">'+head+'</div>'+body+noteTxt
     +'</div></li>';
 }
@@ -1052,6 +1056,9 @@ function routeQuery(r){
 }
 function buildRouteUrl(rows){
   if(!rows||rows.length<2) return null;
+  var last=rows[rows.length-1];
+  if(last.kind==='event'&&last.t&&last.t.noCar) rows=rows.slice(0,-1);   // 駐車場のない会場は車ルートの目的地にしない
+  if(rows.length<2) return null;
   var qs=[]; for(var i=0;i<rows.length;i++){ var q=routeQuery(rows[i]); if(!q) return null; qs.push(q); }
   var url='https://www.google.com/maps/dir/?api=1'
     +'&origin='+encodeURIComponent(qs[0])
@@ -1082,9 +1089,13 @@ function render(ev){
     +'<p class="pl-flow">'+patLabel+'</p>'
     +(plan.notes.length?'<div class="pl-notes">'+plan.notes.map(function(n){return '<p>'+n+'</p>';}).join('')+'</div>':'')
     +'<ol class="pl-list">'+plan.rows.map(rowHTML).join('')+'</ol>'
-    +(function(){ var ru=buildRouteUrl(plan.rows);
-       return ru?'<a class="pl-gmaps" href="'+esc(ru)+'" target="_blank" rel="noopener noreferrer">🚗 このルートをGoogleマップで開く</a>'
-         +'<p class="pl-gmapsnote">※ルートはGoogleマップ上で編集できます</p>':''; })()
+    +(function(){ var ru=buildRouteUrl(plan.rows); var out='';
+       if(ru) out+='<a class="pl-gmaps" href="'+esc(ru)+'" target="_blank" rel="noopener noreferrer">🚗 '+(plan.t.noCar?'会場の手前までの車ルートを開く':'このルートをGoogleマップで開く')+'</a>';
+       if(plan.t.noCar&&ev.transitTo){ var prev=plan.rows.length>=2?routeQuery(plan.rows[plan.rows.length-2]):null;
+         var tu='https://www.google.com/maps/dir/?api=1'+(prev?'&origin='+encodeURIComponent(prev):'')+'&destination='+encodeURIComponent(ev.transitTo)+'&travelmode=transit';
+         out+='<a class="pl-gmaps" style="background:#2E6B3E;margin-top:8px" href="'+esc(tu)+'" target="_blank" rel="noopener noreferrer">🚃 '+esc(ev.transitTo)+'までの公共交通ルートを開く</a>'; }
+       if(out) out+='<p class="pl-gmapsnote">※ルートはGoogleマップ上で編集できます</p>';
+       return out; })()
     +'<button type="button" class="pl-again" id="plAgain">別のプランにする</button>'
     +'<p class="pl-foot">スポット・ランチは、あいち子育ておでかけマップの掲載情報から選んでいます。'
     +'イベントは開始'+plan.t.before+'分前の到着で固定し、営業時間・定休日の範囲でつないでいます。おでかけ前に各公式サイトをご確認ください。</p>';
