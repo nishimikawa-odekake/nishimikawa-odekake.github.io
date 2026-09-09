@@ -1284,7 +1284,9 @@ function diversifyHead(pool){
   const topSc=(top.__sc==null?0:top.__sc);
   const topTier=top.tier||'B';
   // ランク帯を落とさない(Sが先頭ならSのみ、Aが先頭ならS/Aのみ)
-  const okTier=s=>{ const t=s.tier||'B'; return topTier==='S'?(t==='S'):(topTier==='A'?(t==='S'||t==='A'):true); };
+  // 監督A裁定 2026-09-09: 雨などで窓内の S が3件未満のときは S 先頭でも帯を S∪A として扱う(案1が S ペアに固定される問題の解消)。3件以上は従来どおり S のみ。
+  const sInWin=win.filter(s=>s.tier==='S').length;
+  const okTier=s=>{ const t=s.tier||'B'; return topTier==='S'?(t==='S'||(sInWin<3&&t==='A')):(topTier==='A'?(t==='S'||t==='A'):true); };
   // 20分(近場優先)のときだけは「近さ」の意図を壊さないよう、最短候補+10分以内に限定
   const okNear=s=>state.driveTime!=='20'||s.__dm==null||top.__dm==null||s.__dm<=top.__dm+10;
   const eq=win.filter(s=>(s.__sc==null?0:s.__sc)>=topSc-HEAD_DIVERSITY_MARGIN&&okTier(s)&&okNear(s));
