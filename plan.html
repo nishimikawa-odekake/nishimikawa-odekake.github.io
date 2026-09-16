@@ -1044,9 +1044,20 @@ function parseClosedSpec(cdRaw){
               monthDays:[], openMDGlobal:[], substUnknown:false};
   if(!raw.trim()) return spec;
   var t = protectNth(norm(raw)).replace(/(及び|および|並びに|ならびに|かつ)/g,'・');
+  /* v3 rev3: 「火曜日と木曜日のみ開館」の並列の「と」を「・」に寄せる。
+     曜日トークンに挟まれた「と」だけを対象にし、「第3月曜とその前日」等は触らない。 */
+  t = t.replace(new RegExp('(['+WDS+']曜日?)と(?=['+WDS+']曜)','g'), '$1・');
 
   if(/(年中無休|無休|定休日?な[しシ]|休みな[しシ]|終日開放|常時開放|年中開放)/.test(t) || /^\s*(なし|無し|特になし)\s*$/.test(t)) spec.noClosureHint = true;
 
+  /* ===== v3 rev3 / 監査MAJOR-1 =====================================
+     「火曜日、木曜日のみ開館」「水曜日、金曜日のみ営業」「火曜日と木曜日のみ開館」型は、
+     先頭節が CLOSE・後続節が OPEN に分かれて開閉が反転していた。
+     同一 closed_days 文字列内に OPEN 宣言節（「〜のみ開館／のみ営業」「開放は〜のみ」等）が
+     1つでもあれば、その文の**曜日節はすべて営業日集合**として解釈し、補集合を closed にする
+     （監督A裁定102）。「と」「、」「・」結合はすべて同じ扱い。
+     年末年始・実日付などの非曜日節は従来どおり休業節のまま。 */
+  var onlyOpenDecl = RE_ONLY_OPEN_DECL.test(t);
   var segs = splitTop(t, true);
   var openLabel = false;           // 「営業日：」等のラベルは後続の並列列挙にも及ぶ
   for(var si=0; si<segs.length; si++){
@@ -1057,6 +1068,10 @@ function parseClosedSpec(cdRaw){
     if(/(営業|開館|開園|開所|開店|開放|利用)日?\s*[：:はも]/.test(pc.head)) openLabel = true;
     else if(RE_CLOSEWORD.test(pc.head)) openLabel = false;
     if(openLabel) pol='OPEN';
+    /* 監査MAJOR-1: OPEN宣言のある文では、条件節を持たない純粋な曜日節を営業日として読む。
+       「月曜(祝日の場合は翌平日)」のような条件付きの定休節は対象外にする。 */
+    if(onlyOpenDecl && pol!=='OPEN' && RE_WD_ONLY_SEG.test(pc.head.trim()) &&
+       !pc.conds.join('').match(/祝|翌|除|以外/)) pol='OPEN';
     if(pol==='OPEN'){
       collectOpenDays(pc.head, spec);
       spec.clauses.push({seg:seg, kind:'OPEN(営業日の記述)', tokens:[]});
@@ -1153,7 +1168,7 @@ function hasAnyToken(sp){
             sp.afterHoliday||sp.newyear||sp.obon||sp.ranges.length||sp.weekdaysMonFri);
 }
 function collectOpenDays(head, spec){
-  var parts = splitTop(head,false), i, m;
+  var parts = splitTop(head.replace(/、/g,'・'),false), i, m;
   for(i=0;i<parts.length;i++){
     var p=parts[i];
     var r=p.match(new RegExp('(['+WDS+'])曜?日?\\s*〜\\s*(['+WDS+'])曜?日?'));
@@ -1201,6 +1216,15 @@ function tokensOf(head, condsRaw, seg, spec){
   return toks;
 }
 
+/* v3 rev3: 「〜のみ開館／のみ営業」「開放は〜のみ」等の OPEN 宣言（文全体スコープ） */
+var RE_ONLY_OPEN_DECL = new RegExp(
+  '(?:のみ|だけ)[^、。]{0,6}(?:開館|開園|開所|開場|営業|オープン|開放|利用)' + '|' +
+  '(?:営業|開館|開園|開所|開店|開放|利用)日?\\s*[：:はも][^。]{0,24}(?:のみ|だけ)');
+/* 条件節を持たない純粋な曜日の並び（「火曜日」「木曜日のみ開館」「土曜日・日曜日のみ開園」） */
+var RE_WD_ONLY_SEG = new RegExp(
+  '^(?:毎週|毎日|毎)?\\s*(?:開放|開館|開園|営業|利用)?[はも]?\\s*' +
+  '(?:[' + WDS + ']曜?日?)(?:\\s*[・、]\\s*(?:[' + WDS + ']曜?日?))*' +
+  '\\s*(?:のみ|だけ)?\\s*(?:開館|開園|開所|開場|営業|オープン|開放|利用)?\\s*$');
 var RE_HOLHOST  = /(国民の)?祝(日|祭日|休日|・祭日)?/;
 /* 「休日の翌日」も「祝日の翌日」と同義（定休日・学校休業日・夏季休日などは除外） */
 var RE_AFTERHOL = /(?:祝(?:日|祭日|休日|・振替休日)?|(?:^|[^学夏冬臨定週祝])休日)(?:の)?(?:翌|直後|振替)/;
