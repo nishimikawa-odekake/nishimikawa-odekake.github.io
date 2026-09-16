@@ -634,7 +634,7 @@ var DEFAULT_OPT = {
   dateRange      : true,  // 「12月29日〜1月3日」等の明示日付範囲を休として実装（監督A訂正で既定 ON）
   nenmatsuNarrow : false, // 年末年始の既定窓を 12/29〜1/3 にする（既定 OFF＝現行の 12/28〜1/4）
   nenmatsuFromData: true, // closed_days に書かれた実日付を年末年始・お盆の窓に使う（既定 ON）
-  openOnly       : false, // 「土日のみ営業」型で営業曜日の補集合を休にする（既定 OFF・要裁定）
+  openOnly       : true,  // 「土日のみ営業」型で営業曜日の補集合を休にする（監督A裁定102で既定 ON）
   weekdayClose   : false  // 単独節「平日」を月〜金の休として実装する（既定 OFF・要裁定）
 };
 
@@ -1613,11 +1613,13 @@ function judge(s, date, OPT, cache){
     if(weekdayOnly && !weekendOpenSignal(nb, spec.openDays||[], dow, isHol))
       return {state:'closed', soft:soft, reason:'平日限定営業（business_hours「'+String(bh).slice(0,28)+'」）'};
   }
-  /* U3: 営業曜日だけが書かれている行。補集合は closed と断定せず unknown */
-  if(spec.openDays.length && !hasAnyToken(spec)){
+  /* 監督A裁定102: 営業曜日だけが書かれている行の補集合は **closed**。
+     公式が「開放は火・木のみ」と明示している場合、他曜日は「不確か」ではなく明示された非営業日。
+     原則1（不確かなものを閉にしない）とは衝突しない。 */
+  if(OPT.openOnly && spec.openDays.length && !hasAnyToken(spec)){
     if(spec.openDays.indexOf(tw)<0 && !(isHol && spec.openDays.indexOf('祝')>=0))
-      return {state:'unknown', soft:true,
-              reason:'営業曜日('+spec.openDays.join('')+')の補集合（休業とは明記されていない）'};
+      return {state:'closed', soft:soft,
+              reason:'営業曜日('+spec.openDays.join('')+')の補集合（裁定102）'};
   }
   return {state:'open', soft:soft, reason:(r&&r.reason)||'該当する休業規則なし'};
 }
