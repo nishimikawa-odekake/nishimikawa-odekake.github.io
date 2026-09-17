@@ -2167,6 +2167,24 @@ function isUnverifiedHours(s){
   if(alwaysOpenPark(s)) return false;     // 常時開園の公園は「未確認」扱いしない
   return true;
 }
+/* ===== [A-8] 夕方出発ガード ===================================================
+ * business_hours が null（＝営業時間が未取得。「終日開放」とみなせる公園は除く）の
+ * スポットは、到着が 16:00 以降になる枠には確定枠として入れない（候補から外す）。
+ * 「今日これから」で 15:00 以降に開いた場合も、到着が 16:00 以降なら同じ扱い。
+ * 既存の unknown 表示（🕐 営業時間は要確認）はそのまま。
+ * ========================================================================== */
+var EVENING_GUARD_MIN=16*60;
+function bhUnregistered(s){
+  if(!s) return false;
+  if(s.business_hours) return false;     // 登録あり -> closingInfo / BH_V3 の世界
+  if(alwaysOpenPark(s)) return false;    // 終日開放とみなせる公園は対象外
+  return true;
+}
+function eveningBhNullBlocked(s,arrivalMin){
+  if(arrivalMin==null) return false;
+  if(!bhUnregistered(s)) return false;
+  return (((arrivalMin%1440)+1440)%1440)>=EVENING_GUARD_MIN;
+}
 /* [恒久除外] 公式サイトに閉店・休業・改装等の告知があり、営業時間を意図的に付けなかった店。
    「単なる情報未取得」ではなく「閉まっていると分かっている/疑わしい」ため、
    ALLOW_UNVERIFIED_HOURS の値に関わらず、すべての候補プールから除外する。 */
@@ -2620,6 +2638,7 @@ function poolFrom(list,date,w){
     // ages 0-2: no additional spots after dinner time -> exclude late main candidates for 0-2 only groups
     if(state.ages.has('0-2')&&state.ages.size===1 && ((arrival%1440+1440)%1440)>=17*60+30) return false;
     if(hoursUnknown(s)){ noteReserve(s); return false; } // P0: 営業時間未登録は確定枠に入れない
+    if(eveningBhNullBlocked(s,arrival)){ noteReserve(s); return false; } // [A-8] 夕方到着は営業時間nullを確定枠に入れない
     s.__closeNote=ci.note;
     return true;
   });
@@ -2779,6 +2798,7 @@ function lunchCandidates(main,date){
     // 営業時間: ランチ到着時刻に閉店済み／開店前の店は除外（チェーン・地元店とも同じ扱い）
     const arr=lunchBase+legMinutes(main.latitude,main.longitude,s.latitude,s.longitude);
     if(closingInfo(s,arr).exclude) return false;
+    if(eveningBhNullBlocked(s,arr)){ noteReserve(s); return false; } // [A-8] 夕方到着は営業時間nullを確定枠に入れない
     if(hoursUnknown(s)){ noteReserve(s); return false; } // P0: 営業時間未登録の飲食店は確定枠に入れない
     s.__km=km; return true;
   });
@@ -2858,6 +2878,7 @@ function subCandidates(main,lunch,mainDriveMin,date,w){
     const __subArr=__subBase+legMinutes(prev.latitude,prev.longitude,s.latitude,s.longitude);
     if(closingInfo(s,__subArr).exclude) return false;
     if(hoursUnknown(s)){ noteReserve(s); return false; } // P0: 営業時間未登録は確定枠に入れない
+    if(eveningBhNullBlocked(s,__subArr)){ noteReserve(s); return false; } // [A-8] 夕方到着は営業時間nullを確定枠に入れない
     // lunchCandidates と同じ理由でメインまでの所要を下限に取る(圏内メインなら CURRENT_CAP と同値)。
     const __capRef=Math.max(CURRENT_CAP, __dmMain||0);
     const dmO=driveMinutesFrom(o,s);
@@ -5289,6 +5310,8 @@ function showResult(){
   }
   html+='<div class="plancard">';
   html+='<div class="plantitle">🎯 '+esc(state.origin.name)+'発 きょうのプラン <small>'+esc(whenLabel())+' / 案'+(state.planNo||1)+'</small></div>';
+  // 免責は全プランの上部に常時1行（文言は従来のフッター注記をそのまま上へ移設。新文言は増やさない）
+  html+='<div class="foodnote" style="margin:2px 2px 8px">※営業時間・料金等は変更される場合があります。出発前に公式情報をご確認ください。</div>';
   // split main-tier rows and bonus-tier rows, insert a heading before the bonus tier
   const mainRows=[], bonusRows=[];
   p.rows.forEach(r=>{ (r.opt?bonusRows:mainRows).push(r); });
@@ -5312,7 +5335,6 @@ function showResult(){
     html+='<div class="homepriority" style="color:#8a7a4a;background:#f6ede0">👣 余力がある場合のみ、上の「余力があれば」スポットへどうぞ</div>';
   }
   html+='<div class="summary">🚗 移動の目安 <b>約'+driveStr+'</b>（往復）　／　💰 <b>'+esc(p.cost)+'</b></div>';
-  html+='<div class="foodnote" style="margin:8px 2px 0">※営業時間・料金等は変更される場合があります。出発前に公式情報をご確認ください。</div>';
   html+='</div>';
   if(routeUrl){
     html+='<div class="gmaps-route" style="text-align:center;margin:14px 0 18px">'+
