@@ -312,9 +312,9 @@ dialog#planDlg::backdrop{background:rgba(40,35,30,.45)}
 <div class="upd">🔁 <b>このページは毎週木曜に更新しています。</b>次の週末のイベントも同じURL（<code>/weekend/</code>）でご覧いただけます。<br>最終更新：2026-09-16（正本：愛知シルバーウィーク22企画・2026年9月19日〜23日）</div>
 <div class="cta"><a class="m" href="/">🗺 地図で遊び場を探す</a><a class="p" href="/plan.html">🎯 プランを自動作成</a></div>
 <p class="odm-fbrand"><img src="/assets/odemaru-mark.png" alt="" width="22" height="22" loading="lazy" decoding="async">あいち子育ておでかけマップ</p>
-<p class="odm-fdesc">愛知県内<span data-stat="aichi">1,158</span>カ所を掲載。二児のパパが個人で運営しています。</p>
+<p class="odm-fdesc">愛知県内<span data-stat="aichi">1,246</span>カ所を掲載。二児のパパが個人で運営しています。</p>
 <p class="odm-fnote">掲載情報は作成時点のものです。おでかけ前に各公式サイトで最終確認をお願いします。1日プランのスポット・ランチは、あいち子育ておでかけマップの掲載情報（営業時間・定休日）の範囲で自動選定しています。</p>
-<p class="odm-fnat">🌏 <a href="https://kosodate-odekake.jp/">全国版「おでまる｜子育ておでかけマップ」</a> — 全<span data-stat="prefs">47</span>都道府県・総掲載<span data-stat="total">17,313</span>スポット</p>
+<p class="odm-fnat">🌏 <a href="https://kosodate-odekake.jp/">全国版「おでまる｜子育ておでかけマップ」</a> — 全<span data-stat="prefs">47</span>都道府県・総掲載<span data-stat="total">17,755</span>スポット</p>
 <p class="odm-flinks"><a href="/articles.html">記事一覧</a> | <a href="/about.html">運営者情報</a> | <a href="/disclaimer.html">免責事項</a> | <a href="/privacy.html">プライバシーポリシー</a> | <a href="https://kosodate-odekake.jp/odemaru/">おでまるって？</a> | <a href="https://docs.google.com/forms/d/e/1FAIpQLSdcSuUG_4MbFgNq-Ejn_cfDvXKhQdQZh4DxITrDiKlo4ocFfw/viewform" target="_blank" rel="noopener">お問い合わせ</a> | <a href="/request.html">掲載情報の修正・削除依頼</a></p>
 </div>
 <script>(function(){try{fetch('https://kosodate-odekake.jp/stats.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(s){if(!s)return;document.querySelectorAll('[data-stat]').forEach(function(el){var k=el.getAttribute('data-stat');var v=s;var parts=k.split(':');for(var i=0;i<parts.length;i++){if(v==null)return;v=v[parts[i]];}if(v==null||isNaN(Number(v)))return;el.textContent=Number(v).toLocaleString('ja-JP');});}).catch(function(){});}catch(e){}})();</script>
@@ -2021,7 +2021,9 @@ function lunchChainCap(sorted){
   return out;
 }
 /* ---------- 候補選定（安城デモと同じ。市内→市外の「市」はイベント会場の市町） ---------- */
-function cityKey(c){ c=String(c||''); var m=c.match(/^(名古屋市)/); if(m) return m[1]; return c.replace(/^[^郡]+郡/,''); }
+// 市町村名の正規化キー(同一市町村の児童館を優先するための比較用)
+// 郡接頭は「蒲郡市」の郡を誤除去しないよう (?!市) で除外し、市町村の境界で打ち切る。plan.html / weekend/index.html で同一実装。
+function cityKey(c){ c=String(c||'').normalize('NFKC').replace(/\s+/g,''); c=c.replace(/^[^郡市町村]+郡(?!市)/,''); var m=c.match(/^.+?[市町村]/); return m?m[0]:c; }
 function inCity(s,city){ return cityKey(s.city)===cityKey(city); }
 function cityFirst(list,city){
   var a=[], b=[];
