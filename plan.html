@@ -5310,8 +5310,8 @@ function showResult(){
   }
   html+='<div class="plancard">';
   html+='<div class="plantitle">🎯 '+esc(state.origin.name)+'発 きょうのプラン <small>'+esc(whenLabel())+' / 案'+(state.planNo||1)+'</small></div>';
-  // 免責は全プランの上部に常時1行（文言は従来のフッター注記をそのまま上へ移設。新文言は増やさない）
-  html+='<div class="foodnote" style="margin:2px 2px 8px">※営業時間・料金等は変更される場合があります。出発前に公式情報をご確認ください。</div>';
+  // 免責は全プランの上部に常時1行（裁定115: 翔大指定文言）
+  html+='<div class="foodnote" style="margin:2px 2px 8px">※営業時間・休みは必ず公式サイトでご確認ください</div>';
   // split main-tier rows and bonus-tier rows, insert a heading before the bonus tier
   const mainRows=[], bonusRows=[];
   p.rows.forEach(r=>{ (r.opt?bonusRows:mainRows).push(r); });
