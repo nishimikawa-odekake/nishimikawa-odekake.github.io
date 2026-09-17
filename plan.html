@@ -710,7 +710,24 @@ function splitTop(text, strong){
 var RE_OPENWORD  = /(営業|開館|開園|開所|開店|オープン|開放|開催)(?!期間|時間|日時|中|時期|時)/;
 var RE_CLOSEWORD = /(休|閉|やすみ|おやすみ)/;
 var RE_NOTEWORD  = /(予約|要相談|運休|運行|中心|変則|カレンダー|要確認|日程表|掲示|受付|入場|料金|問い合わせ|お問合)/;
+/* ---- v3.1-③: 「無休」の極性 -----------------------------------------------
+   「ゴールデンウィークや7〜9月・年末年始・春休み期間は無休です」を、v3 は
+   『無休』の『休』を CLOSE 語として読み、節の中の「年末年始」を休業として立てていた
+   （実測で 12/28〜1/4 の 8 日が閉に反転）。逆判定なので極性判定の前段で分岐する。
+   ただし「無休」「年中無休」「定休日なし」の**単体**節は CLOSE のまま据え置く。
+   「無休（年末年始除く）」のように括弧の中だけに休業期間が書かれている行を
+   headIsNoClosure 経路で拾う v3 の既存動作を壊さないため。                     */
+var RE_NOCLOSE   = /(年中無休|無休|休まず|休み無し|休みな[しシ]|定休日?な[しシ])/;
+var RE_NOCLOSE_G = new RegExp(RE_NOCLOSE.source, 'g');
 function polarity(seg){
+  if(RE_NOCLOSE.test(seg)){
+    /* 「春休み」「夏休み」等は期間の主語であって休業語ではない。極性判定からは外す
+       （「夏休みは休館」は 夏休み を外しても「休館」が残るので CLOSE のまま） */
+    var rest = seg.replace(RE_NOCLOSE_G,'')
+                  .replace(/(春|夏|冬|秋|学校|長期|お)休み/g,'')
+                  .replace(/(です|でした|ます|[。、\s])/g,'');
+    if(rest && !RE_CLOSEWORD.test(rest)) return 'OPEN';
+  }
   if(RE_CLOSEWORD.test(seg)) return 'CLOSE';
   if(RE_OPENWORD.test(seg))  return 'OPEN';   // 「開館は水曜〜日曜」「通常営業は金曜・土曜・日曜」
   /* 注記は曜日表記を含まないものに限る。「水曜日ほか市場カレンダーによる」を捨てないため */
@@ -782,6 +799,7 @@ function parityOk(par,date){
 function pushU(a,v){ if(a.indexOf(v)<0) a.push(v); }
 function parseConds(conds, hostKind){
   var c={holidayOpen:false, substitute:false, substKind:null, substUnknown:false,
+         substNth:null, substNthWd:null,
          exceptHolidayNames:[], exceptHolidayMD:[],
          exceptWeekdays:[], exceptMonths:[], exceptSelfHoliday:false,
          raw:conds.join('|'), understood:false};
@@ -793,6 +811,15 @@ function parseConds(conds, hostKind){
         var sk=substKindOf(t);
         if(sk==='unknown') c.substUnknown=true;
         else if(sk){ c.substKind=sk; c.substitute=true; }
+      }
+      /* v3.1-①: 「第３金曜日（祝日・休日の場合は開館し、第4金曜日に休館します。）」
+         第N曜への振替。曜日が書かれていなければホストと同じ曜日とみなす。 */
+      if(hostKind==='NTH' && !/除|以外/.test(t)){
+        var mn=t.match(new RegExp('第\\s*(['+NUMC+'])\\s*週?\\s*(['+WDS+'])?曜?日?[^、。]{0,8}?(休館|休園|休所|休場|休業|閉館|休み|休)'));
+        if(mn){
+          var nl=nthList(mn[1]);
+          if(nl.length){ c.substNth=nl[0]; c.substNthWd=mn[2]||null; c.understood=true; }
+        }
       }
     }
     if(hostKind==='HOLIDAY'){
@@ -862,6 +889,51 @@ function parseSingleDates(text){
   while((m=re.exec(t))){
     var mo=+m[1], d=+m[2];
     if(mo>=1&&mo<=12&&d>=1&&d<=31) out.push([mo,d,mo,d]);
+  }
+  return out;
+}
+/* ---- v3.1-⑤⑥: 月中境界（上旬/中旬/下旬）と西暦付きの絶対期間 -------------- */
+var JUNWORD='(?:末日?|上旬|中旬|下旬)';
+function lastDayOf(y,m){ return new Date(y,m,0).getDate(); }
+function junStartDay(w){ return w==='中旬'?11:(w==='下旬'?21:1); }
+function junEndDay(w,y,m){
+  if(w==='上旬') return 10;
+  if(w==='中旬') return 20;
+  return (y&&m)?lastDayOf(y,m):31;               // 下旬・末 → その月の最終日
+}
+/* 「2026年6月から2027年1月末(予定)まで休館」。西暦が最低1つ書かれている形だけを
+   絶対レンジにする。月日だけの ranges（毎年繰り返す）とは別物として持つ。 */
+function parseAbsRanges(text){
+  var t=datePrep(text), out=[], m;
+  var re=new RegExp('([0-9]{4})\\s*年\\s*([0-9]{1,2})\\s*月\\s*(?:([0-9]{1,2})\\s*日|('+JUNWORD+'))?'+
+                    '\\s*〜\\s*(?:([0-9]{4})\\s*年\\s*)?([0-9]{1,2})\\s*月\\s*(?:([0-9]{1,2})\\s*日|('+JUNWORD+'))?','g');
+  while((m=re.exec(t))){
+    var y1=+m[1], m1=+m[2], m2=+m[6];
+    if(m1<1||m1>12||m2<1||m2>12) continue;
+    var y2=m[5]?+m[5]:((m2>=m1)?y1:y1+1);
+    var d1 = m[3] ? +m[3] : (m[4] ? (/末/.test(m[4]) ? lastDayOf(y1,m1) : junStartDay(m[4])) : 1);
+    var d2 = m[7] ? +m[7] : (m[8] ? junEndDay(m[8],y2,m2) : lastDayOf(y2,m2));
+    if(d1<1||d1>31||d2<1||d2>31) continue;
+    out.push([y1,m1,d1,y2,m2,d2]);
+  }
+  return out;
+}
+function inAbsRange(date, r){
+  var v=date.getFullYear()*10000+(date.getMonth()+1)*100+date.getDate();
+  return v>=(r[0]*10000+r[1]*100+r[2]) && v<=(r[3]*10000+r[4]*100+r[5]);
+}
+/* 年なしの月中境界レンジ。「7月下旬〜8月」「12月〜3月中旬」。
+   旬・末が片側にでも付いた形だけを採る（素の「◯月〜◯月」は従来の月リストに任せる）。
+   **開始側の「◯月末〜」は開始日が一意に決まらないので採らない**（→ 未解析＝unknown）。 */
+function parseSpanRanges(text){
+  var t=datePrep(text), out=[], m;
+  var re=new RegExp('([0-9]{1,2})\\s*月\\s*('+JUNWORD+')?\\s*〜\\s*([0-9]{1,2})\\s*月\\s*('+JUNWORD+')?','g');
+  while((m=re.exec(t))){
+    if(!m[2] && !m[4]) continue;
+    if(m[2] && /末/.test(m[2])) continue;
+    var m1=+m[1], m2=+m[3];
+    if(m1<1||m1>12||m2<1||m2>12) continue;
+    out.push([m1, junStartDay(m[2]||''), m2, m[4]?junEndDay(m[4],0,0):31]);
   }
   return out;
 }
@@ -1041,7 +1113,7 @@ function parseClosedSpec(cdRaw){
               afterHoliday:null, newyear:null, obon:null, ranges:[], openDays:[],
               weekdaysMonFri:null, noClosure:false, noClosureHint:false, clauses:[],
               nthSpan:[], openSpans:[], openSpansUnresolved:[], unparsed:[],
-              monthDays:[], openMDGlobal:[], substUnknown:false};
+              monthDays:[], openMDGlobal:[], substUnknown:false, absRanges:[]};
   if(!raw.trim()) return spec;
   var t = protectNth(norm(raw)).replace(/(及び|および|並びに|ならびに|かつ)/g,'・');
   /* v3 rev3: 「火曜日と木曜日のみ開館」の並列の「と」を「・」に寄せる。
@@ -1065,16 +1137,23 @@ function parseClosedSpec(cdRaw){
     var pc  = peelConds(seg);
     var pol = polarity(pc.head);   // 極性は括弧の外＝本文だけで決める
                                    // 「祝日(こどもの日は開館)」を営業節と誤読しないため
-    if(/(営業|開館|開園|開所|開店|開放|利用)日?\s*[：:はも]/.test(pc.head)) openLabel = true;
+    if(RE_OPEN_LABEL.test(pc.head)) openLabel = true;
     else if(RE_CLOSEWORD.test(pc.head)) openLabel = false;
+    /* v3.1-④: 「開館日 木・土・日・祝 ただし、お盆…、年末年始…は休館」。
+       ラベルの効力は「ただし」で終わる。ここで切らないと後続の お盆 節まで
+       営業日の記述として読み、休業が脱落する（歯の博物館で実測）。 */
+    var stopLabel = /ただし|但し|ただ[、し]/.test(seg);
     if(openLabel) pol='OPEN';
+    if(stopLabel) openLabel = false;
     /* 監査MAJOR-1: OPEN宣言のある文では、条件節を持たない純粋な曜日節を営業日として読む。
        「月曜(祝日の場合は翌平日)」のような条件付きの定休節は対象外にする。 */
     if(onlyOpenDecl && pol!=='OPEN' && RE_WD_ONLY_SEG.test(pc.head.trim()) &&
        !pc.conds.join('').match(/祝|翌|除|以外/)) pol='OPEN';
     if(pol==='OPEN'){
       collectOpenDays(pc.head, spec);
-      spec.clauses.push({seg:seg, kind:'OPEN(営業日の記述)', tokens:[]});
+      /* v3.1-④: 開館日宣言の「〜を除く」は開館日集合の補集合＝休業日 */
+      var xt = openExceptTokens(pc.conds, seg, spec);
+      spec.clauses.push({seg:seg, kind:'OPEN(営業日の記述)'+(xt.length?'＋除外':''), tokens:xt});
       continue;
     }
     if(pol==='NOTE'){
@@ -1165,7 +1244,35 @@ function parseClosedSpec(cdRaw){
 }
 function hasAnyToken(sp){
   return !!(sp.weekly.length||sp.nth.length||sp.nthSpan.length||sp.holiday||sp.weekend||sp.sunday||
-            sp.afterHoliday||sp.newyear||sp.obon||sp.ranges.length||sp.weekdaysMonFri);
+            sp.afterHoliday||sp.newyear||sp.obon||sp.ranges.length||sp.weekdaysMonFri||
+            sp.absRanges.length);
+}
+/* ---- v3.1-④: 開館日宣言のラベルと、その除外句 -----------------------------
+   「開館日 日曜日・国民の祝日及び年末年始を除く毎日」(尾張旭市児童館 id=548-555)。
+   v3 は OPEN ラベルの検出に「：」「は」「も」を必須にしていたため空白区切りを読めず、
+   さらに「〜を除く」を例外句として消費して closed 0 日になっていた。
+   日 が付いた形に限って空白区切りを許し、「開館する日」「利用できる日」も拾う。
+   「開館 9:00〜17:00」のような時刻記述を OPEN ラベルと誤読しないよう、
+   日 を伴わない形は従来どおり「：:はも」を必須のままにする。                    */
+var RE_OPEN_LABEL = new RegExp(
+  '(?:営業|開館|開園|開所|開店|開放|利用|開場)(?:する|できる|可能な)?日\\s*[：:はも\\s]' + '|' +
+  '(?:営業|開館|開園|開所|開店|開放|利用)日?\\s*[：:はも]');
+/* 開館日宣言に付いた「Xを除く」「X以外」の X は、開館日集合の補集合＝休業日。
+   休業トークンとして立てる（日曜→WEEKDAY / 国民の祝日→HOLIDAY / 年末年始→NEWYEAR）。 */
+function openExceptTokens(conds, seg, spec){
+  var toks=[], i, j;
+  for(i=0;i<conds.length;i++){
+    var c=conds[i];
+    if(!/(除[くきい]|以外)/.test(c)) continue;
+    var body=c.replace(/(?:を|は|も)?(?:除[くきい]|以外).*$/,'');
+    if(!body.replace(/[\s()、]/g,'')) continue;
+    var parts=splitTop(body.replace(/、/g,'・'), false);
+    for(j=0;j<parts.length;j++){
+      var k=classifyClause(parts[j], [], seg, spec, null);
+      if(k) toks.push(k+'(開館日宣言の除外):'+parts[j]);
+    }
+  }
+  return toks;
 }
 function collectOpenDays(head, spec){
   var parts = splitTop(head.replace(/、/g,'・'),false), i, m;
@@ -1320,6 +1427,19 @@ function classifyClause(p, condsRaw, seg, spec, segOnly){
   }
   var bare2=p.replace(/(定休日?|休館日?|休園日?|休業日?|休み|休|のみ)+$/,'');
   if(bare2==='平日'){ spec.weekdaysMonFri={conds:parseConds(condsRaw,'WEEKDAY'), src:p}; return 'WEEKDAYS'; }
+  /* v3.1-⑥: 西暦付きの絶対期間（年またぎ・「◯月末」）。
+     「2026年6月から2027年1月末(予定)まで休館」(id=129 あいち航空ミュージアム) */
+  var ar=parseAbsRanges(p);
+  if(ar.length){
+    for(var ai=0;ai<ar.length;ai++) spec.absRanges.push({r:ar[ai], src:p});
+    return 'ABS_RANGE';
+  }
+  /* v3.1-⑤: 月中境界（上旬=1-10 / 中旬=11-20 / 下旬=21-末） */
+  var sr=parseSpanRanges(p);
+  if(sr.length){
+    for(var sj=0;sj<sr.length;sj++) spec.ranges.push({r:sr[sj], src:p});
+    return 'SPAN_RANGE';
+  }
   /* 「11月24日以降平日」のように終端が書かれていない形は範囲が決まらない。
      単独日付として誤読せず、未解析に落として旧実装のフォールバックに委ねる（裁定⑱）。 */
   if(/以降|以後|前後|頃|ごろ|中旬|上旬|下旬/.test(p)) return null;
@@ -1373,6 +1493,9 @@ function evalSpec(spec, s, date, OPT){
         return {closed:true, reason:'年末年始（節「'+spec.newyear.src+'」/ 窓 '+nrange[i].join('-')+'）'};
   }
   if(OPT.dateRange){
+    /* v3.1-⑥: 西暦付きの絶対期間（長期休館など）。毎年繰り返させない */
+    for(i=0;i<spec.absRanges.length;i++) if(inAbsRange(date,spec.absRanges[i].r))
+      return {closed:true, reason:'長期休館の期間（節「'+spec.absRanges[i].src+'」）'};
     for(i=0;i<spec.ranges.length;i++) if(inMDRange(date,spec.ranges[i].r))
       return {closed:true, reason:'明示日付範囲（節「'+spec.ranges[i].src+'」）'};
   }
@@ -1401,6 +1524,36 @@ function evalSpec(spec, s, date, OPT){
     if(isHol && (r.conds.holidayOpen||spec.globalHolidayOpen)) continue;
     if(openSpan) continue;
     return {closed:true, viaWeekday:true, reason:'第'+r.nth.join('・').replace('last','最終')+r.wd+'曜が定休（節「'+r.src+'」）'};
+  }
+  /* ---- v3.1-①: 第N曜への振替 --------------------------------------------
+     「第３金曜日（祝日・休日の場合は開館し、第4金曜日に休館します。）」(id=15)。
+     当日が振替先の第N曜で、かつ**同じ月の**ホスト第N曜が祝日のときだけ休。
+     ホストが祝日でない月は何も起きない（第4金曜は開く）。                     */
+  for(i=0;i<spec.nth.length;i++){
+    r=spec.nth[i];
+    if(!r.conds || !r.conds.substNth) continue;
+    var swd=r.conds.substNthWd||r.wd;
+    if(swd!==tw) continue;
+    if(nthOfMonth(date)!==r.conds.substNth) continue;
+    if(monthExcluded(r.conds,date)) continue;
+    if(r.only && r.only.indexOf(date.getMonth()+1)<0) continue;
+    if(!parityOk(r.par,date)) continue;
+    var wi3=WDS.indexOf(r.wd), hostHol=false;
+    if(wi3<0) continue;
+    var f3=1, fd3=new Date(date.getFullYear(),date.getMonth(),1);
+    while(fd3.getDay()!==wi3){ fd3=new Date(date.getFullYear(),date.getMonth(),++f3); }
+    for(var hk=0;hk<r.nth.length;hk++){
+      var hn=r.nth[hk];
+      var hday=(hn==='last') ? (f3+Math.floor((new Date(date.getFullYear(),date.getMonth()+1,0).getDate()-f3)/7)*7)
+                             : (f3+(hn-1)*7);
+      var hd=new Date(date.getFullYear(),date.getMonth(),hday);
+      if(hd.getMonth()===date.getMonth() && isHolDate(hd)) hostHol=true;
+    }
+    if(!hostHol) continue;
+    if(openSpan) continue;
+    return {closed:true, viaWeekday:true,
+            reason:'第'+r.conds.substNth+swd+'曜への振替休（第'+r.nth.join('・').replace('last','最終')+
+                   r.wd+'曜が祝日 / 節「'+r.src+'」）'};
   }
   /* 第N曜を起点にした連続区間（「7月第一月曜日〜水曜日」） */
   for(i=0;i<spec.nthSpan.length;i++){
@@ -1440,6 +1593,11 @@ function evalSpec(spec, s, date, OPT){
       var tgt1=resolveSubst(k1,H);
       if(!tgt1 || tgt1.getTime()!==date.getTime()) continue;
       if(openSpan) continue;
+      /* v3.1-②: 「祝日の場合は翌日」で振替先そのものが祝日。公式に規定がないので断定しない */
+      if(k1==='next' && isHol)
+        return {unknown:true, reason:'振替先の'+(date.getMonth()+1)+'/'+date.getDate()+
+                'も祝日で、公式に規定がない（'+(H.getMonth()+1)+'/'+H.getDate()+'の'+r.wd+
+                '曜が祝日 / 節「'+r.src+'」）'};
       return {closed:true, viaWeekday:true,
               reason:'祝日振替休（'+(H.getMonth()+1)+'/'+H.getDate()+'の'+r.wd+'曜が祝日 / '+
                      (k1==='nextWeekday'?'直後の休日でない日':'翌日')+' / 節「'+r.src+'」）'};
@@ -1461,6 +1619,10 @@ function evalSpec(spec, s, date, OPT){
       var tgt2=resolveSubst(k2,H);
       if(!tgt2 || tgt2.getTime()!==date.getTime()) continue;
       if(openSpan) continue;
+      /* v3.1-②: 振替先そのものが祝日。公式に規定がないので断定しない */
+      if(k2==='next' && isHol)
+        return {unknown:true, reason:'振替先の'+(date.getMonth()+1)+'/'+date.getDate()+
+                'も祝日で、公式に規定がない（節「'+r.src+'」）'};
       return {closed:true, viaWeekday:true,
               reason:'祝日振替休（'+(H.getMonth()+1)+'/'+H.getDate()+'が第'+r.nth.join('・').replace('last','最終')+r.wd+'曜の祝日 / 節「'+r.src+'」）'};
     }
@@ -1617,6 +1779,8 @@ function judge(s, date, OPT, cache){
   var soft = specIsSoft(spec);
 
   var r = evalSpec(spec, s, date, OPT);
+  /* v3.1-②: 振替先が確定できない日は closed にしない（裁定100-1） */
+  if(r && r.unknown) return {state:'unknown', soft:true, reason:r.reason};
   if(r && r.closed){
     if(r.viaWeekday){
       var uq = unresolvedOpenBlocks(spec, tw);
@@ -1765,10 +1929,12 @@ function rangeOf(seg){
     if(c<=o) c+=1440;
     return {openMin:o, closeMin:c};
   }
-  m=src.match(/(午前|午後)?(\d{1,2})時(?:(\d{1,2})分)?\s*(?:[〜\-~]|から)\s*(午前|午後)?(\d{1,2})時(?:(\d{1,2})分)?/);
+  /* v3.1-⑦: 口語時刻。「朝9時から夕方4時まで」(id=123)「午前9時〜午後5時」(id=548-555)「9時半」 */
+  m=src.match(/(午前|午後|朝|昼|夕方|夕|夜|晩)?\s*(\d{1,2})\s*時\s*(?:(\d{1,2})\s*分|(半))?\s*(?:[〜\-~]|から|より)\s*(午前|午後|朝|昼|夕方|夕|夜|晩)?\s*(\d{1,2})\s*時\s*(?:(\d{1,2})\s*分|(半))?/);
   if(m){
-    var oh=(+m[2])+((m[1]==='午後'&&(+m[2])<12)?12:0), om=+(m[3]||0);
-    var chh=(+m[5])+((m[4]==='午後'&&(+m[5])<12)?12:0), cm=+(m[6]||0);
+    var PM=/^(午後|夕方|夕|夜|晩)$/;
+    var oh=(+m[2])+((m[1]&&PM.test(m[1])&&(+m[2])<12)?12:0), om=m[4]?30:+(m[3]||0);
+    var chh=(+m[6])+((m[5]&&PM.test(m[5])&&(+m[6])<12)?12:0), cm=m[8]?30:+(m[7]||0);
     var o2=oh*60+om, c2=chh*60+cm;
     if(c2<=o2&&chh<12) c2+=720;
     if(c2<=o2) return null;
@@ -1780,9 +1946,27 @@ function rangeOf(seg){
 var RE_BH_VAGUE = /(夏季|夏期|冬季|冬期|春季|春期|秋季|秋期|夏休み|冬休み|春休み|繁忙期|季節限定|期間限定|要予約|要問合|要確認|不定)/;
 /* 断片の条件を読む。{months:[], dows:[], hol:null|true|false, vague:bool, has:bool} */
 function condOf(seg){
-  var c={months:[], dows:[], hol:null, vague:false, has:false};
+  var c={months:[], dows:[], hol:null, vague:false, has:false, ranges:[]};
   if(RE_BH_VAGUE.test(seg)) c.vague=true;
   var m, i;
+  /* v3.1-⑤: 月中境界「7月下旬〜8月」「12月〜3月中旬」。上旬=1-10 / 中旬=11-20 / 下旬=21-末。
+     旬・末が片側にでも付いた形だけを日付レンジにし、素の「◯月〜◯月」は月リストに任せる。
+     開始側の「◯月末〜」は開始日が一意に決まらないので採らない。 */
+  var reJ=/([0-9]{1,2})\s*月\s*(末日?|上旬|中旬|下旬)?\s*〜\s*([0-9]{1,2})\s*月\s*(末日?|上旬|中旬|下旬)?/g;
+  while((m=reJ.exec(seg))){
+    if(!m[2] && !m[4]) continue;
+    if(m[2] && /末/.test(m[2])) continue;
+    /* 期間のうしろに時刻が続く形（「7月下旬〜8月は20:00まで」）だけを営業時間の条件にする。
+       「（親水広場の水路遊びは7月下旬〜8月限定）」のように時刻を伴わない注記は条件にしない
+       （v3 は本体のレンジをそのまま返していた。挙動を変えない）。 */
+    if(!/[0-9]{1,2}\s*[:時]/.test(seg.slice(m.index+m[0].length))) continue;
+    var ja=+m[1], jb=+m[3];
+    if(ja<1||ja>12||jb<1||jb>12) continue;
+    var jd1=(m[2]==='中旬')?11:((m[2]==='下旬')?21:1);
+    var jd2=(m[4]==='上旬')?10:((m[4]==='中旬')?20:31);
+    c.ranges.push([ja,jd1,jb,jd2]); c.has=true;
+  }
+  if(!c.ranges.length){
   /* 月条件: 「3〜10月」「4月〜9月」「11〜2月」「12月〜2月末」「1月〜3月」 */
   var reM=/([0-9]{1,2})\s*月?\s*〜\s*([0-9]{1,2})\s*月/g;
   while((m=reM.exec(seg))){
@@ -1795,6 +1979,7 @@ function condOf(seg){
   if(!c.months.length){
     var reS=/(?:^|[(（\s])([0-9]{1,2})\s*月(?!\s*[0-9]{1,2}\s*日)(?![〜\-])/g;
     while((m=reS.exec(seg))){ var v=+m[1]; if(v>=1&&v<=12&&c.months.indexOf(v)<0){ c.months.push(v); c.has=true; } }
+  }
   }
   /* 曜日条件 */
   if(/平日|月\s*[\-〜]\s*金/.test(seg)){ c.dows=[1,2,3,4,5]; c.hol=false; c.has=true; }
@@ -1813,6 +1998,15 @@ function condOf(seg){
   return c;
 }
 function condMatches(c, date, isHol){
+  /* v3.1-⑤: 月中境界のレンジ（年跨ぎ可） */
+  if(c.ranges && c.ranges.length){
+    var md=(date.getMonth()+1)*100+date.getDate(), ok=false;
+    for(var ri=0;ri<c.ranges.length;ri++){
+      var rr=c.ranges[ri], ra=rr[0]*100+rr[1], rb=rr[2]*100+rr[3];
+      if((ra<=rb) ? (md>=ra&&md<=rb) : (md>=ra||md<=rb)){ ok=true; break; }
+    }
+    if(!ok) return false;
+  }
   if(c.months.length && c.months.indexOf(date.getMonth()+1)<0) return false;
   if(c.dows.length){
     var d=date.getDay();
@@ -1827,6 +2021,18 @@ function condMatches(c, date, isHol){
 function preSplitWeekdayRuns(t){
   return t.replace(/([^\s／/、])\s+(?=[日月火水木金土]曜日?\s*[0-9]{1,2}\s*[:時])/g, '$1／');
 }
+/* 括弧の中の断片から「条件付きのレンジ／閉館時刻」を1つ取り出して積む */
+function addInner(inners, inner, r){
+  var ic=condOf(inner);
+  if(!ic.has) return false;
+  var ir=rangeOf(inner);
+  if(!ir){
+    var tm=inner.match(/(?:^|[^0-9:])([0-9]{1,2})(?::([0-9]{2}))?\s*時?(?:[0-9]{1,2}分)?\s*まで/);
+    if(tm) ir={openMin:r.openMin, closeMin:(+tm[1])*60+(+(tm[2]||0))};
+  }
+  if(ir && ir.closeMin>ir.openMin){ inners.push({r:ir, c:ic, src:inner}); return true; }
+  return false;
+}
 function variantsOf(bhRaw){
   var t=preSplitWeekdayRuns(bnorm(bhRaw)), segs=splitBH(t), out=[];
   for(var i=0;i<segs.length;i++){
@@ -1836,14 +2042,13 @@ function variantsOf(bhRaw){
        のように、括弧の中に条件付きの別レンジ／閉館時刻が書かれている形 */
     var inners=[], reP=/\(([^)]*)\)/g, pm;
     while((pm=reP.exec(segs[i]))){
-      var inner=pm[1], ic=condOf(inner);
-      if(!ic.has) continue;
-      var ir=rangeOf(inner);
-      if(!ir){
-        var tm=inner.match(/(?:^|[^0-9:])([0-9]{1,2})(?::([0-9]{2}))?\s*時?(?:[0-9]{1,2}分)?\s*まで/);
-        if(tm) ir={openMin:r.openMin, closeMin:(+tm[1])*60+(+(tm[2]||0))};
-      }
-      if(ir && ir.closeMin>ir.openMin) inners.push({r:ir, c:ic, src:inner});
+      /* v3.1: 括弧の中に条件付きレンジが並列で入る形
+         「(7月下旬〜8月は20:00まで、12月〜3月中旬は17:00まで)」を条件ごとに分ける。
+         v3 は括弧の中身を1つの条件として読み、先頭の閉館時刻を全期間に当てていた。 */
+      var subs=pm[1].split(/[、。]/), got=0;
+      for(var qi=0; qi<subs.length; qi++) got += addInner(inners, subs[qi], r) ? 1 : 0;
+      /* 分割して1つも取れなければ、括弧の中身を丸ごと1つの条件として読む（v3 と同じ挙動） */
+      if(!got && subs.length>1) addInner(inners, pm[1], r);
     }
     /* 括弧側が独自のレンジを持つ場合、本体の条件は括弧を取り除いた部分から読む */
     var outerSrc = inners.length ? segs[i].replace(/\([^)]*\)/g,' ') : segs[i];
