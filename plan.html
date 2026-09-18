@@ -2112,8 +2112,16 @@ function mealLabelFor(arrivalMin){
 // business-hours vs arrival-time consistency check
 // returns {exclude:bool, bonus:bool, note:string|null}
 function closingInfo(s,arrivalMin,date){
-  const bh=parseBusinessHours(s,date||PLAN_DATE||null);
-  if(!bh) return {exclude:false,bonus:false,note:null}; // unparseable -> skip silently
+  const __d=date||PLAN_DATE||null;
+  const bh=parseBusinessHours(s,__d);
+  if(!bh){
+    /* [裁定145] business_hours が非nullでも当日を解析できない行を「無制約で素通り」させない。
+       到着16:00以降は確定枠から外す(=営業時間未取得と同じ夕方ガード)。16:00未満は従来どおり。
+       ユーザーがマップで明示的にえらんだ場所は落とさない([裁定146])。 */
+    if(arrivalMin!=null&&!isUserPick(s)&&bhUnresolved(s,__d)
+       &&(((arrivalMin%1440)+1440)%1440)>=EVENING_GUARD_MIN) return {exclude:true,bonus:false,note:null};
+    return {exclude:false,bonus:false,note:null}; // unparseable -> skip silently
+  }
   const t=((arrivalMin%1440)+1440)%1440;
   const remain=bh.closeMin-t;
   if(t<bh.openMin||remain<=0) return {exclude:true,bonus:false,note:null};
@@ -2177,15 +2185,28 @@ function isUnverifiedHours(s){
  * 既存の unknown 表示（🕐 営業時間は要確認）はそのまま。
  * ========================================================================== */
 var EVENING_GUARD_MIN=16*60;
-function bhUnregistered(s){
+/* [裁定146] マップでユーザーがえらんだ場所の名前。custom 経路の生成中だけ非nullになる。 */
+var CP_PICK_NAMES=null;
+/* [裁定146] えらんだ場所を時間を理由に落とさないための帰宅上限(自動プランの18:00より遅くまで許容)。
+   これを超える場合だけ「組み込めませんでした」に回す。 */
+var CP_PICK_HOME_CAP=20*60;
+function isUserPick(s){ try{ return !!(s&&CP_PICK_NAMES&&s.name&&CP_PICK_NAMES.indexOf(s.name)>=0); }catch(e){ return false; } }
+/* [裁定145] 「その日付で営業時間が確定できない」スポットか。
+   business_hours が空の行に加え、非nullでも parseBusinessHours() が null を返す行を含む。
+   終日開放とみなせる公園・24時間営業は従来どおり対象外。 */
+function bhUnresolved(s,date){
   if(!s) return false;
-  if(s.business_hours) return false;     // 登録あり -> closingInfo / BH_V3 の世界
   if(alwaysOpenPark(s)) return false;    // 終日開放とみなせる公園は対象外
-  return true;
+  const raw=String(s.business_hours||'');
+  if(/24\s*時間/.test(raw)) return false;
+  if(!raw) return true;                  // 未登録
+  try{ return parseBusinessHours(s,date||PLAN_DATE||null)===null; }catch(e){ return true; }
 }
-function eveningBhNullBlocked(s,arrivalMin){
+function bhUnregistered(s,date){ return bhUnresolved(s,date); }
+function eveningBhNullBlocked(s,arrivalMin,date){
   if(arrivalMin==null) return false;
-  if(!bhUnregistered(s)) return false;
+  if(CP_PICK_NAMES) return false;        // [裁定146] custom 経路には夕方ガードを適用しない
+  if(!bhUnregistered(s,date)) return false;
   return (((arrivalMin%1440)+1440)%1440)>=EVENING_GUARD_MIN;
 }
 /* [恒久除外] 公式サイトに閉店・休業・改装等の告知があり、営業時間を意図的に付けなかった店。
@@ -2976,19 +2997,24 @@ function buildPlan(main,date,w,shareOverride){
     }
   }
   // メイン滞在も閉館15分前まで(45分未満はclosingInfoで候補から除外済み)
+  /* [裁定147] 注記はスポットに積まず毎回作り直す(再生成で同じ注記が重複していた)。
+     残り時間が負(=到着時点で閉館後)のときは「閉館が近いため〜」を出さない。 */
+  let __mainClose=String(main.__closeNote||'').split('／')
+      .filter(function(x){ return x&&!/^※閉館が近いため滞在めやす/.test(x); }).join('／')||null;
   (function(){
     const mBh=parseBusinessHours(main);
     if(!mBh) return;
     const mLimit=mBh.closeMin-15;
+    if(mBh.closeMin-t<=0) return;        // [裁定147] remain<=0 なら出さない
     if(t+stay>mLimit){
       const ns=Math.max(45,Math.floor((mLimit-t)/15)*15);
       if(ns<stay){
         stay=ns;
-        main.__closeNote=(main.__closeNote?main.__closeNote+'／':'')+'※閉館が近いため滞在めやす〜'+stay+'分（閉館15分前までの利用がおすすめです）';
+        __mainClose=(__mainClose?__mainClose+'／':'')+'※閉館が近いため滞在めやす〜'+stay+'分（閉館15分前までの利用がおすすめです）';
       }
     }
   })();
-  rows.push({type:'spot',time:t,spot:main,tag:'メイン',closeNote:main.__closeNote});
+  rows.push({type:'spot',time:t,spot:main,tag:'メイン',closeNote:__mainClose});
   t+=stay;
   let lastName=main.name, lastLat=main.latitude, lastLng=main.longitude, lastSpot=main;
   if(lunch){
@@ -3006,7 +3032,7 @@ function buildPlan(main,date,w,shareOverride){
     // 食事枠も閉店15分前を終了上限に(会計・トイレ・支度の余裕)
     let mealStay=60, mealNote=null;
     const mealBh=parseBusinessHours(lunch);
-    if(mealBh){
+    if(mealBh&&mealBh.closeMin-t>0){   // [裁定147] remain<=0 なら「閉店が近いため〜」を出さない
       const mealLimit=mealBh.closeMin-15;
       if(t+mealStay>mealLimit){
         mealStay=Math.max(30,Math.floor((mealLimit-t)/15)*15);
@@ -3049,7 +3075,16 @@ function buildPlan(main,date,w,shareOverride){
     let depart0=Math.min(Math.max(arr0+90, 16*60+30), limit0);
     depart0=Math.floor(depart0/15)*15;
     // 60分以上遊べない場合はこの候補を諦めて次へ
-    if(!ci0.exclude && depart0>=arr0+60){
+    let __ok0=(!ci0.exclude && depart0>=arr0+60);
+    if(!__ok0 && isUserPick(__cand)){
+      /* [裁定146] えらんだ場所は営業時間を理由に落とさない(営業時間外なら上部に警告を出す)。
+         この枠にかぎり閉館時刻のキャップを外し、帰宅上限も CP_PICK_HOME_CAP まで伸ばす。
+         それでも60分以上とれない(=時間割の都合で物理的に入らない)場合は
+         従来どおり「組み込めませんでした」に回す。 */
+      const __d2=Math.floor(Math.min(Math.max(arr0+90,16*60+30),CP_PICK_HOME_CAP-bdm0)/15)*15;
+      if(__d2>=arr0+60){ depart0=__d2; __ok0=true; }
+    }
+    if(__ok0){
       sub=__cand;
       afternoonMode=true;
       rows.push({type:'move',time:t,label:'🚗 移動（約'+sdm0+'分）',sub:transitLabel(lastName,sub.name,sdm0)});
@@ -3081,7 +3116,7 @@ function buildPlan(main,date,w,shareOverride){
       const sdm=legMinutes(lastLat,lastLng,sub.latitude,sub.longitude);
       const arrival=t+sdm;
       const ci=closingInfo(sub,arrival);
-      if(ci.exclude){ sub=null; return; }
+      if(ci.exclude&&!isUserPick(sub)){ sub=null; return; }   // [裁定146] えらんだ場所は落とさない
       const bdm=driveMinutesFrom(o,sub)||legMinutes(sub.latitude,sub.longitude,o.lat,o.lng);
       const bh=parseBusinessHours(sub);
       const limit=Math.min(bh?(bh.closeMin-15):Infinity, 18*60-bdm);  // 閉館15分前までに退場
@@ -3336,6 +3371,7 @@ function approveWiden(next){
   generate();
 }
 async function generate(){
+  CP_PICK_NAMES=null;   // [裁定146] 自動プランでは custom の例外を持ち込まない
   const __gid=genStart('wizard');
   try{
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
@@ -3962,6 +3998,7 @@ function applySwapCustom(k,ns){
   if(!np) return;
   try{ np.__missing=cpMissingSelected(np); }catch(e){}
   try{ np.__closedWarn=cpClosedWarnNames(date); }catch(e){}   // [S-1] 差し替え後も再判定
+  try{ np.__hoursWarn=cpHoursWarnList(np,date); }catch(e){}   // [裁定146] 差し替え後も再判定
   if(p.custom5) state.custom5Warn=!!np.__warn;
   state.plans[state.variant%state.plans.length]=np;
   const sy=window.scrollY||window.pageYOffset||0;
@@ -4832,6 +4869,38 @@ function cpClosedWarnNames(date){
     return out;
   }catch(e){ return []; }
 }
+/* ===== [裁定146] マップで選んだ場所の「到着時刻が営業時間外」検査 ====================
+ * 選んだものは勝手に外さず、到着時刻が営業時間の外になる場合だけ名前・到着時刻・
+ * 営業時間を返す。営業時間が解析できない行は対象にしない(既存の「🕐 営業時間は要確認」に任せる)。
+ * ================================================================================ */
+function cpHoursWarnList(plan,date){
+  try{
+    const d=(date instanceof Date)?date:targetDate(state.when||'today');
+    if(typeof setPlanDate==='function') setPlanDate(d);
+    const sel=(state.customSlots||[]).filter(Boolean).filter(function(s){ return !s.__bento&&!s.__temp&&s.name; }).map(function(s){ return s.name; });
+    if(!sel.length) return [];
+    const seen={}, out=[];
+    ((plan&&plan.rows)||[]).forEach(function(r){
+      if(!r||r.type!=='spot'||!r.spot||r.spot.__temp||r.spot.__bento) return;
+      const s=r.spot;
+      if(sel.indexOf(s.name)<0||seen[s.name]||r.time==null) return;
+      let bh=null; try{ bh=parseBusinessHours(s,d); }catch(e){ bh=null; }
+      const t=((r.time%1440)+1440)%1440;
+      if(bh){
+        if(t>=bh.openMin&&t<bh.closeMin) return;
+        seen[s.name]=1;
+        out.push({name:s.name,at:fmtTime(t),hours:fmtTime(bh.openMin)+'〜'+fmtTime(bh.closeMin)});
+        return;
+      }
+      /* [裁定149] その日の営業時間が解析できない場合は「開いているか確認」を1本だけ出す。
+         解析できる場合(上)を優先し、両方は出さない。終日開放の公園・24時間営業は対象外。 */
+      if(!bhUnresolved(s,d)) return;
+      seen[s.name]=1;
+      out.push({name:s.name,at:fmtTime(t),hours:null});
+    });
+    return out;
+  }catch(e){ return []; }
+}
 function cpMissingSelected(plan){
   try{
     const sel=(state.customSlots||[]).filter(Boolean).filter(s=>!s.__bento).map(s=>s.name);
@@ -4885,7 +4954,7 @@ function buildCustomPlanFromSlots(slots,date,w){
     const lci=closingInfo(lunch,t);
     let mealStay5=60, mealNote5=null;
     const mealBh5=parseBusinessHours(lunch);
-    if(mealBh5){
+    if(mealBh5&&mealBh5.closeMin-t>0){   // [裁定147] remain<=0 なら「閉店が近いため〜」を出さない
       const ml5=mealBh5.closeMin-15;
       if(t+mealStay5>ml5){ mealStay5=Math.max(30,Math.floor((ml5-t)/15)*15); mealNote5='※閉店が近いため滞在めやす〜'+mealStay5+'分（閉店15分前までの利用がおすすめです）'; }
     }
@@ -4940,6 +5009,7 @@ async function customGenerate5(){
   }
   // 「おでまるが提案します」の空きスポット枠を実際に埋める(選択内容の保存は変えない)
   const slots=state.customSlots.slice();
+  CP_PICK_NAMES=(state.customSlots||[]).filter(Boolean).filter(function(s){ return !s.__bento&&s.name; }).map(function(s){ return s.name; });   // [裁定146]
   const li=cpLI();
   try{
     slots.forEach(function(_,k){
@@ -4977,6 +5047,7 @@ async function customGenerate5(){
   const __lunchOut=plan.lunch||null;
   plan.__missing=cpMissingSelected(plan);
   plan.__closedWarn=cpClosedWarnNames(date);   // [S-1]
+  plan.__hoursWarn=cpHoursWarnList(plan,date);   // [裁定146]
   state.shownMains=[plan.main]; state.shownLunches=__lunchOut?[__lunchOut]:[]; state.shownSubs=[];
   state.swapFixed={}; state.swapSeen={}; state.cycledNote=false;
   state.isSharedView=false; state.isCustomView=true; state.custom5Warn=warn;
@@ -4989,6 +5060,7 @@ async function customGenerate5(){
 }
 async function customGenerate(){
   const sel=state.customSlots.filter(Boolean);
+  CP_PICK_NAMES=sel.filter(function(s){ return !s.__bento&&s.name; }).map(function(s){ return s.name; });   // [裁定146]
   const msg=document.getElementById('cpAddMsg');
   if(!sel.length){ if(msg) msg.textContent='場所を1つ以上えらんでください（マップからえらぶ、または上の入力から追加）'; return; }
   if(state.customSlots.length>3||(state.customSlots[cpLI()]&&state.customSlots[cpLI()].__bento)){ return customGenerate5(); }
@@ -5040,6 +5112,7 @@ async function customGenerate(){
   state.plans=[buildPlan(main,date,state.weather,{lunch:lunch||null,sub:sub||null})];
   state.plans[0].__missing=cpMissingSelected(state.plans[0]);
   state.plans[0].__closedWarn=cpClosedWarnNames(date);   // [S-1]
+  state.plans[0].__hoursWarn=cpHoursWarnList(state.plans[0],date);   // [裁定146]
   state.variant=0; state.planNo=1;
   if(!genOk(__gid)) return;
   document.getElementById('loading').style.display='none';
@@ -5356,6 +5429,10 @@ function showResult(){
   if(state.isCustomView&&p.__closedWarn&&p.__closedWarn.length){
     __note(10,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ 「'+p.__closedWarn.map(esc).join('」「')+'」はこの日は休館日の可能性があります</div>','safe');
   }
+  // [裁定146] えらんだ場所の到着時刻が営業時間外のとき(休館日警告の直後に出す)
+  if(state.isCustomView&&p.__hoursWarn&&p.__hoursWarn.length){
+    __note(11,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">'+p.__hoursWarn.map(function(x){ return x.hours?('⚠️ 「'+esc(x.name)+'」は到着時刻（'+esc(x.at)+'）が営業時間（'+esc(x.hours)+'）の外です'):('⚠️ 「'+esc(x.name)+'」は到着時刻（'+esc(x.at)+'）に開いているか確認してください'); }).join('<br>')+'</div>','safe');
+  }
   if(state.weather&&state.weather.tmax!=null&&state.weather.tmax>=30){
     const __hasOutdoor=(p.rows||[]).some(function(r){ return r.type==='spot'&&!r.opt&&r.spot&&r.spot.indoor_or_outdoor==='outdoor'; });
     if(__hasOutdoor){
@@ -5516,6 +5593,7 @@ function reroll(){
   showResult();
 }
 function restart(){
+  CP_PICK_NAMES=null;   // [裁定146]
   state.isCustomView=false; state.customSlots=[null,null,null]; state.cpPlanSlots=null;
   try{ localStorage.removeItem(CUSTOM_KEY); }catch(e){}
   const cpEl=document.getElementById('customPanel'); if(cpEl) cpEl.style.display='none';
