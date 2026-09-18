@@ -4885,11 +4885,18 @@ function cpHoursWarnList(plan,date){
       const s=r.spot;
       if(sel.indexOf(s.name)<0||seen[s.name]||r.time==null) return;
       let bh=null; try{ bh=parseBusinessHours(s,d); }catch(e){ bh=null; }
-      if(!bh) return;
       const t=((r.time%1440)+1440)%1440;
-      if(t>=bh.openMin&&t<bh.closeMin) return;
+      if(bh){
+        if(t>=bh.openMin&&t<bh.closeMin) return;
+        seen[s.name]=1;
+        out.push({name:s.name,at:fmtTime(t),hours:fmtTime(bh.openMin)+'〜'+fmtTime(bh.closeMin)});
+        return;
+      }
+      /* [裁定149] その日の営業時間が解析できない場合は「開いているか確認」を1本だけ出す。
+         解析できる場合(上)を優先し、両方は出さない。終日開放の公園・24時間営業は対象外。 */
+      if(!bhUnresolved(s,d)) return;
       seen[s.name]=1;
-      out.push({name:s.name,at:fmtTime(t),hours:fmtTime(bh.openMin)+'〜'+fmtTime(bh.closeMin)});
+      out.push({name:s.name,at:fmtTime(t),hours:null});
     });
     return out;
   }catch(e){ return []; }
@@ -5424,7 +5431,7 @@ function showResult(){
   }
   // [裁定146] えらんだ場所の到着時刻が営業時間外のとき(休館日警告の直後に出す)
   if(state.isCustomView&&p.__hoursWarn&&p.__hoursWarn.length){
-    __note(11,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">'+p.__hoursWarn.map(function(x){ return '⚠️ 「'+esc(x.name)+'」は到着時刻（'+esc(x.at)+'）が営業時間（'+esc(x.hours)+'）の外です'; }).join('<br>')+'</div>','safe');
+    __note(11,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">'+p.__hoursWarn.map(function(x){ return x.hours?('⚠️ 「'+esc(x.name)+'」は到着時刻（'+esc(x.at)+'）が営業時間（'+esc(x.hours)+'）の外です'):('⚠️ 「'+esc(x.name)+'」は到着時刻（'+esc(x.at)+'）に開いているか確認してください'); }).join('<br>')+'</div>','safe');
   }
   if(state.weather&&state.weather.tmax!=null&&state.weather.tmax>=30){
     const __hasOutdoor=(p.rows||[]).some(function(r){ return r.type==='spot'&&!r.opt&&r.spot&&r.spot.indoor_or_outdoor==='outdoor'; });
