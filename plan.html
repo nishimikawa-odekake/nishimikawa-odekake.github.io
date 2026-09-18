@@ -5279,16 +5279,18 @@ function showResult(){
     html+='<div class="sharedbanner">共有されたプランです ・ <a href="./plan.html">自分のプランを作る →</a></div>';
   }
   /* ===== [A-10] 上部の注意書きの整理 =========================================
-   * プラン結果の上部に出すのは最大 3 ブロックまでにする:
-   *   ① 天気　② この日の最重要の注意 1 つ　③ 免責 1 行(プランカード先頭・常時)
+   * プラン結果の上部は「天気＋安全系(あれば)＋負担系 1 つ＋免責 1 行」にする(裁定125)。
+   *   g:'safe' … 安全系・行ってから困る系。**常に上部に出す**(畳まない)
+   *                休館日警告(10) / 暑さ・熱中症注意(15) / えらんだ場所が入らなかった(18)
+   *   g:'load' … 負担系(負担大 30 / 帰宅遅め 40 / 小さいお子さん 60 / 移動多め 70 / 半日 80)。
+   *                既存の if/else-if で最も強い 1 つだけが積まれるので、上部には常に 1 つ。
+   *   無印　　 … その他の補足(午後出発 90 / 予算超過 92 / 圏外 94 / 雨の日ページ 95 /
+   *                営業時間確認状況 98)。**削除せず**プラン下(__below)へ回す。
    * 条件サマリ(🗣)は見出し行に畳む(.parentfold / タップで全文)。
-   * 「負担大／帰宅遅め／移動多め／半日」は同じ趣旨の注記なので、
-   *   複数該当しても最も強い 1 つだけを出す(既存の if/else-if に半日を加える)。
-   * 2 番目以降の注記は削除せず、プラン下(__below)へ回す。文言は既存のまま変えない。
-   * 優先度は数字が小さいほど強い。
+   * 文言は既存のまま変えない。優先度は数字が小さいほど強い。
    * ======================================================================== */
   const __notes=[];
-  const __note=function(rank,h){ if(h) __notes.push({r:rank,h:h}); };
+  const __note=function(rank,h,g){ if(h) __notes.push({r:rank,h:h,g:g||''}); };
   html+='<div style="text-align:center">'+weatherBadge()+'</div>';
   if(state.indoorPref&&!isRainMode(state.weather)){
     __note(95,'<div class="wxbadge" style="background:#eef4fb;border:1px solid #b9d2ee;color:#2c5a8a">☔ 雨の日ページから、室内中心で組んでいます <button type="button" onclick="clearIndoorPref()" style="margin-left:8px;padding:4px 10px;border-radius:10px;border:1px solid #b9d2ee;background:#fff;color:#2c5a8a;font-size:.78rem;font-weight:700">天気に合わせた通常プランに戻す</button></div>');
@@ -5307,19 +5309,19 @@ function showResult(){
     const __why=[];
     if(p.retHome&&p.retHome>=19*60) __why.push('帰着めやす '+fmtTime(p.retHome)+'ごろ');
     if(p.totalDrive>=180) __why.push('運転合計 '+__dstr);
-    __note(30,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ このプランは負担が大きめです（'+__why.join('・')+'）。'+(state.isCustomView?'1カ所減らす・近い場所に変える・2日に分けるのがおすすめです（下の「えらんだ場所を編集する」から変更できます）':'そのまま使う場合は休憩を多めにどうぞ')+'</div>'+__nb);
+    __note(30,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ このプランは負担が大きめです（'+__why.join('・')+'）。'+(state.isCustomView?'1カ所減らす・近い場所に変える・2日に分けるのがおすすめです（下の「えらんだ場所を編集する」から変更できます）':'そのまま使う場合は休憩を多めにどうぞ')+'</div>'+__nb,'load');
   } else if(p.__late&&p.retHome){
-    __note(40,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 帰宅が遅めのプランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。この条件では近い候補が見つかりませんでした</div>'+__nb);
+    __note(40,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 帰宅が遅めのプランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。この条件では近い候補が見つかりませんでした</div>'+__nb,'load');
   } else if(__kidW){
     const __why=[];
     if(p.retHome&&p.retHome>=18*60) __why.push('帰着めやす '+fmtTime(p.retHome)+'ごろ');
     if(p.totalDrive>=120) __why.push('運転合計 '+__dstr);
-    __note(60,'<div class="notice" style="margin:8px 0;background:#fff3e6;border:1.5px solid #e0964a;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 小さいお子さん連れには帰宅が遅め・移動が多めのプランです（'+__why.join('・')+'）</div>'+__nb);
+    __note(60,'<div class="notice" style="margin:8px 0;background:#fff3e6;border:1.5px solid #e0964a;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🌙 小さいお子さん連れには帰宅が遅め・移動が多めのプランです（'+__why.join('・')+'）</div>'+__nb,'load');
   } else if(p.totalDrive>=120){
-    __note(70,'<div class="notice" style="margin:8px 0;background:#fff8e1;border:1.5px solid #e0b84a;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🚗 移動が多めのプランです（運転合計 '+__dstr+'）。休憩をはさみながらどうぞ</div>');
+    __note(70,'<div class="notice" style="margin:8px 0;background:#fff8e1;border:1.5px solid #e0b84a;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">🚗 移動が多めのプランです（運転合計 '+__dstr+'）。休憩をはさみながらどうぞ</div>','load');
   } else if(p.retHome&&p.retHome<=(14*60+30)&&!(p.rows||[]).some(r=>r.opt)){
     // [A-10] 半日プランは上の負担系警告がないときだけ出す(非表示条件の追加)
-    __note(80,'<div class="notice" style="margin:8px 0;background:#eef6ee;border:1px solid #9dc3a0;border-radius:10px;padding:9px 12px;font-size:.82rem;font-weight:700">🌤 半日プランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。午後も遊びたいときは、移動時間を広げると候補が増えます</div>');
+    __note(80,'<div class="notice" style="margin:8px 0;background:#eef6ee;border:1px solid #9dc3a0;border-radius:10px;padding:9px 12px;font-size:.82rem;font-weight:700">🌤 半日プランです（帰着めやす '+fmtTime(p.retHome)+'ごろ）。午後も遊びたいときは、移動時間を広げると候補が増えます</div>','load');
   }
   // 営業時間の確認状況(カスタムのみ・確認できるデータがある施設だけを「確認済み」と数える)
   if(state.isCustomView){
@@ -5346,24 +5348,28 @@ function showResult(){
     }
   }
   if(state.isCustomView&&p.__missing&&p.__missing.length){
-    __note(20,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ えらんだ「'+p.__missing.map(esc).join('」「')+'」を今回のプランに組み込めませんでした。時間割・営業時間の都合の可能性があります。「えらんだ場所を編集する」から枠を調整してもう一度お試しください</div>');
+    __note(18,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ えらんだ「'+p.__missing.map(esc).join('」「')+'」を今回のプランに組み込めませんでした。時間割・営業時間の都合の可能性があります。「えらんだ場所を編集する」から枠を調整してもう一度お試しください</div>','safe');
   }
   /* [S-1] マップで選んだ場所がその日の休館日にあたる可能性 -> 最優先で上部に出す。
      選択は勝手に外さない。judge が unknown の行はここには入れず、
      既存の「🕐 営業時間は要確認」に任せる。 */
   if(state.isCustomView&&p.__closedWarn&&p.__closedWarn.length){
-    __note(10,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ 「'+p.__closedWarn.map(esc).join('」「')+'」はこの日は休館日の可能性があります</div>');
+    __note(10,'<div class="notice" style="margin:8px 0;background:#fdecea;border:1.5px solid #e57368;border-radius:10px;padding:10px 12px;font-size:.84rem;font-weight:700">⚠️ 「'+p.__closedWarn.map(esc).join('」「')+'」はこの日は休館日の可能性があります</div>','safe');
   }
   if(state.weather&&state.weather.tmax!=null&&state.weather.tmax>=30){
     const __hasOutdoor=(p.rows||[]).some(function(r){ return r.type==='spot'&&!r.opt&&r.spot&&r.spot.indoor_or_outdoor==='outdoor'; });
     if(__hasOutdoor){
-      __note(50,'<div class="notice" style="margin:8px 0;background:#fff3e6;border:1.5px solid #e0964a;border-radius:10px;padding:10px 12px;font-size:.82rem;font-weight:700">🥵 暑さ注意（最高'+Math.round(state.weather.tmax)+'℃予想）: 水分・帽子・日陰休憩を。屋外は短時間ずつがおすすめです</div>');
+      __note(15,'<div class="notice" style="margin:8px 0;background:#fff3e6;border:1.5px solid #e0964a;border-radius:10px;padding:10px 12px;font-size:.82rem;font-weight:700">🥵 暑さ注意（最高'+Math.round(state.weather.tmax)+'℃予想）: 水分・帽子・日陰休憩を。屋外は短時間ずつがおすすめです</div>','safe');
     }
   }
-  // 上部は最重要の1つだけ。残りはプラン下へ(消さない)
+  /* [裁定125] 安全系(g:'safe')は常に上部。負担系(g:'load')は最も強い 1 つだけ上部。
+     それ以外の補足は削除せずプラン下へ回す。 */
   __notes.sort(function(a,b){ return a.r-b.r; });
-  if(__notes.length) html+=__notes[0].h;
-  const __below=__notes.slice(1).map(function(x){ return x.h; }).join('');
+  const __topNotes=__notes.filter(function(x){ return x.g==='safe'; })
+    .concat(__notes.filter(function(x){ return x.g==='load'; }).slice(0,1));
+  html+=__topNotes.map(function(x){ return x.h; }).join('');
+  const __below=__notes.filter(function(x){ return __topNotes.indexOf(x)<0; })
+    .map(function(x){ return x.h; }).join('');
   html+='<div class="plancard">';
   // [A-10] 条件サマリ(🗣)は独立したブロックをやめ、見出し行の中に1行で畳む。
   // タップすると全文が開く。文言(parentSummary の中身)は変更しない。
