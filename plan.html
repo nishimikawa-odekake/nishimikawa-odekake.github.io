@@ -10,6 +10,7 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-8CDXHXFG9F');
+  gtag('config', 'G-8HQQDPB5DN');
 </script>
 <!-- フィードバック設定（フォーム確定後はこのブロックだけ差し替える） -->
 <script>
@@ -4457,14 +4458,14 @@ async function sharePlan(){
   if(navigator.share){
     try{
       await navigator.share({title:'きょうのおでかけプラン',text,url});
-      if(typeof gtag==='function') gtag('event','plan_share',{method:'webshare'}); gtag('event','planner_share',seoP({method:'webshare'}));
+      if(typeof gtag==='function'){ gtag('event','plan_share',{method:'webshare'}); gtag('event','planner_share',seoP({method:'webshare'})); }
     }catch(e){ /* user cancelled share sheet */ }
     return;
   }
   try{
     await copyToClipboard(url);
     showToast('リンクをコピーしました');
-    if(typeof gtag==='function') gtag('event','plan_share',{method:'copy'}); gtag('event','planner_share',seoP({method:'copy'}));
+    if(typeof gtag==='function'){ gtag('event','plan_share',{method:'copy'}); gtag('event','planner_share',seoP({method:'copy'})); }
   }catch(e){
     showToast('コピーに失敗しました');
   }
