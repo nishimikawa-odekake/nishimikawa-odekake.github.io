@@ -4517,6 +4517,8 @@ function restoreFromShare(qs){
       if(c){ lat=c[1]; lng=c[2]; } else { lat=ANJO[0]; lng=ANJO[1]; originName='安城市'; }
     }
   }
+  // [geofix-G] 共有URLの lat/lng が範囲外なら安城市から
+  if(!originInArea(lat,lng)){ lat=ANJO[0]; lng=ANJO[1]; originName='安城市'; __shareOutOfArea=true; }
   state.origin={name:originName,lat,lng,isAnjo:originName==='安城市'};
   const drive=qs.get('drive');
   state.driveTime=['20','40','60'].includes(drive)?drive:'any';
@@ -4616,6 +4618,17 @@ const ORIGIN_KEY='odemaru_custom_origin_v1';
 // [geofix-A] 保存した「現在地」は取得時刻tsから30分以内のときだけ使う(ts無し=旧形式も使わない)。市の選択は従来どおり期限なし
 const HERE_MAX_AGE_MS=30*60*1000;
 var __hereExpired=false;
+// [geofix-G] 保存・共有URLの出発地が愛知版のエリアから遠すぎるときは使わない。
+// 判定: 愛知県のCITIES代表点のうち最も近い点までの距離がAREA_MAX_KMを超えたら範囲外(岐阜・三重・静岡西部など県境の近くは通す)
+const AREA_MAX_KM=60;
+function originInArea(lat,lng){
+  lat=Number(lat); lng=Number(lng);
+  if(!isFinite(lat)||!isFinite(lng)) return false;
+  for(const c of CITIES){ if(haversineKm(lat,lng,c[1],c[2])<=AREA_MAX_KM) return true; }
+  return false;
+}
+var __originOutOfArea=false;
+var __shareOutOfArea=false;   // 共有URLの出発地が範囲外だったとき(受け取った人向けの文言を出す)
 function cpSaveOrigin(){
   try{
     const o=state.origin;
@@ -4629,6 +4642,8 @@ function cpSaveOrigin(){
 function cpLoadOrigin(){
   try{
     const d=JSON.parse(localStorage.getItem(ORIGIN_KEY)||'null');
+    // [geofix-G] 範囲外チェック → 期限チェックの順
+    if(d&&typeof d.name==='string'&&d.name&&isFinite(d.lat)&&isFinite(d.lng)&&!originInArea(d.lat,d.lng)){ localStorage.removeItem(ORIGIN_KEY); __originOutOfArea=true; return null; }
     if(d&&d.name==='現在地'&&isFinite(d.lat)&&isFinite(d.lng)){
       const age=(typeof d.ts==='number'&&isFinite(d.ts))?Date.now()-d.ts:NaN;
       if(!(age>=0&&age<=HERE_MAX_AGE_MS)){ localStorage.removeItem(ORIGIN_KEY); __hereExpired=true; return null; }
@@ -4761,7 +4776,7 @@ function cpGeo(){
   if(note) note.textContent='現在地を取得中…';
   navigator.geolocation.getCurrentPosition(function(pos){
     state.origin={name:'現在地',lat:pos.coords.latitude,lng:pos.coords.longitude,isAnjo:false,ts:Date.now()};
-    __hereExpired=false;
+    __hereExpired=false; __originOutOfArea=false;
     cpSaveOrigin();
     if(typeof gtag==='function') gtag('event','plan_custom_geo');
     renderCustomPanel();
@@ -4968,7 +4983,7 @@ function renderCustomPanel(){
   html+='<div style="margin:10px 0"><b style="font-size:.85rem">🚗 どこから出発？</b><br>'
     +'<div style="display:flex;gap:6px;align-items:center;margin-top:4px"><select class="origin" id="cpOrigin" style="flex:1;min-width:0"></select>'
     +'<button type="button" onclick="cpGeo()" style="white-space:nowrap;border:1.5px solid #e8853d;background:'+(state.origin&&state.origin.name==='現在地'?'#e8853d':'#fff8f0')+';color:'+(state.origin&&state.origin.name==='現在地'?'#fff':'#b45f1d')+';border-radius:999px;padding:8px 12px;font-weight:800;font-size:.82rem">📍 現在地</button></div>'
-    +'<div id="cpGeoNote" style="font-size:.72rem;color:#8a7a5a;margin-top:3px">'+(state.origin&&state.origin.name==='現在地'?'📍 現在地から出発します':(__hereExpired?'前回の現在地は時間がたったので使っていません。📍で取り直してください':''))+'</div></div>';
+    +'<div id="cpGeoNote" style="font-size:.72rem;color:#8a7a5a;margin-top:3px">'+(state.origin&&state.origin.name==='現在地'?'📍 現在地から出発します':(__originOutOfArea?'前回の出発地がこの地図の範囲外だったので'+state.origin.name+'から探します':(__hereExpired?'前回の現在地は時間がたったので使っていません。📍で取り直してください':'')))+'</div></div>';
   const wOn='background:#e8853d;color:#fff;border:1px solid #e8853d;border-radius:999px;padding:8px 18px;font-weight:800;font-size:.9rem';
   const wOff='background:#fff;color:#6b5c40;border:1px solid #d8c9b0;border-radius:999px;padding:8px 18px;font-weight:700;font-size:.9rem';
   // 「きょう」が成立しない時間帯(出発がTODAY_LAST_STARTを超える)は選べないようにし、「あす」へ寄せる
@@ -5151,7 +5166,7 @@ function renderCustomPanel(){
       const nm=sel.options[sel.selectedIndex].textContent;
       state.origin={name:nm,lat:parts[0],lng:parts[1],isAnjo:(nm==='安城市')};
       cpSaveOrigin();
-      __hereExpired=false; const gn=document.getElementById('cpGeoNote'); if(gn) gn.textContent='';   // [geofix-A/E]
+      __hereExpired=false; __originOutOfArea=false; const gn=document.getElementById('cpGeoNote'); if(gn) gn.textContent='';   // [geofix-A/E/G]
     });
   }
   // スクロール: 初回表示のみトップ、以降は位置を保持
@@ -5691,7 +5706,7 @@ function showResult(){
   const driveStr=(total?total+'時間':'')+(tm?tm+'分':'')||'0分';
   let html='';
   if(state.isSharedView){
-    html+='<div class="sharedbanner">共有されたプランです ・ <a href="./plan.html">自分のプランを作る →</a></div>';
+    html+='<div class="sharedbanner">共有されたプランです ・ <a href="./plan.html">自分のプランを作る →</a>'+(__shareOutOfArea?'<br>共有されたプランの出発地がこの地図の範囲外だったので、安城市から作り直しました':'')+'</div>';   // [geofix-G]
   }
   /* ===== [A-10] 上部の注意書きの整理 =========================================
    * プラン結果の上部は「天気＋安全系(あれば)＋負担系 1 つ＋免責 1 行」にする(裁定125)。
@@ -5890,7 +5905,13 @@ function loadPrefs(){
     if(!raw) return;
     const p=JSON.parse(raw);
     // 出発地(市町村選択のみ復元。現在地は毎回取り直し)
-    if(p.origin&&p.origin.name){
+    if(p.origin&&p.origin.name&&!originInArea(p.origin.lat,p.origin.lng)){
+      // [geofix-G] 範囲外の出発地は復元せず破棄(当県の初期値のまま進む)
+      try{ localStorage.removeItem(PREF_KEY); }catch(e2){}
+      __originOutOfArea=true;
+      const note=document.getElementById('geoNote');
+      if(note) note.textContent='前回の出発地がこの地図の範囲外だったので'+state.origin.name+'から探します';
+    }else if(p.origin&&p.origin.name){
       const sel=document.getElementById('originSel');
       if(sel){
         for(const opt of sel.options){

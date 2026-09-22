@@ -669,6 +669,15 @@ originSel.value=CITIES[0][1]+','+CITIES[0][2];
 
 // [geofix-A] 保存した「現在地」は取得時刻tsから30分以内のときだけ復元する(市の選択は従来どおり期限なし)
 const HERE_MAX_AGE_MS=30*60*1000;
+// [geofix-G] 保存・共有URLの出発地が愛知版のエリアから遠すぎるときは使わない。
+// 判定: 愛知県のCITIES代表点のうち最も近い点までの距離がAREA_MAX_KMを超えたら範囲外(岐阜・三重・静岡西部など県境の近くは通す)
+const AREA_MAX_KM=60;
+function originInArea(lat,lng){
+  lat=Number(lat); lng=Number(lng);
+  if(!isFinite(lat)||!isFinite(lng)) return false;
+  for(const c of CITIES){ if(haversineKm(lat,lng,c[1],c[2])<=AREA_MAX_KM) return true; }
+  return false;
+}
 function setOrigin(name,lat,lng,ts){
   origin.name=name; origin.lat=lat; origin.lng=lng; origin.isAnjo=(name==='安城市');
   // プランナー(自分で選ぶプラン)と出発地を共有する
@@ -789,7 +798,10 @@ if(recenterBtn){
     // fromパラメータが無い場合: プランナーで選んだ出発地を引き継ぐ(不正値は無視)
     try{
       const d=JSON.parse(localStorage.getItem('odemaru_custom_origin_v1')||'null');
-      if(d&&typeof d.name==='string'&&isFinite(d.lat)&&isFinite(d.lng)){
+      if(d&&typeof d.name==='string'&&isFinite(d.lat)&&isFinite(d.lng)&&!originInArea(d.lat,d.lng)){   // [geofix-G] 範囲外チェック → 期限チェックの順
+        try{ localStorage.removeItem('odemaru_custom_origin_v1'); }catch(e2){}
+        showToast('前回の出発地がこの地図の範囲外だったので安城市から探します');
+      }else if(d&&typeof d.name==='string'&&isFinite(d.lat)&&isFinite(d.lng)){
         const mc=CITIES.find(c=>c[0]===d.name);
         if(mc){ originSel.value=mc[1]+','+mc[2]; setOrigin(mc[0],mc[1],mc[2]); }
         else if(d.name==='現在地'){
