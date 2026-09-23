@@ -5918,8 +5918,7 @@ function showResult(){
       '</div>';
   }
   html+='<div class="actions">';
-  html+='<button class="act-share" onclick="sharePlan()">📤 家族に送る（共有）</button>';
-  html+='<button class="act-share" onclick="sharePlanImage(this)">🖼 画像で送る（LINEなど）</button>';
+  html+='<button class="act-share" onclick="sharePlanImage(this)">📤 家族に送る（共有）</button>';
   if(state.isCustomView){
     html+='<button class="act-reroll" onclick="editCustom()">✏️ えらんだ場所を編集する</button>';
   } else {
@@ -6076,17 +6075,21 @@ try{ setInterval(function(){ try{ refreshTodayAvailability(); }catch(e){} }, 600
 })();
 </script>
 <script>
-/* ===== [share-img] プランを画像で送る（LINEなど） =====================================
- * 結果画面の「🖼 画像で送る（LINEなど）」から呼ばれる。既存の sharePlan() には触れない。
+/* ===== [share-img] 「📤 家族に送る」を画像つき共有に =====================================
+ * 結果画面の「📤 家族に送る（共有）」から呼ばれる。既存の sharePlan() は変更せず、画像を共有できない端末ではそれを呼ぶ。
  * 表示中のプラン(state.plans[state.variant])を 1080px 幅・縦長(最低1920px)の PNG に Canvas 2D で描く。
  * - 写真は PHOTO_MAIN_ROW の写真だけ。読めない／canvas が汚染されたら写真とクレジットを両方外して描き直す
  *   （写真だけ載ってクレジットが無い画像は作らない）
  * - 共有テキストのURLは sharePlan() と同じ buildShareUrl(p)（画像には長いURLを載せない）
- * - 送信: Web Share(ファイル) が使えれば共有シート、使えなければ PNG を保存してトースト
+ * - 送信: Web Share(ファイル) が使えれば画像＋リンクの共有シート。使えなければ従来の sharePlan()（リンク共有／コピー）
  * - GA4: share_image {method:'image', result:'shared'|'downloaded'|'cancelled'}
  * ================================================================================== */
 (function(){
 var W=1080, MIN_H=1920, PAD=64, busy=false;
+var SITE_DOMAIN='nishimikawa-odekake.com';
+// サイト名とマークはページ上部のロゴ(.odm-brand)から読む（県ごとにコードを変えないため）
+function siteName(){ try{ var b=document.querySelector('.odm-brand'); var t=b?(b.textContent||'').trim():''; if(t) return t; var m=/｜([^｜]+)$/.exec(document.title||''); return m?m[1].trim():''; }catch(e){ return ''; } }
+function markSrc(){ try{ var i=document.querySelector('.odm-brand img'); return (i&&i.getAttribute('src'))||'/odemaru-mark.png'; }catch(e){ return '/odemaru-mark.png'; } }
 function css(n,d){ try{ var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v||d; }catch(e){ return d; } }
 function ga(result){ try{ if(typeof gtag==='function'){ gtag('event','share_image',{method:'image',result:result}); } }catch(e){} }
 function txt(html){ var d=document.createElement('div'); d.innerHTML=String(html==null?'':html); return (d.textContent||'').replace(/\s+/g,' ').trim(); }
@@ -6213,8 +6216,8 @@ function paint(ctx,H,d){
   ctx.fillStyle=C.card; ctx.fillRect(0,fy,W,H-fy);
   ctx.fillStyle=C.acc; ctx.fillRect(0,fy,W,8);
   f('800',34); ctx.fillStyle=C.accd; ctx.textAlign='center';
-  ctx.fillText('おでまる｜あいち子育ておでかけマップ',W/2,fy+34);
-  f('600',26); ctx.fillStyle=C.sub; ctx.fillText('nishimikawa-odekake.com',W/2,fy+88);
+  ctx.fillText('おでまる｜'+d.site,W/2,fy+34);
+  f('600',26); ctx.fillStyle=C.sub; ctx.fillText(SITE_DOMAIN,W/2,fy+88);
   ctx.textAlign='left';
   return {contentBottom:y, cardH:cardH, need:y+FH};
 }
@@ -6235,11 +6238,11 @@ async function buildImage(p){
   try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready; }catch(e){}
   var d={font:(getComputedStyle(document.body).fontFamily||'sans-serif'),
     when:(function(){ try{ return whenLabel(); }catch(e){ return ''; } })(),
-    origin:(state.origin&&state.origin.name)||'', rows:planData(p),
+    origin:(state.origin&&state.origin.name)||'', rows:planData(p), site:siteName(),
     note:'※営業時間・休みは必ず公式サイトでご確認ください', mark:null, photo:null, credit:''};
   var row=(typeof PHOTO_MAIN_ROW!=='undefined')?PHOTO_MAIN_ROW:null;
   var s=(row&&(p.rows||[]).indexOf(row)>=0)?row.spot:null;
-  var jobs=[loadImg('/assets/odemaru-mark.png',3000,false)];
+  var jobs=[loadImg(markSrc(),3000,false)];
   if(s&&photoAllowed(s)) jobs.push(loadPhoto(s.image_url));
   var got=await Promise.all(jobs);
   d.mark=got[0];
@@ -6263,6 +6266,10 @@ async function doShare(file,text){
   try{ await navigator.share({files:[file],text:text}); ga('shared'); return 'ok'; }
   catch(e){ if(e&&e.name==='AbortError'){ ga('cancelled'); return 'ok'; } return e&&e.name==='NotAllowedError'?'retry':'fail'; }
 }
+// 画像ファイルを共有できる端末か（できなければ従来のリンク共有 sharePlan() をそのまま使う）
+function canShareFiles(){
+  try{ return !!(navigator.share&&navigator.canShare&&typeof File==='function'&&navigator.canShare({files:[new File([''],'odemaru-plan.png',{type:'image/png'})]})); }catch(e){ return false; }
+}
 // 画像作成に時間がかかりタップ直後の扱いが切れた端末向け：プレビューとボタンを出してもう一度タップしてもらう
 function sheet(file,blob,text){
   var u=URL.createObjectURL(blob), acted=false;
@@ -6270,7 +6277,7 @@ function sheet(file,blob,text){
   o.setAttribute('style','position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px');
   o.innerHTML='<div style="background:#fffdf9;border-radius:16px;padding:14px;max-width:360px;width:100%;text-align:center">'
     +'<img src="'+u+'" alt="プランの画像" style="max-width:100%;max-height:52vh;border-radius:8px;border:1px solid #e7ddcd">'
-    +'<button type="button" data-a="s" style="display:block;width:100%;margin:10px 0 0;padding:13px;border-radius:12px;border:none;background:#e08a5b;color:#fff;font-weight:800;font-size:1rem">📤 画像を送る</button>'
+    +'<button type="button" data-a="s" style="display:block;width:100%;margin:10px 0 0;padding:13px;border-radius:12px;border:none;background:#e08a5b;color:#fff;font-weight:800;font-size:1rem">📤 送る</button>'
     +'<button type="button" data-a="d" style="display:block;width:100%;margin:8px 0 0;padding:11px;border-radius:12px;border:2px solid #e08a5b;background:#fff;color:#c9713f;font-weight:800">💾 画像を保存</button>'
     +'<button type="button" data-a="c" style="margin:8px 0 0;padding:6px;border:none;background:none;color:#7a746a;text-decoration:underline">閉じる</button></div>';
   var close=function(){ o.remove(); setTimeout(function(){ URL.revokeObjectURL(u); },1000); };
@@ -6283,31 +6290,24 @@ function sheet(file,blob,text){
   });
   document.body.appendChild(o);
 }
+// 「📤 家族に送る」: 画像を共有できる端末は画像＋リンク、できない端末（PC・古いスマホ）は従来の sharePlan() のまま
 window.sharePlanImage=async function(btn){
   if(busy||!state.plans||!state.plans.length) return;
+  if(!canShareFiles()) return sharePlan();
   busy=true;
-  var label=btn?btn.textContent:'';
+  var label=btn?btn.textContent:'', blob=null, file=null, text='';
   if(btn){ btn.disabled=true; btn.textContent='⏳ 画像を作成中…'; }
   try{
     var p=state.plans[state.variant%state.plans.length];
-    var url=buildShareUrl(p);
-    var blob=await buildImage(p);
-    var name=fileName(), file=null;
-    try{ file=new File([blob],name,{type:'image/png'}); }catch(e){}
-    var text='きょうのおでかけプラン（おでまる）\n'+url;
-    if(file&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-      var r=await doShare(file,text);
-      if(r==='retry') sheet(file,blob,text);
-      else if(r==='fail') download(blob,name);
-    } else {
-      download(blob,name);
-    }
-  }catch(e){
-    showToast('画像を作れませんでした。「家族に送る」をお使いください');
-  }finally{
-    busy=false;
-    if(btn){ btn.disabled=false; btn.textContent=label; }
-  }
+    text='きょうのおでかけプラン（おでまる）\n'+buildShareUrl(p);
+    blob=await buildImage(p);
+    file=new File([blob],fileName(),{type:'image/png'});
+  }catch(e){ blob=null; }
+  busy=false;
+  if(btn){ btn.disabled=false; btn.textContent=label; }
+  if(!blob||!file) return sharePlan();   // 画像が作れなかったときも従来のリンク共有へ
+  var r=await doShare(file,text);
+  if(r!=='ok') sheet(file,blob,text);
 };
 })();
 </script>
