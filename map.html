@@ -678,7 +678,17 @@ function originInArea(lat,lng){
   for(const c of CITIES){ if(haversineKm(lat,lng,c[1],c[2])<=AREA_MAX_KM) return true; }
   return false;
 }
+function hereOutToast(){ showToast('現在地が愛知版の範囲から離れています。'+origin.name+'から表示します'); }   // [geofix2]
+// [geofix2] 現在地で出発するときは選択欄にも「📍 現在地」を出す(plan.html の geoSelHere と同じ)
+function mapSelHere(on){
+  let h=originSel.querySelector('option[data-here]');
+  if(on){
+    if(!h){ h=document.createElement('option'); h.value=''; h.textContent='📍 現在地'; h.setAttribute('data-here','1'); originSel.insertBefore(h,originSel.firstChild); }
+    originSel.value='';
+  }else if(h){ h.remove(); }
+}
 function setOrigin(name,lat,lng,ts){
+  mapSelHere(name==='現在地');   // [geofix2]
   origin.name=name; origin.lat=lat; origin.lng=lng; origin.isAnjo=(name==='安城市');
   // プランナー(自分で選ぶプラン)と出発地を共有する
   try{ const rec={name:name,lat:lat,lng:lng,isAnjo:(name==='安城市')}; if(name==='現在地') rec.ts=(typeof ts==='number'&&isFinite(ts))?ts:Date.now(); localStorage.setItem('odemaru_custom_origin_v1',JSON.stringify(rec)); }catch(e){}
@@ -720,6 +730,7 @@ function requestGeolocation(onOk,onFail,opt){
 }
 
 originSel.addEventListener('change',()=>{
+  if(!originSel.value) return;   // [geofix2] 「📍 現在地」のままなら何もしない
   const opt=originSel.selectedOptions[0];
   const parts=originSel.value.split(',');
   setOrigin(opt.dataset.name, +parts[0], +parts[1]);
@@ -727,10 +738,11 @@ originSel.addEventListener('change',()=>{
 document.getElementById('originGeo').addEventListener('click',()=>{
   const backToAnjo=()=>{ originSel.value=CITIES[0][1]+','+CITIES[0][2]; setOrigin('安城市',ANJO[0],ANJO[1]); };
   requestGeolocation((lat,lng)=>{
+    if(!originInArea(lat,lng)){ if(origin.name==='現在地') backToAnjo(); hereOutToast(); return; }   // [geofix2] 範囲外の現在地は使わない
     setOrigin('現在地',lat,lng);
     placeUserDot(lat,lng);
     if(!autoPannedOnce && map){ map.setView([lat,lng],13,{animate:true}); autoPannedOnce=true; }
-  }, backToAnjo);
+  }, backToAnjo, {enableHighAccuracy:false,timeout:10000,maximumAge:0});   // [geofix2] 押したときは位置のキャッシュを使わない
 });
 const recenterBtn=document.getElementById('recenterBtn');
 if(recenterBtn){
@@ -743,6 +755,7 @@ if(recenterBtn){
     const end=()=>{ recenterBtn.disabled=false; recenterBtn.style.opacity=''; };
     requestGeolocation((lat,lng)=>{
       end();
+      if(!originInArea(lat,lng)){ hereOutToast(); if(prev&&map) map.setView(prev,13,{animate:true}); return; }   // [geofix2]
       setOrigin('現在地',lat,lng);
       placeUserDot(lat,lng);
       if(map) map.setView([lat,lng],13,{animate:true});
@@ -784,10 +797,10 @@ if(recenterBtn){
   if(from==='現在地'){
     // index.htmlで現在地を選んだまま全画面にした場合: 座標を引き継ぎ現在地設定を維持する
     const flat=parseFloat(qs.get('flat')), flng=parseFloat(qs.get('flng'));
-    if(isFinite(flat)&&isFinite(flng)){
+    if(isFinite(flat)&&isFinite(flng)&&originInArea(flat,flng)){
       setOrigin('現在地',flat,flng);
       placeUserDot(flat,flng);
-    }
+    }else if(isFinite(flat)&&isFinite(flng)){ hereOutToast(); }   // [geofix2]
   }else if(from){
     const match=CITIES.find(c=>c[0]===from);
     if(match){
